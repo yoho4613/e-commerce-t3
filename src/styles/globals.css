@@ -3,5 +3,13 @@
 @tailwind utilities;
 
 body {
-  font-family: inter, Helvetica, sans-serif,
+  font-family: inter, Helvetica, sans-serif;
+  overflow-x: hidden;
+  width: 100vw;
 }
+
+.btn--red {
+  @apply bg-redPrimary text-whitePrimary rounded-md font-light hover:bg-red-500;
+}
+
+

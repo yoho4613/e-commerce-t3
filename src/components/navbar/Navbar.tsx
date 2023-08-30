@@ -27,7 +27,7 @@ const Navbar: FC<NavbarProps> = ({}) => {
 
   return (
     <nav className="flex items-center justify-between overflow-hidden ">
-      <div className=" relative w-16 h-16 md:w-28 md:h-28 order-1">
+      <div className=" relative w-16 h-16 md:w-20 md:h-20 order-1">
         <Link href="/">
           <Image src={logo} alt="logo" fill />
         </Link>
@@ -36,7 +36,7 @@ const Navbar: FC<NavbarProps> = ({}) => {
         <button className="md:hidden flex items-center" onClick={() => setMobileMenuOpened(prev => !prev)}>
           <RiMenu2Fill className="sm:text-3xl text-xl" />
         </button>
-        <ul ref={popupRef} className={`flex flex-col w-full bg-[rgba(0,0,0,0.6)] md:bg-transparent h-screen md:h-auto md:top-0 md:w-full absolute z-50 left-0 top-32  md:relative md:justify-between text-xl md:flex-row transition md:transition-none md:translate-x-0 ${mobileMenuOpened ? "translate-x-0" : "translate-x-full"}`}>
+        <ul ref={popupRef} className={`flex flex-col w-full bg-[rgba(0,0,0,0.6)] md:bg-transparent h-screen md:h-auto md:top-0 md:w-full absolute z-50 left-0 top-32  md:relative md:justify-between text-lg md:flex-row transition md:transition-none md:translate-x-0 ${mobileMenuOpened ? "translate-x-0" : "translate-x-full"}`}>
           <li className="hover-underline-animation bg-slate-200 md:bg-transparent p-2.5 md:p-0">
             <Link className="w-full inline-block" href="/">Home</Link>
           </li>
@@ -47,7 +47,7 @@ const Navbar: FC<NavbarProps> = ({}) => {
             <Link className="w-full inline-block" href="/">About</Link>
           </li>
           <li className="hover-underline-animation bg-slate-200 md:bg-transparent p-2.5 md:p-0">
-            <Link className="w-full inline-block" href="/">Login</Link>
+            <Link className="w-full inline-block" href="/login">Login</Link>
           </li>
       </ul>
       </div>

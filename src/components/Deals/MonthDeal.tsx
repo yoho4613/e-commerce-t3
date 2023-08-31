@@ -52,16 +52,15 @@ const MonthDeal: FC<MonthDealProps> = ({}) => {
     <div>
       <div className="flex items-center">
         <span className="bg-redPrimary mr-4 inline-block h-12 w-6 rounded-md" />
-        <h2 className="text-redPrimary font-bold">Today's</h2>
+        <h2 className="text-redPrimary font-bold">This Month</h2>
       </div>
-      <div className="my-6 flex w-full items-center justify-between">
-        <h2 className="text-3xl tracking-widest">Flash Sales</h2>
-
+      <div className="my-6 flex w-full items-start gap-4 pl-4 sm:flex-row justify-between sm:items-center sm:gap-0 sm:pl-0">
+        <h2 className="text-xl tracking-widest sm:text-2xl md:text-3xl">Best Selling Products</h2>
         <div>
-          <button className="btn--red w-36 py-4 ">View All</button>
+          <button className="btn--red w-24 sm:w-36 py-2 sm:py-4 ">View All</button>
         </div>
       </div>
-      <div className="flex justify-between ">
+      <div className="flex flex-wrap justify-between ">
         {products.map((product, i) => (
           <ProductCard key={i} product={product} />
         ))}

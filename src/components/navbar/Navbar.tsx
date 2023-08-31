@@ -27,7 +27,7 @@ const Navbar: FC<NavbarProps> = ({}) => {
 
   return (
     <nav className="flex items-center justify-between overflow-hidden ">
-      <div className=" relative w-16 h-16 md:w-20 md:h-20 order-1">
+      <div className="relative w-16 h-16 md:w-20 md:h-20 order-1">
         <Link href="/">
           <Image src={logo} alt="logo" fill />
         </Link>
@@ -41,7 +41,7 @@ const Navbar: FC<NavbarProps> = ({}) => {
             <Link className="w-full inline-block" href="/">Home</Link>
           </li>
           <li className="hover-underline-animation bg-slate-200 md:bg-transparent p-2.5 md:p-0">
-            <Link className="w-full inline-block" href="/">Contact</Link>
+            <Link className="w-full inline-block" href="/contact">Contact</Link>
           </li>
           <li className="hover-underline-animation bg-slate-200 md:bg-transparent p-2.5 md:p-0">
             <Link className="w-full inline-block" href="/">About</Link>

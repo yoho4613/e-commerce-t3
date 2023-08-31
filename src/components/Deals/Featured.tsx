@@ -9,12 +9,14 @@ const Featured: FC<FeaturedProps> = ({}) => {
         <span className="bg-redPrimary mr-4 inline-block h-12 w-6 rounded-md" />
         <h2 className="text-redPrimary font-bold">Featured</h2>
       </div>
-      <div className="mt-6 mb-12 flex w-full items-center">
-        <h2 className="text-3xl tracking-widest">New Arrivals</h2>
+      <div className="my-6 flex w-full items-start justify-between gap-4 pl-4 sm:flex-row sm:items-center sm:gap-0 sm:pl-0">
+        <h2 className="text-xl tracking-widest sm:text-2xl md:text-3xl">
+          New Arrivals
+        </h2>
       </div>
-      <div className="text-textPrimary flex w-full gap-4">
+      <div className="text-textPrimary flex flex-col sm:flex-row w-full gap-4">
         <div
-          className={`flex h-[30rem] w-1/2 flex-col items-start justify-end gap-4 bg-[url("https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2023%2F08%2FPlayStation-5-Drops-Its-Price-for-the-First-Time-1.jpg?cbr=1&q=90")] bg-cover bg-center p-6`}
+          className={`flex h-[30rem] w-full sm:w-1/2 flex-col items-start justify-end gap-4 bg-[url("https://image-cdn.hypb.st/https%3A%2F%2Fhypebeast.com%2Fimage%2F2023%2F08%2FPlayStation-5-Drops-Its-Price-for-the-First-Time-1.jpg?cbr=1&q=90")] bg-cover bg-center p-6`}
         >
           <h3 className="text-2xl">PlayStation5</h3>
           <h4 className="w-1/2 text-sm">
@@ -22,7 +24,7 @@ const Featured: FC<FeaturedProps> = ({}) => {
           </h4>
           <button className="underline">Shop Now</button>
         </div>
-        <div className="flex h-[30rem] w-1/2 flex-col gap-4">
+        <div className="flex h-[30rem] w-full sm:w-1/2 flex-col gap-4">
           <div
             className={`flex h-[14rem] flex-col items-start justify-end gap-4 bg-[url(https://fq.co.nz/wp-content/uploads/2018/04/chic-cliques-power-dresses-image.jpg)] bg-cover bg-center p-6`}
           >

@@ -11,7 +11,7 @@ const HomeBanner: FC<HomeBannerProps> = ({}) => {
   const [currentBanner, setCurrentBanner] = useState(1);
 
   return (
-    <div className="relative w-full ">
+    <div className="relative m-auto  w-full ">
       <div className="bg-buttonBlack relative h-56 overflow-hidden rounded-lg md:h-96 md:px-4">
         {banners.map((banner) => (
           <div

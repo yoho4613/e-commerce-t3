@@ -15,7 +15,7 @@ export default function Home() {
       <main className="m-auto max-w-[1280px] md:px-6">
         <div className="flex flex-col sm:flex-row">
           <CategoryNavBar />
-          <div className="pl-12 pt-12">
+          <div className="sm:pl-12 pt-12">
             <HomeBanner />
           </div>
         </div>

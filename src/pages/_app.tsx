@@ -7,6 +7,7 @@ import "~/styles/globals.css";
 import Head from "next/head";
 import TopBanner from "~/components/banners/TopBanner";
 import Navbar from "~/components/navbar/Navbar";
+import Footer from "~/components/Footer/Footer";
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -21,11 +22,12 @@ const MyApp: AppType<{ session: Session | null }> = ({
       </Head>
       <SessionProvider session={session}>
         <TopBanner />
-        <div>
+        <div className="max-w-[1280px] m-auto">
           <Navbar />
           <div className="absolute left-0 w-[100vw] border-b-2" />
         </div>
         <Component {...pageProps} />
+        <Footer />  
       </SessionProvider>
     </>
   );

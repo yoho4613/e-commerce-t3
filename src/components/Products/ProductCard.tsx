@@ -18,8 +18,8 @@ interface ProductCardProps {
 
 const ProductCard: FC<ProductCardProps> = ({ product }) => {
   return (
-    <div className="w-64 group/item">
-      <div className="relative border-2 overflow-y-hidden rounded-md">
+    <div className="w-64 group/item shrink-0">
+      <div className="relative border-2 overflow-y-hidden rounded-md h-48">
         <img
           className="m-auto w-3/5"
           src={product.imgUrl}
@@ -45,11 +45,11 @@ const ProductCard: FC<ProductCardProps> = ({ product }) => {
         <div className="flex">
           {[...Array(5)].map((star, i) => 
             i < product.rate && i + 1 > product.rate ? (
-              <BsStarHalf size={20} className="text-[#ffc107] mr-2" />
+              <BsStarHalf key={i} size={20} className="text-[#ffc107] mr-2" />
             ) : i > product.rate ? (
-              <BsStar size={20} className="text-[#ffc107] mr-2" />
+              <BsStar key={i} size={20} className="text-[#ffc107] mr-2" />
             ) : (
-              <BsStarFill size={20} className="text-[#ffc107] mr-2" />
+              <BsStarFill key={i} size={20} className="text-[#ffc107] mr-2" />
             )
           )}
           <span className="text-grayPrimary">({product.review.length})</span>

@@ -1,5 +1,11 @@
 import { signIn, signOut, useSession } from "next-auth/react";
+import Categories from "~/components/Categories/Categories";
+import Featured from "~/components/Deals/Featured";
+import MonthDeal from "~/components/Deals/MonthDeal";
 import TodayDeal from "~/components/Deals/TodayDeal";
+import HotProducts from "~/components/Products/HotProducts";
+import Service from "~/components/Service/Service";
+import HeroBanner from "~/components/banners/HeroBanner";
 import HomeBanner from "~/components/banners/HomeBanner";
 import CategoryNavBar from "~/components/navbar/CategoryNavBar";
 
@@ -9,13 +15,19 @@ export default function Home() {
       <main className="m-auto max-w-[1280px] md:px-6">
         <div className="flex flex-col sm:flex-row">
           <CategoryNavBar />
-          <div className="pt-12 pl-12">
+          <div className="pl-12 pt-12">
             <HomeBanner />
           </div>
         </div>
-        <div>
+        <div className="mt-24 space-y-10">
           <TodayDeal />
+          <Categories />
+          <MonthDeal />
+          <HeroBanner />
+          <HotProducts />
+          <Featured />
         </div>
+        <Service />
       </main>
     </>
   );

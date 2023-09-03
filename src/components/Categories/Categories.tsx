@@ -19,7 +19,7 @@ const Categories: FC<CategoriesProps> = ({}) => {
         <span className="bg-redPrimary mr-4 inline-block h-12 w-6 rounded-md" />
         <h2 className="text-redPrimary font-bold">Categories</h2>
       </div>
-      <div className="my-6 flex w-full flex-col items-start gap-4 pl-4 sm:flex-row sm:items-center sm:gap-0 sm:pl-0">
+      <div className="my-6 flex w-full flex-col justify-between items-start gap-4 pl-4 sm:flex-row sm:items-center sm:gap-0 sm:pl-0">
         <h2 className="text-xl tracking-widest sm:text-2xl md:text-3xl">
           Browse By Category
         </h2>

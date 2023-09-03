@@ -4,7 +4,7 @@ import { AiOutlineSend } from "react-icons/ai";
 
 const Footer: FC = ({}) => {
   return (
-    <footer className="mt-12 bg-buttonBlack text-whitePrimary flex flex-col gap-6 md:flex-row justify-between px-4 py-6 sm:px-16 sm:py-12">
+    <footer className="bg-buttonBlack text-whitePrimary flex flex-col gap-6 md:flex-row justify-between px-4 py-6 sm:px-16 sm:py-12">
       <div className="flex flex-col gap-1 md:gap-4">
         <h2 className="text-3xl font-light">E-Market</h2>
         <h3>Subscribe</h3>

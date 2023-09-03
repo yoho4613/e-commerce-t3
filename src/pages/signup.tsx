@@ -1,31 +1,35 @@
 import Image from "next/image";
 import React, { FC, FormEventHandler, useState } from "react";
 import loginBanner from "../../public/loginBanner.png";
-import { signIn } from "next-auth/react";
 import Link from "next/link";
-import { useRouter } from "next/router";
-import { FcGoogle } from 'react-icons/fc'
 import { api } from "~/utils/api";
+import { useRouter } from "next/router";
 
-const Login: FC = ({}) => {
+const Signup: FC = ({}) => {
   const router = useRouter();
-  const [form, setForm] = useState({ email: "", password: "" });
-  const {mutate: signin} = api.user.loginUser.useMutation({
-    onSuccess: () => router.push('/')
-  })
+  const [form, setForm] = useState({
+    email: "",
+    password: "",
+    confirmPassword: "",
+  });
+  const { mutate: signUp } = api.user.signupUser.useMutation({
+    onSuccess: () => router.push("/login"),
+  });
 
   const handleSubmit: FormEventHandler = async (e) => {
     e.preventDefault();
-
-     signin(form)
+    signUp({
+      email: form.email,
+      password: form.password,
+    });
   };
 
   return (
-    <div className="flex flex-col items-center md:flex-row ">
-      <div className=" flex w-full flex-col items-center justify-start md:mb-0 md:w-1/2">
+    <div className="flex flex-col md:flex-row ">
+      <div className="mb-12 mt-12 flex w-full flex-col items-center justify-start md:mb-0 md:w-1/2">
         <div className="mb-12 w-3/5">
           <h2 className="mb-2 text-2xl">Welcome to E-Market</h2>
-          <p>Enter your Credentials to access your account</p>
+          <p>Enter your Credentials to create your account</p>
         </div>
         <form className="w-3/5" onSubmit={handleSubmit}>
           <div className="mb-6">
@@ -39,7 +43,7 @@ const Login: FC = ({}) => {
               type="email"
               id="email"
               className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-              placeholder="name@flowbite.com"
+              placeholder="name@e-market.com"
               onChange={(e) =>
                 setForm((prev) => ({ ...prev, email: e.target.value }))
               }
@@ -58,6 +62,7 @@ const Login: FC = ({}) => {
               type="password"
               id="password"
               className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              placeholder="password"
               onChange={(e) =>
                 setForm((prev) => ({ ...prev, password: e.target.value }))
               }
@@ -65,30 +70,40 @@ const Login: FC = ({}) => {
               required
             />
           </div>
-          <div className="mb-6 flex items-start">
-            <div className="flex h-5 items-center">
-              <input
-                id="remember"
-                type="checkbox"
-                value=""
-                className="focus:ring-3 h-4 w-4 rounded border border-gray-300 bg-gray-50 focus:ring-blue-300 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-blue-600 dark:focus:ring-offset-gray-800"
-              />
-            </div>
+          <div className="mb-6">
             <label
-              htmlFor="remember"
-              className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300"
+              htmlFor="password-confirm"
+              className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
             >
-              Remember me
+              Confirm Password
             </label>
+            <input
+              type="password"
+              id="password-confirm"
+              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              placeholder="confirm password"
+              onChange={(e) =>
+                setForm((prev) => ({
+                  ...prev,
+                  confirmPassword: e.target.value,
+                }))
+              }
+              value={form.confirmPassword}
+              required
+            />
           </div>
           <button
             type="submit"
             className="w-full rounded-lg bg-[#3A5B22] px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-[#2e491b] focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
           >
-            Login
+            Sign Up
           </button>
-          <button className="rounded-md border-2  px-5 py-2.5  mt-4" onClick={() => signIn("google")}><FcGoogle size={30} className="inline" /> Sign in with Google</button>
-          <p className="text-sm mt-4 text-center">Don't have account? <Link className="underline" href="/signup">Sign Up</Link></p>
+          <p className="mt-4 text-center text-sm">
+            Already have have account?{" "}
+            <Link className="underline" href="/login">
+              Login
+            </Link>
+          </p>
         </form>
       </div>
       <div className="w-full md:w-1/2 ">
@@ -98,4 +113,4 @@ const Login: FC = ({}) => {
   );
 };
 
-export default Login;
+export default Signup;

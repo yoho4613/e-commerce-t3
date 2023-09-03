@@ -1,4 +1,3 @@
-import { signIn, signOut, useSession } from "next-auth/react";
 import Categories from "~/components/Categories/Categories";
 import Featured from "~/components/Deals/Featured";
 import MonthDeal from "~/components/Deals/MonthDeal";
@@ -10,6 +9,8 @@ import HomeBanner from "~/components/banners/HomeBanner";
 import CategoryNavBar from "~/components/navbar/CategoryNavBar";
 
 export default function Home() {
+
+
   return (
     <>
       <main className="m-auto max-w-[1280px] md:px-6">

@@ -1,5 +1,3 @@
-import { type Session } from "next-auth";
-import { SessionProvider } from "next-auth/react";
 import { type AppType } from "next/app";
 import { api } from "~/utils/api";
 
@@ -9,9 +7,9 @@ import TopBanner from "~/components/banners/TopBanner";
 import Navbar from "~/components/navbar/Navbar";
 import Footer from "~/components/Footer/Footer";
 
-const MyApp: AppType<{ session: Session | null }> = ({
+const MyApp: AppType= ({
   Component,
-  pageProps: { session, ...pageProps },
+  pageProps: { ...pageProps },
 }) => {
   return (
     <>
@@ -20,17 +18,16 @@ const MyApp: AppType<{ session: Session | null }> = ({
         <meta name="description" content="E Market - Online Smart Store" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <SessionProvider session={session}>
-        <TopBanner />
-        <div className="max-w-[1280px] m-auto">
-          <Navbar />
-          <div className="absolute left-0 w-[100vw] border-b-2" />
-        </div>
-        <Component {...pageProps} />
-        <Footer />  
-      </SessionProvider>
+      <TopBanner />
+      <div className="m-auto max-w-[1280px]">
+        <Navbar />
+        <div className="absolute left-0 w-[100vw] border-b-2" />
+      </div>
+      <Component {...pageProps} />
+      <Footer />
     </>
   );
 };
 
 export default api.withTRPC(MyApp);
+

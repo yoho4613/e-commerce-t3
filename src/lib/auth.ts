@@ -6,7 +6,7 @@ interface UserJwtPayload {
 }
 
 export function getJwtSecretKey(): string {
-  const secret = process.env.JWT_SECRET_KEY;
+  const secret = process.env.JWT_SECRET;
 
   if (!secret || secret.length === 0) {
     throw new Error("JWT secret key is not defined");
@@ -21,6 +21,7 @@ export const verifyAuth = async (token: string) => {
       token,
       new TextEncoder().encode(getJwtSecretKey())
     );
+      console.log(verified)
   } catch (error) {
     throw new Error("Your token is invalid");
   }

@@ -5,14 +5,10 @@ import { verifyAuth } from "./lib/auth";
 
 // This function can be marked `async` if using `await` inside
 export async function middleware(req: NextRequest) {
-  const token = req.cookies.get("user-token")?.value;
+  const token = req.cookies.get("next-auth.session-token")?.value;
 
   // validate the user is authenticated
-  const verifiedToken =
-    token &&
-    (await verifyAuth(token).catch((err: Error) => {
-      console.error(err.message);
-    }));
+  const verifiedToken = token;
 
   if (req.nextUrl.pathname.startsWith("/login") && !verifiedToken) {
     return;
@@ -27,7 +23,7 @@ export async function middleware(req: NextRequest) {
   if (!verifiedToken) {
     return NextResponse.redirect(new URL("/login", req.url));
   }
-  return
+  return;
 }
 
 // See "Matching Paths" below to learn more

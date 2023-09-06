@@ -4,20 +4,30 @@ import loginBanner from "../../public/loginBanner.png";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { FcGoogle } from 'react-icons/fc'
+import { FcGoogle } from "react-icons/fc";
 import { api } from "~/utils/api";
 
 const Login: FC = ({}) => {
   const router = useRouter();
   const [form, setForm] = useState({ email: "", password: "" });
-  const {mutate: signin} = api.user.loginUser.useMutation({
-    onSuccess: () => router.push('/')
-  })
+  const [warning, setWarning] = useState<null | string>(null)
+  // const {mutate: signin} = api.user.loginUser.useMutation({
+  //   onSuccess: () => router.push('/')
+  // })
 
   const handleSubmit: FormEventHandler = async (e) => {
     e.preventDefault();
 
-     signin(form)
+   const res = await signIn("credentials", {
+      ...form,
+      redirect: false,
+    })
+    
+    if(!res?.ok) {
+      setWarning(res?.error!)
+    } else {
+      router.push('/')
+    }
   };
 
   return (
@@ -87,8 +97,19 @@ const Login: FC = ({}) => {
           >
             Login
           </button>
-          <button className="rounded-md border-2  px-5 py-2.5  mt-4" onClick={() => signIn("google")}><FcGoogle size={30} className="inline" /> Sign in with Google</button>
-          <p className="text-sm mt-4 text-center">Don't have account? <Link className="underline" href="/signup">Sign Up</Link></p>
+          {warning && <p className="text-redPrimary">{warning}</p>}
+          <button
+            className="mt-4 rounded-md  border-2 px-5  py-2.5"
+            onClick={() => signIn("google")}
+          >
+            <FcGoogle size={30} className="inline" /> Sign in with Google
+          </button>
+          <p className="mt-4 text-center text-sm">
+            Don't have account?{" "}
+            <Link className="underline" href="/signup">
+              Sign Up
+            </Link>
+          </p>
         </form>
       </div>
       <div className="w-full md:w-1/2 ">

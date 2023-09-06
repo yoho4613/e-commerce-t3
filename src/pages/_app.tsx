@@ -6,11 +6,9 @@ import Head from "next/head";
 import TopBanner from "~/components/banners/TopBanner";
 import Navbar from "~/components/navbar/Navbar";
 import Footer from "~/components/Footer/Footer";
+import Provider from "~/context/authContext";
 
-const MyApp: AppType= ({
-  Component,
-  pageProps: { ...pageProps },
-}) => {
+const MyApp: AppType = ({ Component, pageProps: { ...pageProps } }) => {
   return (
     <>
       <Head>
@@ -18,16 +16,17 @@ const MyApp: AppType= ({
         <meta name="description" content="E Market - Online Smart Store" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <TopBanner />
-      <div className="m-auto max-w-[1280px]">
-        <Navbar />
-        <div className="absolute left-0 w-[100vw] border-b-2" />
-      </div>
-      <Component {...pageProps} />
-      <Footer />
+      <Provider>
+        <TopBanner />
+        <div className="m-auto max-w-[1280px]">
+          <Navbar />
+          <div className="absolute left-0 w-[100vw] border-b-2" />
+        </div>
+        <Component {...pageProps} />
+        <Footer />
+      </Provider>
     </>
   );
 };
 
 export default api.withTRPC(MyApp);
-

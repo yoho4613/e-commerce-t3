@@ -10,30 +10,46 @@ import { RiMenu2Fill } from "react-icons/ri";
 import { RxAvatar } from "react-icons/rx";
 import logo from "../../../public/logo.png";
 import Link from "next/link";
-import { api } from "~/utils/api";
 import { BsPerson } from "react-icons/bs";
 import { PiShoppingBagOpenLight } from "react-icons/pi";
 import { GiCancel } from "react-icons/gi";
 import { BiLogOut } from "react-icons/bi";
 import { useRouter } from "next/router";
-import { User } from "@prisma/client";
+import { useSession } from "next-auth/react";
+import { signOut } from "next-auth/react";
 
 interface NavbarProps {}
+
+interface User {
+  name: string | null | undefined;
+  email: string | null | undefined;
+  image: string | null | undefined;
+}
 
 const Navbar: FC<NavbarProps> = ({}) => {
   const router = useRouter();
   const [mobileMenuOpened, setMobileMenuOpened] = useState(false);
   const [profileOpened, setProfileOpened] = useState(false);
   const popupRef = useRef<HTMLUListElement>(null);
-  const { data: user, refetch } = api.user.findUser.useQuery();
-  const { mutate: logout, isLoading } = api.user.logout.useMutation({
-    onSuccess: async () => {
-      setProfileOpened(false);
-      await refetch();
-      console.log(user)
-      router.push("/login");
-    },
-  });
+  const [user, setUser] = useState<User | { id: string } | null>(null);
+  // const { data: user, refetch } = api.user.findUser.useQuery();
+  // const { mutate: logout, isLoading } = api.user.logout.useMutation({
+  //   onSettled: async () => {
+  //     setProfileOpened(false);
+  //     await refetch();
+  //     console.log(user)
+  //     router.push("/login");
+  //   },
+  // });
+  const session = useSession();
+
+
+  useEffect(() => {
+    if (session.status === "authenticated") {
+      setUser(session.data.user);
+    }
+
+  }, [session]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -61,6 +77,7 @@ const Navbar: FC<NavbarProps> = ({}) => {
         >
           <RiMenu2Fill className="text-xl sm:text-3xl" />
         </button>
+
         <ul
           ref={popupRef}
           className={`absolute left-0 top-32 z-50 flex h-screen w-full flex-col bg-[rgba(0,0,0,0.6)] text-lg transition md:relative md:top-0  md:h-auto md:w-full md:translate-x-0 md:flex-row md:justify-between md:bg-transparent md:transition-none ${
@@ -138,7 +155,7 @@ const Navbar: FC<NavbarProps> = ({}) => {
                 My Reviews
               </Link>
               <button
-                onClick={() => logout()}
+                onClick={() => signOut()}
                 className="flex w-full items-center p-2 text-left"
               >
                 <BiLogOut color="white" className="mr-2 text-xl" />

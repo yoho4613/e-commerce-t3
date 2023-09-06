@@ -7,7 +7,9 @@ import { useRouter } from "next/router";
 
 const Signup: FC = ({}) => {
   const router = useRouter();
+  const [warning, setWarning] = useState<null | string>(null);
   const [form, setForm] = useState({
+    name: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -18,10 +20,19 @@ const Signup: FC = ({}) => {
 
   const handleSubmit: FormEventHandler = async (e) => {
     e.preventDefault();
-    signUp({
-      email: form.email,
-      password: form.password,
-    });
+    if (!form.name || !form.email || !form.password || !form.confirmPassword) {
+      setWarning("Miss Information");
+    } else {
+      if (form.password !== form.confirmPassword) {
+        setWarning("Password and Confirm Password are not matched");
+      } else {
+        signUp({
+          email: form.email,
+          password: form.password,
+          name: form.name,
+        });
+      }
+    }
   };
 
   return (
@@ -32,6 +43,25 @@ const Signup: FC = ({}) => {
           <p>Enter your Credentials to create your account</p>
         </div>
         <form className="w-3/5" onSubmit={handleSubmit}>
+          <div className="mb-6">
+            <label
+              htmlFor="email"
+              className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+            >
+              Full Name
+            </label>
+            <input
+              type="text"
+              id="name"
+              className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
+              placeholder="Jiho Park"
+              onChange={(e) =>
+                setForm((prev) => ({ ...prev, name: e.target.value }))
+              }
+              value={form.name}
+              required
+            />
+          </div>
           <div className="mb-6">
             <label
               htmlFor="email"
@@ -98,6 +128,7 @@ const Signup: FC = ({}) => {
           >
             Sign Up
           </button>
+
           <p className="mt-4 text-center text-sm">
             Already have have account?{" "}
             <Link className="underline" href="/login">

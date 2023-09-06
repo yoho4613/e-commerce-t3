@@ -8,6 +8,8 @@ import { nanoid } from "nanoid";
 import cookie from "cookie";
 import { getJwtSecretKey } from "~/lib/auth";
 import { User } from "@prisma/client";
+import { getServerSession } from "next-auth";
+import { authOptions } from "~/server/auth";
 
 export const userRouter = createTRPCRouter({
   // getAllUsers: adminProcedure.query(async ({ ctx, input }) => {
@@ -16,13 +18,14 @@ export const userRouter = createTRPCRouter({
   signupUser: publicProcedure
     .input(
       z.object({
+        name: z.string(),
         email: z.string(),
         password: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { email, password } = input;
-      if (!email || !password) {
+      const { email, password, name } = input;
+      if (!email || !password || !name) {
         throw new TRPCError({
           code: "CONFLICT",
           message: "Missing Information",
@@ -43,10 +46,21 @@ export const userRouter = createTRPCRouter({
 
       const user = await ctx.prisma.user.create({
         data: {
+          name,
           email,
           password: hasedPassword,
         },
       });
+
+      await ctx.prisma.account.create({
+        data: {
+          userId: user.id,
+          type: "oauth",
+          provider: "next-auth-credentials",
+          providerAccountId: process.env.JWT_SECRET!
+        }
+      })
+
       return { success: true };
     }),
 
@@ -67,7 +81,7 @@ export const userRouter = createTRPCRouter({
 
       const passwordMatch = await bcrypt.compare(
         password,
-        (user as User).password,
+        (user as User).password!,
       );
 
       const adminAccess =
@@ -107,15 +121,6 @@ export const userRouter = createTRPCRouter({
         },
       });
 
-      // await ctx.prisma.user.update({
-      //   where: {
-      //     id: user?.id,
-      //   },
-      //   data: {
-      //     ...user,
-      //   },
-      // });
-
       return { success: true };
     }),
 
@@ -123,7 +128,7 @@ export const userRouter = createTRPCRouter({
     // const { token } = input;
     const token = ctx.req.cookies["user-token"];
 
-    if(!token) {
+    if (!token) {
       throw new TRPCError({
         code: "BAD_REQUEST",
         message: "Token does not exist",
@@ -135,7 +140,7 @@ export const userRouter = createTRPCRouter({
       },
     });
 
-    if(!session) {
+    if (!session) {
       throw new TRPCError({
         code: "BAD_REQUEST",
         message: "Session does not exist",
@@ -152,14 +157,13 @@ export const userRouter = createTRPCRouter({
       throw new TRPCError({
         code: "BAD_REQUEST",
         message: "No user found",
-        
       });
     }
 
     return user;
   }),
 
-  logout: publicProcedure.mutation( ({ ctx }) => {
+  logout: publicProcedure.mutation(({ ctx }) => {
     const { res } = ctx;
 
     res.setHeader(
@@ -169,10 +173,15 @@ export const userRouter = createTRPCRouter({
         path: "/",
         expires: new Date(0),
         secure: process.env.NODE_ENV === "production",
-      })
+      }),
     );
 
     return { success: true };
+  }),
+  getSession: publicProcedure.query(async ({ ctx }) => {
+    const session = await getServerSession(authOptions);
+
+    return { session };
   }),
   // deleteUser: adminProcedure
   //   .input(

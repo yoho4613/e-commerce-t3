@@ -14,7 +14,6 @@ import { BsPerson } from "react-icons/bs";
 import { PiShoppingBagOpenLight } from "react-icons/pi";
 import { GiCancel } from "react-icons/gi";
 import { BiLogOut } from "react-icons/bi";
-import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
 
@@ -27,20 +26,11 @@ interface User {
 }
 
 const Navbar: FC<NavbarProps> = ({}) => {
-  const router = useRouter();
+
   const [mobileMenuOpened, setMobileMenuOpened] = useState(false);
   const [profileOpened, setProfileOpened] = useState(false);
   const popupRef = useRef<HTMLUListElement>(null);
   const [user, setUser] = useState<User | { id: string } | null>(null);
-  // const { data: user, refetch } = api.user.findUser.useQuery();
-  // const { mutate: logout, isLoading } = api.user.logout.useMutation({
-  //   onSettled: async () => {
-  //     setProfileOpened(false);
-  //     await refetch();
-  //     console.log(user)
-  //     router.push("/login");
-  //   },
-  // });
   const session = useSession();
 
 
@@ -64,7 +54,7 @@ const Navbar: FC<NavbarProps> = ({}) => {
   }, [mobileMenuOpened]);
 
   return (
-    <nav className="flex items-center justify-between ">
+    <nav className="flex items-center justify-between sm:px-4 ">
       <div className="relative order-1 h-16 w-16 md:h-20 md:w-20">
         <Link href="/">
           <Image src={logo} alt="logo" fill />
@@ -127,7 +117,11 @@ const Navbar: FC<NavbarProps> = ({}) => {
           </button>
           {user && (
             <button onClick={() => setProfileOpened((prev) => !prev)}>
+             {(user as User).image ? (
+              <Image src={(user as User).image!} alt="avatar" width={100} height={100} className="rounded-full w-5 sm:w-6" />
+             ) : (
               <RxAvatar color="#DB4444" className=" text-lg sm:text-2xl" />
+             )}
             </button>
           )}
           {profileOpened && (

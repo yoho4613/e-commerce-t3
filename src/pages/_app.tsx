@@ -7,8 +7,21 @@ import TopBanner from "~/components/banners/TopBanner";
 import Navbar from "~/components/navbar/Navbar";
 import Footer from "~/components/Footer/Footer";
 import Provider from "~/context/authContext";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import AdminNavBar from "~/components/navbar/AdminNavbar";
+
 
 const MyApp: AppType = ({ Component, pageProps: { ...pageProps } }) => {
+  const router = useRouter()
+  const [isAdmin, setIsAdmin] = useState(false);
+  useEffect(() => {
+
+    router.pathname.includes("/admin")
+      ? setIsAdmin(true)
+      : setIsAdmin(false);
+  }, [router]);
+
   return (
     <>
       <Head>
@@ -17,9 +30,9 @@ const MyApp: AppType = ({ Component, pageProps: { ...pageProps } }) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Provider>
-        <TopBanner />
+        {!isAdmin && <TopBanner />}
         <div className="m-auto max-w-[1280px]">
-          <Navbar />
+          {isAdmin ? <AdminNavBar /> : <Navbar />}
           <div className="absolute left-0 w-[100vw] border-b-2" />
         </div>
         <Component {...pageProps} />

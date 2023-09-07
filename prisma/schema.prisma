@@ -6,12 +6,20 @@ generator client {
 }
 
 datasource db {
-    provider = "cockroachdb"
+    provider = "postgres"
     // NOTE: When using mysql or sqlserver, uncomment the @db.Text annotations in model Account below
     // Further reading:
     // https://next-auth.js.org/adapters/prisma#create-the-prisma-schema
     // https://www.prisma.io/docs/reference/api-reference/prisma-schema-reference#string
     url      = env("DATABASE_URL")
+}
+
+model admin {
+    id       String       @id @default(cuid())
+    name     String
+    email    String       @unique
+    password String
+    role     RoleEnumType @default(admin)
 }
 
 // Necessary for Next auth
@@ -42,19 +50,27 @@ model Session {
 }
 
 model User {
-    id            String    @id @default(cuid())
+    id            String       @id @default(cuid())
     name          String?
-    email         String    @unique
+    email         String       @unique
     password      String?
     emailVerified DateTime?
     image         String?
     accounts      Account[]
     sessions      Session[]
-    cart          String[]  @default([])
-    watchlist     String[]  @default([])
+    cart          String[]     @default([])
+    watchlist     String[]     @default([])
     purchase      Json?
-    address       String[]  @default([])
+    address       String[]     @default([])
     Order         Order[]
+    role          RoleEnumType @default(customer)
+}
+
+enum RoleEnumType {
+    customer
+    vipCustomer
+    admin
+    superadmin
 }
 
 model VerificationToken {
@@ -66,26 +82,38 @@ model VerificationToken {
 }
 
 model Product {
-    id          String    @id @default(cuid())
-    title       String
-    type        String
-    description String
-    rrp         String
-    price       String
-    imgUrl      String[]
-    attributes  Json?
-    review      String[]
-    delivery    Int?
-    stock       Int
-    Category    Category? @relation(fields: [categoryId], references: [id])
-    categoryId  String?
-    Order       Order[]
+    id            String       @id @default(cuid())
+    title         String
+    type          String
+    description   String
+    rrp           String
+    price         String
+    imgUrl        String[]
+    attributes    Json?
+    review        String[]
+    star          Int[]
+    delivery      Int?
+    stock         Int
+    category      Category?    @relation(fields: [categoryId], references: [id])
+    categoryId    String?
+    subcategory   Subcategory? @relation(fields: [subcategoryId], references: [id])
+    subcategoryId String
+    order         Order[]
 }
 
 model Category {
-    id      String    @id @default(cuid())
-    name    String
-    Product Product[]
+    id          String        @id @default(cuid())
+    name        String
+    Subcategory Subcategory[]
+    Product     Product[]
+}
+
+model Subcategory {
+    id         String    @id @default(cuid())
+    name       String
+    product    Product[]
+    category   Category  @relation(fields: [categoryId], references: [id])
+    categoryId String
 }
 
 model Banner {

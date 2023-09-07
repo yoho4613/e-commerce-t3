@@ -1,11 +1,18 @@
-export interface User {
+import { Session } from "next-auth"
 
+export interface User {
     name:          string
-    email:         String    
-    image?:        String
-    cart:          String[]  
-    watchlist:     String[]  
+    email:         string    
+    image?:        string
+    cart:          string[]  
+    watchlist:     string[]  
     purchase?:     []
-    address:       String[] 
+    address:       string[] 
     Order:         Order[]
+}
+
+export interface SessionType  {
+    update: UpdateSession;
+    data: Session;
+    status: string;
 }

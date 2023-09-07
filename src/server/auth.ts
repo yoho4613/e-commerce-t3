@@ -85,8 +85,6 @@ export const authOptions: NextAuthOptions = {
         });
 
         if(!user || !user?.password) {
-          console.log("no user")
-          console.log(user)
           throw new Error("No user found")
         }
 
@@ -98,7 +96,7 @@ export const authOptions: NextAuthOptions = {
         if (!passwordMatch) {
           throw new Error("Password not match");
         } 
-        
+
         return user;
       },
     }),

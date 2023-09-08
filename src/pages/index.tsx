@@ -1,4 +1,4 @@
-import { isToday } from "date-fns";
+import { isSameMonth, isToday } from "date-fns";
 import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
 import Categories from "~/components/Categories/Categories";
@@ -18,16 +18,22 @@ export default function Home() {
   const { data: withSubCategory } = api.category.withSubcategory.useQuery();
   const { data: sales } = api.sale.getAllSales.useQuery();
   const [todayDeal, setTodayDeal] = useState<Sale | null>(null);
-  console.log(todayDeal);
+  const [monthDeal, setMonthDeal] = useState<Sale | null>(null);
 
   useEffect(() => {
     if (sales && sales.length) {
       if (todayDeal === null) {
         setTodayDeal(sales[sales.length - 1]!);
       }
+      if (monthDeal === null) {
+        setMonthDeal(sales[0]!);
+      }
       sales.map((sale) => {
         if (isToday(sale.expire)) {
           setTodayDeal(sale);
+        }
+        if (isSameMonth(new Date(), sale.expire)) {
+          setMonthDeal(sale);
         }
       });
     }
@@ -55,7 +61,7 @@ export default function Home() {
           ) : (
             <div>Loading...</div>
           )}
-          <MonthDeal />
+          <MonthDeal deal={monthDeal} />
           <HeroBanner />
           <HotProducts />
           <Featured />

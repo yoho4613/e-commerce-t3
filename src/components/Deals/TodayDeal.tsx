@@ -1,8 +1,9 @@
-import React, { FC, useState } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { IoMdArrowBack, IoMdArrowForward } from "react-icons/io";
 import ProductCard from "../Products/ProductCard";
 import { Sale } from "~/config/type";
-import { getAverage } from "~/lib/helper";
+import { getAverage, shuffle, startCountdown } from "~/lib/helper";
+import { Product } from "@prisma/client";
 
 interface TodayDealProps {
   deal: Sale | null;
@@ -10,6 +11,27 @@ interface TodayDealProps {
 
 const TodayDeal: FC<TodayDealProps> = ({ deal }) => {
   const [cardLocation, setCardLocation] = useState(0);
+  const [countdown, setCountdown] = useState({
+    days: 0,
+    hours: 0,
+    minutes: 0,
+    seconds: 0,
+  });
+  const [suffledProducts, setSuffledProducts] = useState<Product[] | null>(
+    null,
+  );
+  useEffect(() => {
+    if (deal?.expire) {
+      const interval = setInterval(() => {
+        setCountdown(startCountdown(deal.expire));
+      }, 1000);
+    }
+  }, [deal]);
+  useEffect(() => {
+    if (deal?.products) {
+      setSuffledProducts(shuffle(deal?.products!));
+    }
+  }, [deal]);
 
   return (
     <div>
@@ -24,22 +46,22 @@ const TodayDeal: FC<TodayDealProps> = ({ deal }) => {
         <div className="flex grow items-end space-x-6 sm:mx-24 ">
           <div>
             <span className="text-xs sm:text-sm">Days</span>
-            <p className="text-xl font-bold sm:text-2xl">03</p>
+            <p className="text-xl font-bold sm:text-2xl">{countdown.days}</p>
           </div>
           <span className="pb-1 text-xl font-bold text-redPrimary">:</span>
           <div>
             <span className="text-xs sm:text-sm">Hours</span>
-            <p className="text-xl font-bold sm:text-2xl">23</p>
+            <p className="text-xl font-bold sm:text-2xl">{countdown.hours}</p>
           </div>
           <span className="pb-1 text-xl font-bold text-redPrimary">:</span>
           <div>
             <span className="text-xs sm:text-sm">Minutes</span>
-            <p className="text-xl font-bold sm:text-2xl">19</p>
+            <p className="text-xl font-bold sm:text-2xl">{countdown.minutes}</p>
           </div>
           <span className="pb-1 text-xl font-bold text-redPrimary">:</span>
           <div>
             <span className="text-xs sm:text-sm">Seconds</span>
-            <p className="text-xl font-bold sm:text-2xl">56</p>
+            <p className="text-xl font-bold sm:text-2xl">{countdown.seconds}</p>
           </div>
         </div>
         <div>
@@ -63,8 +85,13 @@ const TodayDeal: FC<TodayDealProps> = ({ deal }) => {
         className="flex gap-6 transition"
         style={{ transform: `translateX(-${cardLocation}%)` }}
       >
-        {deal?.products?.map((product, i) => (
-          <ProductCard key={i} product={product} average={getAverage(product.star)} deal={deal} />
+        {deal && suffledProducts?.map((product, i) => (
+          <ProductCard
+            key={i}
+            product={product}
+            average={getAverage(product.star)}
+            deal={deal}
+          />
         ))}
       </div>
       <div className="my-12 text-center">

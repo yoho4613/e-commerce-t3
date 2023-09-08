@@ -1,52 +1,14 @@
 import React, { FC, useState } from "react";
 import ProductCard from "../Products/ProductCard";
+import { getAverage, shuffle } from "~/lib/helper";
+import { Sale } from "~/config/type";
 
-interface MonthDealProps {}
+interface MonthDealProps {
+  deal: Sale | null;
+}
 
-const MonthDeal: FC<MonthDealProps> = ({}) => {
-  const products = [
-    {
-      id: 123,
-      title: "IPS LCD Gaming Monitor",
-      rrp: 400,
-      price: 370,
-      rate: 2.5,
-      imgUrl:
-        "https://www.pbtech.co.nz/imgprod/M/O/MONSAM72534__10.jpg?h=2637858417",
-      review: ["2", "2", "2"],
-    },
-    {
-      id: 123,
-      title: "IPS LCD Gaming Monitor",
-      rrp: 400,
-      price: 370,
-      rate: 2.5,
-      imgUrl:
-        "https://www.pbtech.co.nz/imgprod/M/O/MONSAM72534__10.jpg?h=2637858417",
-      review: ["2", "2", "2"],
-    },
-    {
-      id: 123,
-      title: "IPS LCD Gaming Monitor",
-      rrp: 400,
-      price: 370,
-      rate: 2.5,
-      imgUrl:
-        "https://www.pbtech.co.nz/imgprod/M/O/MONSAM72534__10.jpg?h=2637858417",
-      review: ["2", "2", "2"],
-    },
-    {
-      id: 123,
-      title: "IPS LCD Gaming Monitor",
-      rrp: 400,
-      price: 370,
-      rate: 2.5,
-      imgUrl:
-        "https://www.pbtech.co.nz/imgprod/M/O/MONSAM72534__10.jpg?h=2637858417",
-      review: ["2", "2", "2"],
-    },
-   
-  ];
+const MonthDeal: FC<MonthDealProps> = ({deal}) => {
+ 
 
   return (
     <div>
@@ -61,8 +23,8 @@ const MonthDeal: FC<MonthDealProps> = ({}) => {
         </div>
       </div>
       <div className="flex flex-wrap justify-between ">
-        {products.map((product, i) => (
-          <ProductCard key={i} product={product} />
+        {deal && shuffle(deal?.products?.slice(0, 12)).map((product, i) => (
+          <ProductCard key={i} product={product} average={getAverage(product.star)} deal={deal} />
         ))}
       </div>
 

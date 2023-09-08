@@ -20,9 +20,9 @@ const AdminNavBar: FC = () => {
   })
   const [navigation, setNavigation] = useState([
     { name: "Dashboard", href: "/admin", current: true },
-    { name: "Opening Hours", href: "/admin/opening", current: false },
-    { name: "Menu", href: "/admin/menu", current: false },
-    { name: "Booking", href: "/admin/booking", current: false },
+    { name: "Category", href: "/admin/category", current: false },
+    { name: "Product", href: "/admin/product", current: false },
+    { name: "Banner", href: "/admin/banner", current: false },
   ]);
 
   const handleActivePage = (url: string) => {
@@ -89,7 +89,7 @@ const AdminNavBar: FC = () => {
                 {/* Profile dropdown */}
                 <Menu as="div" className="relative ml-3 flex">
                   <Link
-                    href="/dashboard/setting"
+                    href="/admin/setting"
                     className="flex rounded-md bg-gray-800 px-3 py-2 text-sm font-medium text-gray-300 hover:bg-gray-700 hover:text-white focus:outline-none"
                   >
                     Setting

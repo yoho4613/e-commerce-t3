@@ -99,6 +99,24 @@ model Product {
     subcategory   Subcategory? @relation(fields: [subcategoryId], references: [id])
     subcategoryId String
     order         Order[]
+    Sale          Sale?        @relation(fields: [saleId], references: [id])
+    saleId        String?
+}
+
+model Sale {
+    id       String     @id @default(cuid())
+    title    String
+    subtitle String?
+    start    DateTime
+    expire   DateTime
+    products Product[]
+    method   SaleMethod
+    value    Int
+}
+
+enum SaleMethod {
+    fixedPrice
+    percentDiscount
 }
 
 model Category {

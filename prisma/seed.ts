@@ -54,6 +54,41 @@ async function main() {
       name: "Sports and Outdoors",
       product: [],
     },
+    {
+      id: "clhkg2ksn000o035oyriu3u9z",
+      name: "Beauty and Personal Care",
+      product: [],
+    },
+    {
+      id: "clhkg2ksn000o035oyriu2v01",
+      name: "Books and Literature",
+      product: [],
+    },
+    {
+      id: "clhkg2ksn000o035oyriu2v02",
+      name: "Toys and Games",
+      product: [],
+    },
+    {
+      id: "clhkg2ksn000o035oyriu2v03",
+      name: "Food and Beverages",
+      product: [],
+    },
+    {
+      id: "clhkg2ksn000o035oyriu2v13",
+      name: "Jewelry and Accessories",
+      product: [],
+    },
+    {
+      id: "clhkg2ksn000o035oyriu2v14",
+      name: "Office Supplies",
+      product: [],
+    },
+    {
+      id: "clhkg2ksn000o035oyriu2v19",
+      name: "Pet Supplies",
+      product: [],
+    },
   ];
 
   const subcategories = [
@@ -97,6 +132,26 @@ async function main() {
       name: "Camping Equipment",
       categoryId: categories[3]?.id,
     },
+    {
+      id: "clhkg2ksn000o135oyriu2v05",
+      name: "Skincare",
+      categoryId: categories[4]?.id,
+    },
+    {
+      id: "clhkg2ksn000o135oyriu2v06",
+      name: "Haircare",
+      categoryId: categories[4]?.id,
+    },
+    {
+      id: "clhkg2ksn000o135oyriu2v09",
+      name: "Snacks",
+      categoryId: categories[7]?.id,
+    },
+    {
+      id: "clhkg2ksn000o135oyriu2v10",
+      name: "Beverages",
+      categoryId: categories[7]?.id,
+    },
   ];
 
   await Promise.all(
@@ -123,6 +178,22 @@ async function main() {
         }),
     ),
   );
+
+  const saleData = {
+    id: "clhkg2ksn000o135oyriu2v11",
+    title: "Christmas Sale 50%",
+    subtitle: "Christmas Sale for clothes men and women",
+    start: new Date(),
+    expire: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30),
+  };
+
+  const sale = await prisma.sale.create({
+    data: {
+      ...saleData,
+      method: "percentDiscount",
+      value: 10
+    },
+  });
 
   const products = [];
 
@@ -174,6 +245,8 @@ async function main() {
             stock: product.stock,
             categoryId: product.categoryId,
             subcategoryId: product.subcategoryId,
+            saleId:
+              product.categoryId === categories[1]?.id ? saleData.id : null,
           },
         }),
     ),

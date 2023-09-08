@@ -1,28 +1,60 @@
+import { isToday } from "date-fns";
+import { GetServerSideProps } from "next";
+import { useEffect, useState } from "react";
 import Categories from "~/components/Categories/Categories";
 import Featured from "~/components/Deals/Featured";
 import MonthDeal from "~/components/Deals/MonthDeal";
 import TodayDeal from "~/components/Deals/TodayDeal";
+import Spinner from "~/components/Global/Spinner";
 import HotProducts from "~/components/Products/HotProducts";
 import Service from "~/components/Service/Service";
 import HeroBanner from "~/components/banners/HeroBanner";
 import HomeBanner from "~/components/banners/HomeBanner";
 import CategoryNavBar from "~/components/navbar/CategoryNavBar";
+import { Sale } from "~/config/type";
+import { api } from "~/utils/api";
 
 export default function Home() {
+  const { data: withSubCategory } = api.category.withSubcategory.useQuery();
+  const { data: sales } = api.sale.getAllSales.useQuery();
+  const [todayDeal, setTodayDeal] = useState<Sale | null>(null);
+  console.log(todayDeal);
 
+  useEffect(() => {
+    if (sales && sales.length) {
+      if (todayDeal === null) {
+        setTodayDeal(sales[sales.length - 1]!);
+      }
+      sales.map((sale) => {
+        if (isToday(sale.expire)) {
+          setTodayDeal(sale);
+        }
+      });
+    }
+  }, [sales]);
 
   return (
     <>
       <main className="m-auto max-w-[1280px] md:px-6">
         <div className="flex flex-col sm:flex-row">
-          <CategoryNavBar />
-          <div className="sm:pl-12 pt-12">
+          {withSubCategory ? (
+            <CategoryNavBar categories={withSubCategory} />
+          ) : (
+            <div>
+              <Spinner /> Loading...
+            </div>
+          )}
+          <div className="pt-12 sm:pl-12">
             <HomeBanner />
           </div>
         </div>
         <div className="mt-24 space-y-10">
-          <TodayDeal />
-          <Categories />
+          <TodayDeal deal={todayDeal} />
+          {withSubCategory ? (
+            <Categories categories={withSubCategory} />
+          ) : (
+            <div>Loading...</div>
+          )}
           <MonthDeal />
           <HeroBanner />
           <HotProducts />
@@ -33,27 +65,3 @@ export default function Home() {
     </>
   );
 }
-
-// function AuthShowcase() {
-//   const { data: sessionData } = useSession();
-
-//   const { data: secretMessage } = api.example.getSecretMessage.useQuery(
-//     undefined, // no input
-//     { enabled: sessionData?.user !== undefined }
-//   );
-
-//   return (
-//     <div className="flex flex-col items-center justify-center gap-4">
-//       <p className="text-center text-2xl text-white">
-//         {sessionData && <span>Logged in as {sessionData.user?.name}</span>}
-//         {secretMessage && <span> - {secretMessage}</span>}
-//       </p>
-//       <button
-//         className="rounded-full bg-white/10 px-10 py-3 font-semibold text-white no-underline transition hover:bg-white/20"
-//         onClick={sessionData ? () => void signOut() : () => void signIn()}
-//       >
-//         {sessionData ? "Sign out" : "Sign in"}
-//       </button>
-//     </div>
-//   );
-// }

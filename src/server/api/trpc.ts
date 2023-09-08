@@ -92,7 +92,7 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
 
 const isAdmin = t.middleware(async ({ ctx, next }) => {
   const { req } = ctx;
-  const token = req.cookies["user-token"];
+  const token = req.cookies["emarket-admin-token"];
   
   if (!token) {
     throw new TRPCError({

@@ -1,51 +1,67 @@
-import React, { FC, useState } from "react";
-import defaultImg from "../../../public/BannerImg.png";
+import React, { FC, useEffect, useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { MdArrowForward } from "react-icons/md";
+import { api } from "~/utils/api";
 
 interface HomeBannerProps {}
 
 const HomeBanner: FC<HomeBannerProps> = ({}) => {
-  const [banners, setBanners] = useState([1, 2, 3, 4, 5]);
-  const [currentBanner, setCurrentBanner] = useState(1);
+  const [currentBanner, setCurrentBanner] = useState(0);
+  const { data: banners } = api.banner.getTopBanners.useQuery();
+  useEffect(() => {
+    if (banners) {
+      const interval = setInterval(() => {
+        setCurrentBanner((prev) =>
+          prev === banners.length - 1 ? 0 : prev + 1,
+        );
+      }, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [banners]);
 
   return (
-    <div className="relative m-auto  w-full ">
-      <div className="bg-buttonBlack relative h-56 overflow-hidden rounded-lg md:h-96 md:px-4">
-        {banners.map((banner) => (
+    <div className="relative h-full w-full overflow-x-hidden">
+      <div
+        className="relative flex h-full min-h-[24rem] w-full rounded-lg transition"
+        style={{ transform: `translateX(-${currentBanner * 100}%)` }}
+      >
+        {banners?.map((banner, i) => (
           <div
-            key={banner}
-            className={`${
-              currentBanner !== banner && "hidden"
-            }  flex h-full w-full items-center duration-700 ease-in-out`}
+            key={banner.id}
+            className="relative h-full w-full shrink-0 duration-700 ease-in-out"
+            style={{ background: "rgba(0, 0, 0, 0.4)" }}
           >
-            <div className="text-whitePrimary hidden w-1/2 flex-col justify-center p-12 md:flex ">
-              <h2>iPhone 14 Series</h2>
-              <p className="my-6 text-4xl">Up to 10% off Voucher</p>
-              <Link href="/" className="text-lg underline">
+            <div className="flex h-full min-h-[24rem] w-full flex-col justify-center p-12 text-whitePrimary ">
+              <h2 className="text-4xl">{banner.title}</h2>
+              <p className="my-6">{banner.description}</p>
+              <Link href={`${banner.link}`} className="text-lg underline">
                 Shop Now
                 <MdArrowForward className="inline" />
               </Link>
             </div>
-            <div className="grow relative">
-              <Image sizes="cover"  src={defaultImg}  alt="..." />
+            <div className="absolute left-0 top-0 -z-10 h-full w-full">
+              <Image
+                className="h-full w-full"
+                sizes="cover"
+                width={100}
+                height={100}
+                src={banner.imgUrl}
+                alt={banner.description}
+              />
             </div>
           </div>
         ))}
       </div>
-      <div className="absolute bottom-5 left-1/2 z-30 flex -translate-x-1/2 space-x-3">
-        {banners.map((banner) => (
+      <div className="absolute bottom-5 right-1/2 z-30 flex translate-x-1/2 space-x-3">
+        {banners?.map((banner, i) => (
           <button
-            key={banner}
+            key={banner.id}
             type="button"
             className={`h-3 w-3 rounded-full ${
-              currentBanner === banner ? "bg-slate-200" : "bg-slate-400"
+              currentBanner === i ? "bg-slate-200" : "bg-slate-400"
             } hover:bg-slate-200`}
-            onClick={() => setCurrentBanner(banner)}
-            aria-current="true"
-            aria-label="Slide 1"
-            data-carousel-slide-to="0"
+            onClick={() => setCurrentBanner(i)}
           ></button>
         ))}
       </div>

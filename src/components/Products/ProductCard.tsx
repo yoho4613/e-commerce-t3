@@ -9,7 +9,7 @@ import { api } from "~/utils/api";
 interface ProductCardProps {
   product: Product;
   average: number;
-  deal: Sale;
+  deal?: Sale;
 }
 
 const ProductCard: FC<ProductCardProps> = ({ product, average, deal }) => {
@@ -26,14 +26,16 @@ const ProductCard: FC<ProductCardProps> = ({ product, average, deal }) => {
           src={image || ""}
           alt={product.title}
         />
-        <button className="btn--red absolute left-1 top-1 px-0.5 py-1 text-xs sm:left-2 sm:top-2 sm:px-2 sm:py-1 sm:text-sm">
-          {deal?.method === "percentDiscount" ? `-${deal.value}%` : ""}
-        </button>
+        {deal && (
+          <button className="btn--red absolute left-1 top-1 px-0.5 py-1 text-xs sm:left-2 sm:top-2 sm:px-2 sm:py-1 sm:text-sm">
+            {deal.method === "percentDiscount" ? `-${deal.value}%` : ""}
+          </button>
+        )}
         <button className="absolute right-2 top-2 p-1 ">
-          <AiOutlineHeart size={20} />
+          <AiOutlineHeart color="white" size={20} />
         </button>
         <button className="absolute right-2 top-10 p-1 ">
-          <AiOutlineEye size={20} />
+          <AiOutlineEye color="white" size={20} />
         </button>
         <button className="absolute bottom-0 right-0 z-10 w-full translate-y-full bg-buttonBlack py-1.5 text-xs text-whitePrimary transition group-hover/item:translate-y-0 sm:text-base">
           Add To Cart
@@ -44,7 +46,7 @@ const ProductCard: FC<ProductCardProps> = ({ product, average, deal }) => {
         <p>
           <span className="mr-2 text-sm text-redPrimary sm:text-base">
             ${product.price}
-          </span>{" "}
+          </span>
           <span className="text-sm text-grayPrimary line-through sm:text-base">
             ${product.rrp}
           </span>

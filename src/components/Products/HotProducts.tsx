@@ -1,93 +1,16 @@
 import React, { FC, useState } from "react";
 import { IoMdArrowBack, IoMdArrowForward } from "react-icons/io";
 import ProductCard from "../Products/ProductCard";
+import { api } from "~/utils/api";
+import { Product } from "@prisma/client";
+import { getAverage } from "~/lib/helper";
 
-interface HotProductsProps {}
+interface HotProductsProps {
+  products: Product[]
+}
 
-const HotProducts: FC<HotProductsProps> = ({}) => {
+const HotProducts: FC<HotProductsProps> = ({products}) => {
   const [cardLocation, setCardLocation] = useState(0)
-  const products = [
-    {
-      id: 123,
-      title: "IPS LCD Gaming Monitor",
-      rrp: 400,
-      price: 370,
-      rate: 2.5,
-      imgUrl:
-        "https://www.pbtech.co.nz/imgprod/M/O/MONSAM72534__10.jpg?h=2637858417",
-      review: ["2","2","2"]
-    },
-    {
-      id: 123,
-      title: "IPS LCD Gaming Monitor",
-      rrp: 400,
-      price: 370,
-      rate: 2.5,
-      imgUrl:
-        "https://www.pbtech.co.nz/imgprod/M/O/MONSAM72534__10.jpg?h=2637858417",
-      review: ["2","2","2"]
-    },
-    {
-      id: 123,
-      title: "IPS LCD Gaming Monitor",
-      rrp: 400,
-      price: 370,
-      rate: 2.5,
-      imgUrl:
-        "https://www.pbtech.co.nz/imgprod/M/O/MONSAM72534__10.jpg?h=2637858417",
-      review: ["2","2","2"]
-    },
-    {
-      id: 123,
-      title: "IPS LCD Gaming Monitor",
-      rrp: 400,
-      price: 370,
-      rate: 2.5,
-      imgUrl:
-        "https://www.pbtech.co.nz/imgprod/M/O/MONSAM72534__10.jpg?h=2637858417",
-      review: ["2","2","2"]
-    },
-    {
-      id: 123,
-      title: "IPS LCD Gaming Monitor",
-      rrp: 400,
-      price: 370,
-      rate: 2.5,
-      imgUrl:
-        "https://www.pbtech.co.nz/imgprod/M/O/MONSAM72534__10.jpg?h=2637858417",
-      review: ["2","2","2"]
-    },
-    {
-      id: 123,
-      title: "IPS LCD Gaming Monitor",
-      rrp: 400,
-      price: 370,
-      rate: 2.5,
-      imgUrl:
-        "https://www.pbtech.co.nz/imgprod/M/O/MONSAM72534__10.jpg?h=2637858417",
-      review: ["2","2","2"]
-    },
-    {
-      id: 123,
-      title: "IPS LCD Gaming Monitor",
-      rrp: 400,
-      price: 370,
-      rate: 2.5,
-      imgUrl:
-        "https://www.pbtech.co.nz/imgprod/M/O/MONSAM72534__10.jpg?h=2637858417",
-      review: ["2","2","2"]
-    },
-    {
-      id: 123,
-      title: "IPS LCD Gaming Monitor",
-      rrp: 400,
-      price: 370,
-      rate: 2.5,
-      imgUrl:
-        "https://www.pbtech.co.nz/imgprod/M/O/MONSAM72534__10.jpg?h=2637858417",
-      review: ["2","2","2"]
-    },
-  ];
 
   return (
     <div>
@@ -98,11 +21,14 @@ const HotProducts: FC<HotProductsProps> = ({}) => {
       <div className="my-6 flex w-full flex-col items-start gap-4 pl-4 sm:flex-row sm:items-center sm:gap-0 sm:pl-0">
         <h2 className="text-xl tracking-widest sm:text-2xl md:text-3xl">Explore Our Products</h2>
        
-       
+
       </div>
       <div className={`flex flex-wrap justify-between gap-6 transition -translate-x-[${cardLocation}%]`}>
-        {products.map((product, i) => ( 
-          <ProductCard key={i} product={product} />
+        {products?.map((product, i) => ( 
+          <ProductCard key={i} product={product} 
+          average={getAverage(product.star)}
+          // deal={product}
+          />
         ))}
       </div>
       <div className="my-12 text-center">

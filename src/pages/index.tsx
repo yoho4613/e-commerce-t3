@@ -17,8 +17,10 @@ import { api } from "~/utils/api";
 export default function Home() {
   const { data: withSubCategory } = api.category.withSubcategory.useQuery();
   const { data: sales } = api.sale.getAllSales.useQuery();
+  const { data: randomProducts } = api.product.getRandomProducts.useQuery(20);
   const [todayDeal, setTodayDeal] = useState<Sale | null>(null);
   const [monthDeal, setMonthDeal] = useState<Sale | null>(null);
+  console.log(randomProducts)
 
   useEffect(() => {
     if (sales && sales.length) {
@@ -41,8 +43,8 @@ export default function Home() {
 
   return (
     <>
-      <main className="m-auto max-w-[1280px] md:px-6">
-        <div className="flex flex-col sm:flex-row">
+      <main className="m-auto w-screen max-w-[1280px] md:px-6">
+        <div className="flex w-full flex-col md:flex-row ">
           {withSubCategory ? (
             <CategoryNavBar categories={withSubCategory} />
           ) : (
@@ -50,10 +52,11 @@ export default function Home() {
               <Spinner /> Loading...
             </div>
           )}
-          <div className="pt-12 sm:pl-12">
+          <div className="min-w-[20rem] grow px-4 py-4">
             <HomeBanner />
           </div>
         </div>
+
         <div className="mt-24 space-y-10">
           <TodayDeal deal={todayDeal} />
           {withSubCategory ? (
@@ -63,7 +66,7 @@ export default function Home() {
           )}
           <MonthDeal deal={monthDeal} />
           <HeroBanner />
-          <HotProducts />
+          {randomProducts && <HotProducts products={randomProducts} />}
           <Featured />
         </div>
         <Service />

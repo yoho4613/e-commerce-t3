@@ -1,7 +1,8 @@
 import { PrismaClient, RoleEnumType } from "@prisma/client";
 import bcrypt from "bcryptjs";
-// import { faker } from "@faker-js/faker";
 import faker from "faker";
+import axios from "axios";
+
 const prisma = new PrismaClient();
 
 async function main() {
@@ -187,11 +188,11 @@ async function main() {
     expire: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 30),
   };
 
-  const sale = await prisma.sale.create({
+  await prisma.sale.create({
     data: {
       ...saleData,
       method: "percentDiscount",
-      value: 10
+      value: 10,
     },
   });
 
@@ -251,6 +252,63 @@ async function main() {
         }),
     ),
   );
+
+  const url = `https://api.unsplash.com/search/photos?page=1&query=ecommerce&client_id=${process.env.IMAGE_API_KEY}`;
+  const res = await axios.get(url);
+  const data = await res.data;
+  const image = data?.results;
+
+  const banners = [
+    {
+      title: "Summer Sale",
+      description: products[5]?.title || "",
+      link: `/${products[5]?.title}`,
+      imgUrl: image[0].urls.regular,
+    },
+    {
+      title: "Back to School",
+      description: products[26]?.title || "",
+      link: `/${products[26]?.title}`,
+      imgUrl: image[1].urls.regular,
+    },
+    {
+      title: "Electronics Extravaganza",
+      description: products[57]?.title || "",
+      link: `/${products[57]?.title}`,
+      imgUrl: image[2].urls.regular,
+    },
+    {
+      title: "Fashion Frenzy",
+      description: products[170]?.title || "",
+      link: `/${products[170]?.title}`,
+      imgUrl: image[3].urls.regular,
+    },
+    {
+      title: "Home Makeover",
+      description: products[80]?.title || "",
+      link: `/${products[80]?.title}`,
+      imgUrl: image[4].urls.regular,
+    },
+  ];
+
+  await Promise.all(
+    banners.map(async (banner) => {
+      await prisma.banner.create({
+        data: banner,
+      });
+    }),
+  );
+
+  await prisma.banner.create({
+    data: {
+      title: "Shoes Limited Sale",
+      description: products[90]?.title || "",
+      link: `/${products[90]?.title}`,
+      imgUrl:
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgtdw1aIPVP6HIYevObQJ-7lr5mIuY9u50OMDsJxYgOAw6ejcuKlyN618d_26BbunWPtpUL4sDWujbmp3UlL-LiEXKScRzcUR99dtgUYfS7qeHJmh-1go5lKlrt2uF_pIVyXmtKp5GjQ7TWJDfW6OnoUEoVgAXqrAkLRZ2yEs7r04G9mn2ITGbmy4bn/w640-h360/Banner%20Design.webp",
+      position: "heroAlone",
+    },
+  });
 
   await prisma.$disconnect();
 }

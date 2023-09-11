@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const bannerRouter = createTRPCRouter({
@@ -16,4 +17,16 @@ export const bannerRouter = createTRPCRouter({
         },
       }),
   ),
+  getNewBanners: publicProcedure
+    .input(z.number())
+    .query(async ({ ctx, input }) => {
+      const banners = await ctx.prisma.banner.findMany({
+        take: input,
+        orderBy: {
+          id: "desc",
+        },
+      });
+
+      return banners;
+    }),
 });

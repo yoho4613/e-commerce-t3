@@ -20,7 +20,6 @@ export default function Home() {
   const { data: randomProducts } = api.product.getRandomProducts.useQuery(20);
   const [todayDeal, setTodayDeal] = useState<Sale | null>(null);
   const [monthDeal, setMonthDeal] = useState<Sale | null>(null);
-  console.log(randomProducts)
 
   useEffect(() => {
     if (sales && sales.length) {

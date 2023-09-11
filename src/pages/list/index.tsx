@@ -1,20 +1,22 @@
 import { Product } from "@prisma/client";
 import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
 import { FC } from "react";
 import CategoryNavBar from "~/components/navbar/CategoryNavBar";
 import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
 
-interface indexProps {
-  query: { filter: string };
-  products: Product[];
+interface FilterProps {
+  // query: { filter: string };
 }
 
-const index: FC<indexProps> = ({ query, products }) => {
-  const { filter } = query;
+const index: FC<FilterProps> = () => {
+  const router = useRouter()
+  const filter = router.query
   const {data: categories} = api.category.withSubcategory.useQuery();
-  console.log(filter);
-  console.log(products)
+  const {data: products } = api.product.getAllProducts.useQuery()
+  console.log(router.query)
+  console.log(filter)
   return (
     <div className="flex">
       {categories && <CategoryNavBar categories={categories} />}
@@ -25,14 +27,14 @@ const index: FC<indexProps> = ({ query, products }) => {
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  const products = await prisma.product.findMany();
-  return {
-    props: {
-      query,
-      products,
-    },
-  };
-};
+// export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+//   console.log("server",query)
+
+//   return {
+//     props: {
+//       query,
+//     },
+//   };
+// };
 
 export default index;

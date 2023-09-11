@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "../trpc";
 
 
@@ -9,6 +10,6 @@ export const saleRouter = createTRPCRouter({
       }
     });
     return sales;
-  }),
+  })
   
 });

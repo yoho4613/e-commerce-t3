@@ -28,8 +28,8 @@ const TodayDeal: FC<TodayDealProps> = ({ deal }) => {
     }
   }, [deal]);
   useEffect(() => {
-    if (deal?.products) {
-      setSuffledProducts(shuffle(deal?.products!));
+    if (deal?.Products) {
+      setSuffledProducts(shuffle(deal?.Products!));
     }
   }, [deal]);
 
@@ -85,14 +85,15 @@ const TodayDeal: FC<TodayDealProps> = ({ deal }) => {
         className="flex gap-6 transition"
         style={{ transform: `translateX(-${cardLocation}%)` }}
       >
-        {deal && suffledProducts?.map((product, i) => (
-          <ProductCard
-            key={i}
-            product={product}
-            average={getAverage(product.star)}
-            deal={deal}
-          />
-        ))}
+        {deal &&
+          suffledProducts?.map((product, i) => (
+            <ProductCard
+              key={i}
+              product={product}
+              average={getAverage(product.star)}
+              deal={deal}
+            />
+          ))}
       </div>
       <div className="my-12 text-center">
         <button className="btn--red w-48 py-2 text-sm sm:w-64 sm:py-4 sm:text-base ">

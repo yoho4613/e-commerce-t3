@@ -94,15 +94,15 @@ model Product {
     star          Int[]
     delivery      Int?
     stock         Int
-    category      Category?    @relation(fields: [categoryId], references: [id])
-    categoryId    String?
+    category      Category    @relation(fields: [categoryId], references: [id])
+    categoryId    String
     subcategory   Subcategory? @relation(fields: [subcategoryId], references: [id])
-    subcategoryId String
+    subcategoryId String?
     order         Order[]
     Sale          Sale?        @relation(fields: [saleId], references: [id])
     saleId        String?
-    createdAt     DateTime  @default(now())
-    updatedAt     DateTime  @updatedAt
+    createdAt     DateTime     @default(now())
+    updatedAt     DateTime     @updatedAt
 }
 
 model Sale {
@@ -111,7 +111,7 @@ model Sale {
     subtitle String?
     start    DateTime
     expire   DateTime
-    products Product[]
+    Products Product[]
     method   SaleMethod
     value    Int
 }
@@ -124,25 +124,25 @@ enum SaleMethod {
 model Category {
     id          String        @id @default(cuid())
     name        String
-    Subcategory Subcategory[]
+    subcategory Subcategory[]
     Product     Product[]
 }
 
 model Subcategory {
     id         String    @id @default(cuid())
     name       String
-    product    Product[]
+    Product    Product[]
     category   Category  @relation(fields: [categoryId], references: [id])
     categoryId String
 }
 
 model Banner {
-    id          String @id @default(cuid())
+    id          String         @id @default(cuid())
     title       String
     description String
     link        String
     imgUrl      String
-    position    BannerPosition  @default(homeTop)
+    position    BannerPosition @default(homeTop)
 }
 
 enum BannerPosition {

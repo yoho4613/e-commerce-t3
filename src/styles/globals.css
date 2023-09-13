@@ -12,4 +12,12 @@ body {
   @apply bg-redPrimary text-whitePrimary rounded-md font-light hover:bg-red-500;
 }
 
+.number-input[type="number"] {
+  -moz-appearance: textfield;
+}
 
+.number-input::-webkit-outer-spin-button,
+.number-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}

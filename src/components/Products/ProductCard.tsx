@@ -1,5 +1,6 @@
 import { Product, Sale } from "@prisma/client";
 import Image from "next/image";
+import Link from "next/link";
 import React, { FC, useEffect, useState } from "react";
 import { AiOutlineEye, AiOutlineHeart } from "react-icons/ai";
 
@@ -19,7 +20,7 @@ const ProductCard: FC<ProductCardProps> = ({ product, average, deal }) => {
   });
 
   return (
-    <div className="group/item w-32 shrink-0 sm:w-64">
+    <Link href={`/product/${product.id}`} className="group/item w-32 shrink-0 sm:w-64">
       <div className="relative h-24 overflow-y-hidden rounded-md border-2 sm:h-48">
         <img
           className="m-auto h-full w-full"
@@ -72,7 +73,7 @@ const ProductCard: FC<ProductCardProps> = ({ product, average, deal }) => {
           <span className="text-grayPrimary">({product.review.length})</span>
         </div>
       </div>
-    </div>
+    </Link>
   );
 };
 

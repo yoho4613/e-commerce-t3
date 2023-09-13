@@ -1,5 +1,4 @@
 import { isSameMonth, isToday } from "date-fns";
-import { GetServerSideProps } from "next";
 import { useEffect, useState } from "react";
 import Categories from "~/components/Categories/Categories";
 import Featured from "~/components/Deals/Featured";

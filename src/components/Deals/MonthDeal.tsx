@@ -23,11 +23,10 @@ const MonthDeal: FC<MonthDealProps> = ({deal}) => {
         </div>
       </div>
       <div className="flex flex-wrap justify-between ">
-        {deal && shuffle(deal?.products?.slice(0, 12)).map((product, i) => (
+        {deal && shuffle(deal?.Products?.slice(0, 12)).map((product, i) => (
           <ProductCard key={i} product={product} average={getAverage(product.star)} deal={deal} />
         ))}
       </div>
-
     </div>
   );
 };

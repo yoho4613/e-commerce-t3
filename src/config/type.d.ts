@@ -21,7 +21,7 @@ export interface SessionType {
 export interface CategoryWithSubCategory {
   id: string;
   name: string;
-  Subcategory: {
+  subcategory: {
     id: string;
     name: string;
     categoryId: string;
@@ -36,5 +36,11 @@ export interface Sale {
     expire: Date;
     method: $Enums.SaleMethod;
     value: number;
-    products: Product[]
+    Products: Product[]
+}
+
+export interface product {
+  id: string
+  title: string
+
 }

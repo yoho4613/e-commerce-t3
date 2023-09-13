@@ -6,7 +6,7 @@ export const saleRouter = createTRPCRouter({
   getAllSales: publicProcedure.query(async ({ ctx }) => {
     const sales = await ctx.prisma.sale.findMany({
       include: {
-        products: true
+        Products: true
       }
     });
     return sales;

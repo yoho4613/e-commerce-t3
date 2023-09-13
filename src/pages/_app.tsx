@@ -2,6 +2,7 @@ import { type AppType } from "next/app";
 import { api } from "~/utils/api";
 
 import "~/styles/globals.css";
+import "~/styles/Spinner.css";
 import Head from "next/head";
 import TopBanner from "~/components/banners/TopBanner";
 import Navbar from "~/components/navbar/Navbar";
@@ -11,15 +12,11 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import AdminNavBar from "~/components/navbar/AdminNavbar";
 
-
 const MyApp: AppType = ({ Component, pageProps: { ...pageProps } }) => {
-  const router = useRouter()
+  const router = useRouter();
   const [isAdmin, setIsAdmin] = useState(false);
   useEffect(() => {
-
-    router.pathname.includes("/admin")
-      ? setIsAdmin(true)
-      : setIsAdmin(false);
+    router.pathname.includes("/admin") ? setIsAdmin(true) : setIsAdmin(false);
   }, [router]);
 
   return (

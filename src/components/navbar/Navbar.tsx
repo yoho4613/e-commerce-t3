@@ -16,6 +16,7 @@ import { GiCancel } from "react-icons/gi";
 import { BiLogOut } from "react-icons/bi";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
+import Searchbar from "../Global/Searchbar";
 
 interface NavbarProps {}
 
@@ -80,7 +81,7 @@ const Navbar: FC<NavbarProps> = ({}) => {
             </Link>
           </li>
           <li className="hover-underline-animation bg-slate-200 p-2.5 md:bg-transparent md:p-0">
-            <Link className="inline-block w-full" href="/list/all">
+            <Link className="inline-block w-full" href="/list?category=all&subcategory=all">
               Shop
             </Link>
           </li>
@@ -104,14 +105,8 @@ const Navbar: FC<NavbarProps> = ({}) => {
         </ul>
       </div>
       <div className="order-3 flex items-center ">
-        <div className="relative mr-2 md:mr-6">
-          <input
-            className="w-52 bg-secondary px-2 py-1 text-sm md:w-64 md:px-4 md:py-2"
-            placeholder="What are you looking for?"
-          />
-          <button className="absolute right-2 top-1.5 text-xl">
-            <FiSearch />
-          </button>
+        <div className="relative mr-2 md:mr-6 w-52 md:w-64 ">
+         <Searchbar />
         </div>
         <div className="relative flex items-center">
           <button className="sm:mr-4">
@@ -125,7 +120,7 @@ const Navbar: FC<NavbarProps> = ({}) => {
              {(user as User).image ? (
               <Image src={(user as User).image!} alt="avatar" width={100} height={100} className="rounded-full w-5 sm:w-6" />
              ) : (
-              <RxAvatar color="#DB4444" className=" text-lg sm:text-2xl" />
+              <RxAvatar color="#DB4444" className="text-lg sm:text-2xl" />
              )}
             </button>
           )}

@@ -21,7 +21,7 @@ export const verifyAuth = async (token: string) => {
       token,
       new TextEncoder().encode(getJwtSecretKey())
     );
-      console.log(verified)
+
   } catch (error) {
     throw new Error("Your token is invalid");
   }

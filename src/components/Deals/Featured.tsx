@@ -7,7 +7,7 @@ interface FeaturedProps {}
 
 const Featured: FC<FeaturedProps> = ({}) => {
   const { data: banners } = api.banner.getNewBanners.useQuery(4);
-  console.log(banners);
+
   return (
     <div className="mb-24">
       <div className="flex items-center">

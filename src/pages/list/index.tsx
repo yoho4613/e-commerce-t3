@@ -24,7 +24,6 @@ const index: FC<FilterProps> = () => {
   );
   const [category, setCategory] = useState("all");
   const [subCategory, setSubCategory] = useState("all");
-  console.log(filter);
 
   useEffect(() => {
     if (products) {

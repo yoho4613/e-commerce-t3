@@ -29,18 +29,30 @@ export interface CategoryWithSubCategory {
 }
 
 export interface Sale {
-    id: string;
-    title: string;
-    subtitle: string | null;
-    start: Date;
-    expire: Date;
-    method: $Enums.SaleMethod;
-    value: number;
-    Products: Product[]
+  id: string;
+  title: string;
+  subtitle: string | null;
+  start: Date;
+  expire: Date;
+  method: $Enums.SaleMethod;
+  value: number;
+  Products: Product[];
 }
 
 export interface product {
-  id: string
-  title: string
+  id: string;
+  title: string;
+}
 
+export interface UserDetail {
+  id: string;
+  name: string | null;
+  email: string;
+  emailVerified: Date | null;
+  image: string | null;
+  cart: string[];
+  watchlist: string[];
+  purchase: Prisma.JsonValue;
+  address: string[];
+  role: string
 }

@@ -61,7 +61,7 @@ export const createTRPCContext = (_opts: CreateNextContextOptions) => {
 import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
-import { verifyAuth } from "~/lib/auth";
+import { verifyAuth, verifyNextAuth } from "~/lib/auth";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
@@ -93,23 +93,46 @@ const t = initTRPC.context<typeof createTRPCContext>().create({
 const isAdmin = t.middleware(async ({ ctx, next }) => {
   const { req } = ctx;
   const token = req.cookies["emarket-admin-token"];
-  
+
   if (!token) {
     throw new TRPCError({
       code: "UNAUTHORIZED",
       message: "Missing user token",
     });
   }
-  
+
   const verifiedToken = await verifyAuth(token);
-  
+
   if (!verifiedToken) {
     throw new TRPCError({
       code: "UNAUTHORIZED",
       message: "Invalid user token",
     });
   }
-  
+
+  return next();
+});
+
+const isUser = t.middleware(async ({ ctx, next }) => {
+  const { req } = ctx;
+  const token = req.cookies["next-auth.session-token"];
+
+  if (!token) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "Missing user token",
+    });
+  }
+
+  const verifiedToken = await verifyNextAuth(token);
+
+  if (!verifiedToken) {
+    throw new TRPCError({
+      code: "UNAUTHORIZED",
+      message: "Invalid user token",
+    });
+  }
+
   return next();
 });
 
@@ -122,4 +145,5 @@ export const createTRPCRouter = t.router;
  * are logged in.
  */
 export const publicProcedure = t.procedure;
-export const adminProcedure = t.procedure.use(isAdmin)
+export const adminProcedure = t.procedure.use(isAdmin);
+export const userProcedure = t.procedure.use(isUser)

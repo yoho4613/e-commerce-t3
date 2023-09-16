@@ -7,6 +7,7 @@ import { saleRouter } from "./routers/sale";
 import { imageRouter } from "./routers/image";
 import { bannerRouter } from "./routers/banner";
 import { productRouter } from "./routers/product";
+import { watchlistRouter } from "./routers/watchlist";
 
 /**
  * This is the primary router for your server.
@@ -22,6 +23,7 @@ export const appRouter = createTRPCRouter({
   image: imageRouter,
   banner: bannerRouter,
   product: productRouter,
+  watchlist: watchlistRouter
 });
 
 // export type definition of API

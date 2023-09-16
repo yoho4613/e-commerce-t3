@@ -1,9 +1,10 @@
 import { Product } from "@prisma/client";
 import { GetServerSideProps } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useState } from "react";
-import { AiOutlineMinus } from "react-icons/ai";
+import { AiFillHeart, AiOutlineMinus } from "react-icons/ai";
 import { BiHeart } from "react-icons/bi";
 import {
   BsArrowRepeat,
@@ -15,84 +16,99 @@ import {
 import { TbTruckDelivery } from "react-icons/tb";
 import Spinner from "~/components/Global/Spinner";
 import RelatedItems from "~/components/Products/RelatedItems";
+import { useStateContext } from "~/context/userDetailContext";
 import { getAverage } from "~/lib/helper";
 import { api } from "~/utils/api";
 
 interface IProductDetailProps {
   id: string;
 }
+interface Order {
+  [key: string]: number | string | undefined;
+}
+
+interface OrderDetail extends Order {
+  quantity: number;
+}
 
 const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
-  // const router = useRouter();
-  // const {id} = router.query
-
-  const { data: product } = api.product.findProduct.useQuery({ id });
+  const { data: product, refetch } = api.product.findProduct.useQuery({ id });
   const { data: relatedProducts } = api.product.findRelatedProducts.useQuery({
     id,
   });
-  const [attributes, setAttributes] = useState();
+  const { mutate: updateWatchlist } = api.watchlist.updateWatchlist.useMutation(
+    {
+      onSuccess: () => refetch(),
+    },
+  );
+  const [selectedPhoto, setSelectedPhoto] = useState("");
+  const [orderDetail, setOrderDetail] = useState<OrderDetail>({ quantity: 0 });
+  const { userDetail, updateWatchlistContext } = useStateContext();
 
-  console.log(product);
-  console.log(relatedProducts);
+  useEffect(() => {
+    if (product) {
+      if (product.imgUrl.length) {
+        setSelectedPhoto(product.imgUrl[0]!);
+      }
+      if (product.attributes) {
+        setOrderDetail({ quantity: 0 });
+        Object.keys(product.attributes).map((key) => {
+          setOrderDetail((prev) => ({
+            ...prev,
+            key: "",
+          }));
+        });
+      }
+    }
+  }, [product]);
 
   if (!product) {
-    return <Spinner />;
+    return (
+      <div className="flex h-screen w-screen items-center justify-center">
+        <Spinner />;
+      </div>
+    );
   }
 
-  console.log(Object.entries(product.attributes!));
+  console.log(orderDetail);
+  console.log(orderDetail.hasOwnProperty("color"));
 
   return (
-    <main className="m-auto mt-4 sm:mt-12 w-screen max-w-[1280px] px-2 sm:px-10">
+    <main className="m-auto mt-4 w-screen max-w-[1280px] px-2 sm:mt-12 sm:px-10">
       <div className="flex  flex-col md:flex-row">
         {/* Gallery */}
-        <div className="grid w-full mb-8 md:mb-0 md:w-3/5 gap-4 mr-8">
+        <div className="mb-8 mr-8 grid w-full gap-4 md:mb-0 md:w-3/5">
           <div>
-            <img
-              className="h-auto max-w-full rounded-lg"
-              src="https://flowbite.s3.amazonaws.com/docs/gallery/featured/image.jpg"
-              alt=""
-            />
+            {selectedPhoto && (
+              <Image
+                className="h-auto max-h-96 w-full rounded-lg"
+                width={100}
+                height={100}
+                src={selectedPhoto}
+                alt={product.title}
+              />
+            )}
           </div>
           <div className="grid grid-cols-5 gap-4">
-            <div>
-              <img
-                className="h-auto max-w-full rounded-lg"
-                src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-1.jpg"
-                alt=""
-              />
-            </div>
-            <div>
-              <img
-                className="h-auto max-w-full rounded-lg"
-                src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-2.jpg"
-                alt=""
-              />
-            </div>
-            <div>
-              <img
-                className="h-auto max-w-full rounded-lg"
-                src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-3.jpg"
-                alt=""
-              />
-            </div>
-            <div>
-              <img
-                className="h-auto max-w-full rounded-lg"
-                src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-4.jpg"
-                alt=""
-              />
-            </div>
-            <div>
-              <img
-                className="h-auto max-w-full rounded-lg"
-                src="https://flowbite.s3.amazonaws.com/docs/gallery/square/image-5.jpg"
-                alt=""
-              />
-            </div>
+            {product.imgUrl.map((img) => (
+              <button onClick={() => setSelectedPhoto(img)}>
+                <Image
+                  className={`h-24 w-full rounded-lg ${
+                    selectedPhoto === img && "border-2 border-redPrimary"
+                  }`}
+                  sizes="cover"
+                  objectPosition="center"
+                  width={100}
+                  height={100}
+                  src={img}
+                  alt={product.title}
+                />
+              </button>
+            ))}
           </div>
         </div>
         {/* Detail */}
-        <div className="space-y-2 mb-10 md:mb-0">
+        <div className="mb-10 space-y-2 md:mb-0">
           <h2 className="text-2xl font-bold">{product.title}</h2>
           <div className="flex items-center">
             {[...Array(5)].map((star, i) =>
@@ -129,17 +145,29 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
           </p>
           <div className="pt-6">
             {product.attributes &&
-              Object.entries(product.attributes).map((attributes) => (
-                <div className="mb-4 flex flex-wrap sm:flex-nowrap items-center space-x-2">
-                  {attributes.map((att, i) =>
+              Object.entries(product.attributes).map((attribute) => (
+                <div className="mb-4 flex flex-wrap items-center space-x-2 sm:flex-nowrap">
+                  {attribute.map((att, i) =>
                     i === 0 ? (
-                      <h3 className="text-base sm:text-xl">
+                      <h3 key={i} className="text-base sm:text-xl">
                         {att[0].toUpperCase()}
                         {att.slice(1)}:
                       </h3>
                     ) : (
                       att.map((value: string) => (
-                        <button className="rounded-md border-2 px-2.5 py-1 text-xs sm:text-sm">
+                        <button
+                          key={i}
+                          onClick={() =>
+                            setOrderDetail((prev) => ({
+                              ...prev,
+                              [String(attribute[0])]: value,
+                            }))
+                          }
+                          className={`rounded-md border-2 px-2.5 py-1 text-xs sm:text-sm ${
+                            orderDetail[attribute[0]] === value &&
+                            "bg-redPrimary text-whitePrimary"
+                          }`}
+                        >
                           {value}
                         </button>
                       ))
@@ -148,22 +176,66 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
                 </div>
               ))}
           </div>
-          <div className="flex justify-start gap-4 md:gap-0 md:justify-between py-6">
+          <div className="flex justify-start gap-4 py-6 md:justify-between md:gap-0">
             <div className="flex items-center">
-              <button className="rounded-l-md border-2 p-1 sm:p-2 hover:border-transparent hover:bg-redPrimary hover:text-whitePrimary">
+              <button
+                onClick={() =>
+                  setOrderDetail((prev) => ({
+                    ...prev,
+                    quantity:
+                      prev.quantity >= product.stock
+                        ? prev.quantity
+                        : prev.quantity + 1,
+                  }))
+                }
+                className="rounded-l-md border-2 p-1 hover:border-transparent hover:bg-redPrimary hover:text-whitePrimary sm:p-2"
+              >
                 <BsPlusLg className="text-sm sm:text-xl" />
               </button>
               <input
                 type="number"
-                className="number-input sm:h-full w-10 sm:w-16 border-y-2 p-1 sm:p-2 text-xs sm:text-base text-center outline-0"
+                value={orderDetail.quantity}
+                onChange={(e) =>
+                  setOrderDetail((prev) => ({
+                    ...prev,
+                    quantity: Number(e.target.value),
+                  }))
+                }
+                className="number-input w-10 border-y-2 p-1 text-center text-xs outline-0 sm:h-full sm:w-16 sm:p-2 sm:text-base"
               />
-              <button className="rounded-r-md border-2 p-1 sm:p-2 hover:border-transparent hover:bg-redPrimary hover:text-whitePrimary">
+              <button
+                onClick={() =>
+                  setOrderDetail((prev) => ({
+                    ...prev,
+                    quantity:
+                      prev.quantity <= 1
+                        ? prev.quantity
+                        : Number(prev.quantity) - 1,
+                  }))
+                }
+                className="rounded-r-md border-2 p-1 hover:border-transparent hover:bg-redPrimary hover:text-whitePrimary sm:p-2"
+              >
                 <AiOutlineMinus className="text-sm sm:text-xl" />
               </button>
             </div>
-            <button className="btn--red w-24 sm:w-36 text-xs sm:text-base">Buy Now</button>
-            <button className="rounded-md border-2 p-1 sm:p-2 hover:border-transparent hover:bg-redPrimary hover:text-whitePrimary">
-              <BiHeart />
+            <button className="btn--red w-24 text-xs sm:w-36 sm:text-base">
+              Buy Now
+            </button>
+            <button
+              onClick={() => {
+                updateWatchlistContext(product.id);
+                updateWatchlist({
+                  userId: userDetail.id,
+                  productId: product.id,
+                });
+              }}
+              className="rounded-md border-2 p-1 hover:border-transparent hover:bg-redPrimary hover:text-whitePrimary sm:p-2"
+            >
+              {userDetail?.watchlist.includes(product.id) ? (
+                <AiFillHeart className="text-redPrimary" />
+              ) : (
+                <BiHeart />
+              )}
             </button>
           </div>
           <div>
@@ -171,7 +243,9 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
               <TbTruckDelivery className="mr-4" size={35} />
               <div>
                 <h3 className="font-bold">Fast Delivery</h3>
-                <p className="text-xs"> Delivery is available for <strong>${product.delivery}</strong></p>
+                <p className="text-xs">
+                  Delivery is available for <strong>${product.delivery}</strong>
+                </p>
               </div>
             </div>
             <div className="flex items-center rounded-sm border-2 border-t-0 px-2.5 py-4">

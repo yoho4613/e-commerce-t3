@@ -5,7 +5,6 @@ import {
   AiOutlineShoppingCart,
   AiOutlineStar,
 } from "react-icons/ai";
-import { FiSearch } from "react-icons/fi";
 import { RiMenu2Fill } from "react-icons/ri";
 import { RxAvatar } from "react-icons/rx";
 import logo from "../../../public/logo.png";
@@ -17,6 +16,8 @@ import { BiLogOut } from "react-icons/bi";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
 import Searchbar from "../Global/Searchbar";
+import { api } from "~/utils/api";
+import { useStateContext } from "~/context/userDetailContext";
 
 interface NavbarProps {}
 
@@ -27,19 +28,25 @@ interface User {
 }
 
 const Navbar: FC<NavbarProps> = ({}) => {
-
   const [mobileMenuOpened, setMobileMenuOpened] = useState(false);
   const [profileOpened, setProfileOpened] = useState(false);
   const popupRef = useRef<HTMLUListElement>(null);
   const [user, setUser] = useState<User | { id: string } | null>(null);
   const session = useSession();
-
+  const { mutate: getUserDetail } = api.user.findUser.useMutation({
+    onSuccess: (res) => {
+      if (res) {
+        setUserDetail(res);
+      }
+    },
+  });
+  const { setUserDetail } = useStateContext();
 
   useEffect(() => {
     if (session.status === "authenticated") {
       setUser(session.data.user);
+      getUserDetail({ email: session.data.user.email! });
     }
-
   }, [session]);
 
   useEffect(() => {
@@ -81,7 +88,10 @@ const Navbar: FC<NavbarProps> = ({}) => {
             </Link>
           </li>
           <li className="hover-underline-animation bg-slate-200 p-2.5 md:bg-transparent md:p-0">
-            <Link className="inline-block w-full" href="/list?category=all&subcategory=all">
+            <Link
+              className="inline-block w-full"
+              href="/list?category=all&subcategory=all"
+            >
               Shop
             </Link>
           </li>
@@ -105,23 +115,29 @@ const Navbar: FC<NavbarProps> = ({}) => {
         </ul>
       </div>
       <div className="order-3 flex items-center ">
-        <div className="relative mr-2 md:mr-6 w-52 md:w-64 ">
-         <Searchbar />
+        <div className="relative mr-2 w-52 md:mr-6 md:w-64 ">
+          <Searchbar />
         </div>
         <div className="relative flex items-center">
           <button className="sm:mr-4">
-            <AiOutlineHeart className="text-lg sm:text-2xl" />
+             <AiOutlineHeart className="text-lg sm:text-2xl" />
           </button>
           <button className="sm:mr-4">
             <AiOutlineShoppingCart className="text-lg sm:text-2xl" />
           </button>
           {user && (
             <button onClick={() => setProfileOpened((prev) => !prev)}>
-             {(user as User).image ? (
-              <Image src={(user as User).image!} alt="avatar" width={100} height={100} className="rounded-full w-5 sm:w-6" />
-             ) : (
-              <RxAvatar color="#DB4444" className="text-lg sm:text-2xl" />
-             )}
+              {(user as User).image ? (
+                <Image
+                  src={(user as User).image!}
+                  alt="avatar"
+                  width={100}
+                  height={100}
+                  className="w-5 rounded-full sm:w-6"
+                />
+              ) : (
+                <RxAvatar color="#DB4444" className="text-lg sm:text-2xl" />
+              )}
             </button>
           )}
           {profileOpened && (

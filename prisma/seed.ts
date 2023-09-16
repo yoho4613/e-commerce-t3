@@ -195,6 +195,10 @@ async function main() {
       value: 10,
     },
   });
+  const url = `https://api.unsplash.com/search/photos?page=1&query=ecommerce&client_id=${process.env.IMAGE_API_KEY}`;
+  const res = await axios.get(url);
+  const data = await res.data;
+  const image = data?.results;
 
   const products = [];
 
@@ -208,7 +212,12 @@ async function main() {
         price: faker.commerce.price(),
         imgUrl: [faker.image.imageUrl()],
         attributes: {
-          color: [faker.commerce.color(), faker.commerce.color(), faker.commerce.color(), faker.commerce.color()],
+          color: [
+            faker.commerce.color(),
+            faker.commerce.color(),
+            faker.commerce.color(),
+            faker.commerce.color(),
+          ],
           size: ["S", "M", "L", "XL"],
         },
         review: [...Array(faker.datatype.number({ min: 20, max: 98 }))].map(
@@ -227,6 +236,9 @@ async function main() {
     }
   }
 
+  
+  const getRandomIndex = (length: number) => Math.floor(Math.random() * length);
+
   // Insert mock products into the database
   await Promise.all(
     products.map(
@@ -238,7 +250,13 @@ async function main() {
             description: product.description,
             rrp: product.rrp,
             price: product.price,
-            imgUrl: product.imgUrl ,
+            imgUrl: [
+              image[getRandomIndex(image.length)].urls.regular,
+              image[getRandomIndex(image.length)].urls.regular,
+              image[getRandomIndex(image.length)].urls.regular,
+              image[getRandomIndex(image.length)].urls.regular,
+              image[getRandomIndex(image.length)].urls.regular,
+            ],
             attributes: product.attributes,
             review: product.review,
             star: product.star,
@@ -246,16 +264,12 @@ async function main() {
             stock: product.stock,
             categoryId: product.categoryId!,
             subcategoryId: product.subcategoryId ? product.subcategoryId : null,
-            saleId: product.categoryId === categories[1]?.id ? saleData.id : null,
+            saleId:
+              product.categoryId === categories[1]?.id ? saleData.id : null,
           },
         }),
     ),
   );
-
-  const url = `https://api.unsplash.com/search/photos?page=1&query=ecommerce&client_id=${process.env.IMAGE_API_KEY}`;
-  const res = await axios.get(url);
-  const data = await res.data;
-  const image = data?.results;
 
   const banners = [
     {

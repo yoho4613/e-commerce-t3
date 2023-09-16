@@ -11,6 +11,7 @@ import Provider from "~/context/authContext";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import AdminNavBar from "~/components/navbar/AdminNavbar";
+import { StateContext } from "~/context/userDetailContext";
 
 const MyApp: AppType = ({ Component, pageProps: { ...pageProps } }) => {
   const router = useRouter();
@@ -26,15 +27,17 @@ const MyApp: AppType = ({ Component, pageProps: { ...pageProps } }) => {
         <meta name="description" content="E Market - Online Smart Store" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <Provider>
-        {!isAdmin && <TopBanner />}
-        <div className="m-auto max-w-[1280px]">
-          {isAdmin ? <AdminNavBar /> : <Navbar />}
-          <div className="absolute left-0 w-[100vw] border-b-2" />
-        </div>
-        <Component {...pageProps} />
-        <Footer />
-      </Provider>
+      <StateContext>
+        <Provider>
+          {!isAdmin && <TopBanner />}
+          <div className="m-auto max-w-[1280px]">
+            {isAdmin ? <AdminNavBar /> : <Navbar />}
+            <div className="absolute left-0 w-[100vw] border-b-2" />
+          </div>
+          <Component {...pageProps} />
+          <Footer />
+        </Provider>
+      </StateContext>
     </>
   );
 };

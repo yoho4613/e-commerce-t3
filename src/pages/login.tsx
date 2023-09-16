@@ -1,32 +1,31 @@
 import Image from "next/image";
-import React, { FC, FormEventHandler, useState } from "react";
+import React, { FC, FormEventHandler, useContext, useState } from "react";
 import loginBanner from "../../public/loginBanner.png";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FcGoogle } from "react-icons/fc";
 import { api } from "~/utils/api";
+import { useStateContext } from "~/context/userDetailContext";
 
 const Login: FC = ({}) => {
   const router = useRouter();
   const [form, setForm] = useState({ email: "", password: "" });
-  const [warning, setWarning] = useState<null | string>(null)
-  // const {mutate: signin} = api.user.loginUser.useMutation({
-  //   onSuccess: () => router.push('/')
-  // })
+  const [warning, setWarning] = useState<null | string>(null);
+  const { setUserDetail } = useStateContext();
 
   const handleSubmit: FormEventHandler = async (e) => {
     e.preventDefault();
 
-   const res = await signIn("credentials", {
+    const res = await signIn("credentials", {
       ...form,
       redirect: false,
-    })
-    
-    if(!res?.ok) {
-      setWarning(res?.error!)
+    });
+
+    if (!res?.ok) {
+      setWarning(res?.error!);
     } else {
-      router.push('/')
+      router.push("/");
     }
   };
 

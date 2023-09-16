@@ -113,7 +113,6 @@ export const userRouter = createTRPCRouter({
         }),
       );
 
-
       await ctx.prisma.session.create({
         data: {
           sessionToken: token,
@@ -131,7 +130,7 @@ export const userRouter = createTRPCRouter({
         email: z.string(),
       }),
     )
-    .query(async ({ ctx, input }) => {
+    .mutation(async ({ ctx, input }) => {
       const { email } = input;
       const token = ctx.req.cookies["next-auth.session-token"];
 
@@ -141,19 +140,6 @@ export const userRouter = createTRPCRouter({
           message: "Token does not exist. User may not loggedin",
         });
       }
-
-      // const session = await ctx.prisma.session.findFirst({
-      //   where: {
-      //     sessionToken: token,
-      //   },
-      // });
-
-      // if (!session) {
-      //   throw new TRPCError({
-      //     code: "BAD_REQUEST",
-      //     message: "Session does not exist",
-      //   });
-      // }
 
       const user = await ctx.prisma.user.findFirst({
         where: {
@@ -168,7 +154,31 @@ export const userRouter = createTRPCRouter({
         });
       }
 
-      return user;
+      const {
+        id,
+        name,
+        emailVerified,
+        image,
+        cart,
+        email: userEmail,
+        watchlist,
+        purchase,
+        address,
+        role,
+      } = user;
+
+      return {
+        id,
+        name,
+        email: userEmail,
+        emailVerified,
+        image,
+        cart,
+        watchlist,
+        purchase,
+        address,
+        role,
+      };
     }),
 
   logout: publicProcedure.mutation(({ ctx }) => {

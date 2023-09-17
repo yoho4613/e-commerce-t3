@@ -1,6 +1,6 @@
-import React, { FC } from "react";
+import React from "react";
 
-const Spinner: FC = ({}) => {
+const Spinner = () => {
   return (
     <svg
       className="spinner"

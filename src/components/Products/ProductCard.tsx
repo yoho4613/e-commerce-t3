@@ -2,9 +2,10 @@ import { Product, Sale } from "@prisma/client";
 import Image from "next/image";
 import Link from "next/link";
 import React, { FC, useEffect, useState } from "react";
-import { AiOutlineEye, AiOutlineHeart } from "react-icons/ai";
+import { AiOutlineEye, AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 
 import { BsStarHalf, BsStarFill, BsStar } from "react-icons/bs";
+import { useStateContext } from "~/context/userDetailContext";
 import { api } from "~/utils/api";
 
 interface ProductCardProps {
@@ -18,28 +19,55 @@ const ProductCard: FC<ProductCardProps> = ({ product, average, deal }) => {
     page: 1,
     query: product?.title,
   });
+  const { mutate: updateWatchlist } =
+    api.watchlist.updateWatchlist.useMutation();
+  const { mutate: updateCart } = api.cart.updateCart.useMutation();
+  const { userDetail, updateWatchlistContext, updateCartContext } =
+    useStateContext();
 
   return (
-    <Link href={`/product/${product.id}`} className="group/item w-32 shrink-0 sm:w-64">
+    <div className="group/item w-32 shrink-0 sm:w-64">
       <div className="relative h-24 overflow-y-hidden rounded-md border-2 sm:h-48">
-        <img
-          className="m-auto h-full w-full"
-          src={image || ""}
-          alt={product.title}
-        />
+        <Link href={`/product/${product.id}`}>
+          <img
+            className="m-auto h-full w-full"
+            src={image || ""}
+            alt={product.title}
+          />
+        </Link>
         {deal && (
           <button className="btn--red absolute left-1 top-1 px-0.5 py-1 text-xs sm:left-2 sm:top-2 sm:px-2 sm:py-1 sm:text-sm">
             {deal.method === "percentDiscount" ? `-${deal.value}%` : ""}
           </button>
         )}
-        <button className="absolute right-2 top-2 p-1 ">
-          <AiOutlineHeart color="white" size={20} />
+        <button
+          onClick={() => {
+            updateWatchlistContext(product.id);
+            updateWatchlist({ userId: userDetail.id, productId: product.id });
+          }}
+          className="absolute right-2 top-2 p-1 "
+        >
+          {userDetail.watchlist.includes(product.id) ? (
+            <AiFillHeart size={20} color="red" />
+          ) : (
+            <AiOutlineHeart color="white" size={20} />
+          )}
         </button>
         <button className="absolute right-2 top-10 p-1 ">
           <AiOutlineEye color="white" size={20} />
         </button>
-        <button className="absolute bottom-0 right-0 z-10 w-full translate-y-full bg-buttonBlack py-1.5 text-xs text-whitePrimary transition group-hover/item:translate-y-0 sm:text-base">
-          Add To Cart
+        <button
+          onClick={() => {
+            updateCartContext(product.id);
+            updateCart({ userId: userDetail.id, productId: product.id });
+          }}
+          className={`absolute bottom-0 right-0 z-10 w-full translate-y-full bg-buttonBlack py-1.5 text-xs text-whitePrimary transition group-hover/item:translate-y-0 sm:text-base ${
+            userDetail.cart.includes(product.id) && "bg-redPrimary"
+          }`}
+        >
+          {userDetail.cart.includes(product.id)
+            ? "Remove From Cart"
+            : "Add To Cart"}
         </button>
       </div>
       <div className="mt-4 flex flex-col space-y-2">
@@ -73,7 +101,7 @@ const ProductCard: FC<ProductCardProps> = ({ product, average, deal }) => {
           <span className="text-grayPrimary">({product.review.length})</span>
         </div>
       </div>
-    </Link>
+    </div>
   );
 };
 

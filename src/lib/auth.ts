@@ -31,7 +31,6 @@ export const verifyAuth = async (token: string) => {
 
 export function getNextJwtSecretKey(): string {
   const nextAuthSecret = process.env.NEXTAUTH_SECRET;
-
   if (!nextAuthSecret || nextAuthSecret.length === 0 ) {
     throw new Error("JWT nextAuthSecret key is not defined");
   }
@@ -45,9 +44,8 @@ export const verifyNextAuth = async (token: string) => {
       token,
       new TextEncoder().encode(getJwtSecretKey())
     );
-
   } catch (error) {
-    throw new Error("Your token is invalid");
+    throw new Error("Your user token is invalid");
   }
 
   return token

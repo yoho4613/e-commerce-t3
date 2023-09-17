@@ -1,5 +1,6 @@
 import { Product } from "@prisma/client";
 import { GetServerSideProps } from "next";
+import { getServerSession } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -18,6 +19,7 @@ import Spinner from "~/components/Global/Spinner";
 import RelatedItems from "~/components/Products/RelatedItems";
 import { useStateContext } from "~/context/userDetailContext";
 import { getAverage } from "~/lib/helper";
+import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/utils/api";
 
 interface IProductDetailProps {
@@ -44,7 +46,7 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
   const [selectedPhoto, setSelectedPhoto] = useState("");
   const [orderDetail, setOrderDetail] = useState<OrderDetail>({ quantity: 0 });
   const { userDetail, updateWatchlistContext } = useStateContext();
-
+console.log(userDetail)
   useEffect(() => {
     if (product) {
       if (product.imgUrl.length) {
@@ -154,9 +156,9 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
                         {att.slice(1)}:
                       </h3>
                     ) : (
-                      att.map((value: string) => (
+                      att.map((value: string, index:number) => (
                         <button
-                          key={i}
+                          key={index}
                           onClick={() =>
                             setOrderDetail((prev) => ({
                               ...prev,

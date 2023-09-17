@@ -13,12 +13,14 @@ interface ContextProp {
   userDetail: UserDetail;
   setUserDetail: Dispatch<SetStateAction<UserDetail>>;
   updateWatchlistContext: (productId: string) => void;
+  updateCartContext: (productId: string) => void;
 }
 
 const UserContext = createContext<ContextProp>({
   userDetail: defaultUserDetail,
   setUserDetail: () => {},
   updateWatchlistContext: () => {},
+  updateCartContext: () => {},
 });
 
 export const StateContext = ({ children }: { children: ReactNode }) => {
@@ -38,12 +40,27 @@ export const StateContext = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const updateCartContext = (productId: string) => {
+    if (userDetail.watchlist.includes(productId)) {
+      setUserDetail((prev) => ({
+        ...prev,
+        cart: prev.cart.filter((id) => id !== productId),
+      }));
+    } else {
+      setUserDetail((prev) => ({
+        ...prev,
+        cart: [...prev.cart, productId],
+      }));
+    }
+  };
+
   return (
     <UserContext.Provider
       value={{
         userDetail,
         setUserDetail,
         updateWatchlistContext,
+        updateCartContext,
       }}
     >
       {children}

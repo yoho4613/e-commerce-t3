@@ -48,7 +48,7 @@ const index: FC<FilterProps> = () => {
             </button>
           </div>
         </div>
-        <div className="flex flex-wrap space-y-2 justify-between">
+        <div className="flex flex-wrap space-y-2 justify-between items-start">
           {filteredProducts &&
             filteredProducts.map((product) => (
               <ProductCard

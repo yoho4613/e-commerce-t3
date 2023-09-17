@@ -49,6 +49,8 @@ const Navbar: FC<NavbarProps> = ({}) => {
     }
   }, [session]);
 
+
+
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
       if (e.target instanceof HTMLUListElement) {

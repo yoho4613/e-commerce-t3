@@ -62,6 +62,8 @@ import { TRPCError, initTRPC } from "@trpc/server";
 import superjson from "superjson";
 import { ZodError } from "zod";
 import { verifyAuth, verifyNextAuth } from "~/lib/auth";
+import { getServerSession } from "next-auth";
+import { getServerAuthSession } from "../auth";
 
 const t = initTRPC.context<typeof createTRPCContext>().create({
   transformer: superjson,
@@ -116,20 +118,21 @@ const isAdmin = t.middleware(async ({ ctx, next }) => {
 const isUser = t.middleware(async ({ ctx, next }) => {
   const { req } = ctx;
   const token = req.cookies["next-auth.session-token"];
-
+  
+  
   if (!token) {
     throw new TRPCError({
       code: "UNAUTHORIZED",
       message: "Missing user token",
     });
   }
+  
+  const userSession = await getServerAuthSession(ctx)
 
-  const verifiedToken = await verifyNextAuth(token);
-
-  if (!verifiedToken) {
+  if (!userSession) {
     throw new TRPCError({
       code: "UNAUTHORIZED",
-      message: "Invalid user token",
+      message: "Invalid user session",
     });
   }
 

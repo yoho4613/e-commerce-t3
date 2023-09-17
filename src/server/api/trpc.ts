@@ -118,16 +118,15 @@ const isAdmin = t.middleware(async ({ ctx, next }) => {
 const isUser = t.middleware(async ({ ctx, next }) => {
   const { req } = ctx;
   const token = req.cookies["next-auth.session-token"];
-  
-  
+
   if (!token) {
     throw new TRPCError({
       code: "UNAUTHORIZED",
       message: "Missing user token",
     });
   }
-  
-  const userSession = await getServerAuthSession(ctx)
+
+  const userSession = await getServerAuthSession(ctx);
 
   if (!userSession) {
     throw new TRPCError({
@@ -149,4 +148,4 @@ export const createTRPCRouter = t.router;
  */
 export const publicProcedure = t.procedure;
 export const adminProcedure = t.procedure.use(isAdmin);
-export const userProcedure = t.procedure.use(isUser)
+export const userProcedure = t.procedure.use(isUser);

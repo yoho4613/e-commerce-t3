@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 import { AiFillHeart, AiOutlineMinus } from "react-icons/ai";
 import { BiHeart } from "react-icons/bi";
 import {
@@ -15,6 +16,7 @@ import {
   BsStarHalf,
 } from "react-icons/bs";
 import { TbTruckDelivery } from "react-icons/tb";
+import Heart from "~/components/Global/Heart";
 import Spinner from "~/components/Global/Spinner";
 import RelatedItems from "~/components/Products/RelatedItems";
 import { useStateContext } from "~/context/userDetailContext";
@@ -34,19 +36,14 @@ interface OrderDetail extends Order {
 }
 
 const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
-  const { data: product, refetch } = api.product.findProduct.useQuery({ id });
+  const router = useRouter();
+  const { data: product } = api.product.findProduct.useQuery({ id });
   const { data: relatedProducts } = api.product.findRelatedProducts.useQuery({
     id,
   });
-  const { mutate: updateWatchlist } = api.watchlist.updateWatchlist.useMutation(
-    {
-      onSuccess: () => refetch(),
-    },
-  );
   const [selectedPhoto, setSelectedPhoto] = useState("");
   const [orderDetail, setOrderDetail] = useState<OrderDetail>({ quantity: 0 });
-  const { userDetail, updateWatchlistContext } = useStateContext();
-console.log(userDetail)
+
   useEffect(() => {
     if (product) {
       if (product.imgUrl.length) {
@@ -71,9 +68,6 @@ console.log(userDetail)
       </div>
     );
   }
-
-  console.log(orderDetail);
-  console.log(orderDetail.hasOwnProperty("color"));
 
   return (
     <main className="m-auto mt-4 w-screen max-w-[1280px] px-2 sm:mt-12 sm:px-10">
@@ -156,7 +150,7 @@ console.log(userDetail)
                         {att.slice(1)}:
                       </h3>
                     ) : (
-                      att.map((value: string, index:number) => (
+                      att.map((value: string, index: number) => (
                         <button
                           key={index}
                           onClick={() =>
@@ -223,22 +217,9 @@ console.log(userDetail)
             <button className="btn--red w-24 text-xs sm:w-36 sm:text-base">
               Buy Now
             </button>
-            <button
-              onClick={() => {
-                updateWatchlistContext(product.id);
-                updateWatchlist({
-                  userId: userDetail.id,
-                  productId: product.id,
-                });
-              }}
-              className="rounded-md border-2 p-1 hover:border-transparent hover:bg-redPrimary hover:text-whitePrimary sm:p-2"
-            >
-              {userDetail?.watchlist.includes(product.id) ? (
-                <AiFillHeart className="text-redPrimary" />
-              ) : (
-                <BiHeart />
-              )}
-            </button>
+            <div className="rounded-md border-2 hover:border-transparent hover:bg-redPrimary hover:text-whitePrimary">
+              <Heart productId={product.id} />
+            </div>
           </div>
           <div>
             <div className="flex items-center rounded-sm border-2 px-2.5 py-4">

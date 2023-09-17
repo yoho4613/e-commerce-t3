@@ -1,12 +1,14 @@
 import { Product, Sale } from "@prisma/client";
-import Image from "next/image";
 import Link from "next/link";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC } from "react";
 import { AiOutlineEye, AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 
 import { BsStarHalf, BsStarFill, BsStar } from "react-icons/bs";
 import { useStateContext } from "~/context/userDetailContext";
 import { api } from "~/utils/api";
+import Heart from "../Global/Heart";
+import { toast } from "react-hot-toast";
+import { useRouter } from "next/router";
 
 interface ProductCardProps {
   product: Product;
@@ -15,15 +17,19 @@ interface ProductCardProps {
 }
 
 const ProductCard: FC<ProductCardProps> = ({ product, average, deal }) => {
+  const router = useRouter();
   const { data: image } = api.image.getRandomImage.useQuery({
     page: 1,
     query: product?.title,
   });
-  const { mutate: updateWatchlist } =
-    api.watchlist.updateWatchlist.useMutation();
-  const { mutate: updateCart } = api.cart.updateCart.useMutation();
-  const { userDetail, updateWatchlistContext, updateCartContext } =
-    useStateContext();
+  const { mutate: updateCart } = api.cart.updateCart.useMutation({
+    onError: (err) => {
+      toast.error("You must be logged in in order to add or remove cart");
+      router.push("/login");
+      return err;
+    },
+  });
+  const { userDetail, updateCartContext } = useStateContext();
 
   return (
     <div className="group/item w-32 shrink-0 sm:w-64">
@@ -40,26 +46,14 @@ const ProductCard: FC<ProductCardProps> = ({ product, average, deal }) => {
             {deal.method === "percentDiscount" ? `-${deal.value}%` : ""}
           </button>
         )}
+        <div className="absolute right-2 top-2 ">
+          <Heart productId={product.id} />
+        </div>
+
         <button
           onClick={() => {
-            updateWatchlistContext(product.id);
-            updateWatchlist({ userId: userDetail.id, productId: product.id });
-          }}
-          className="absolute right-2 top-2 p-1 "
-        >
-          {userDetail.watchlist.includes(product.id) ? (
-            <AiFillHeart size={20} color="red" />
-          ) : (
-            <AiOutlineHeart color="white" size={20} />
-          )}
-        </button>
-        <button className="absolute right-2 top-10 p-1 ">
-          <AiOutlineEye color="white" size={20} />
-        </button>
-        <button
-          onClick={() => {
-            updateCartContext(product.id);
             updateCart({ userId: userDetail.id, productId: product.id });
+            updateCartContext(product.id);
           }}
           className={`absolute bottom-0 right-0 z-10 w-full translate-y-full bg-buttonBlack py-1.5 text-xs text-whitePrimary transition group-hover/item:translate-y-0 sm:text-base ${
             userDetail.cart.includes(product.id) && "bg-redPrimary"

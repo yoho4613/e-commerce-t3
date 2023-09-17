@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 import AdminNavBar from "~/components/navbar/AdminNavbar";
 import { StateContext } from "~/context/userDetailContext";
+import { Toaster } from "react-hot-toast";
 
 const MyApp: AppType = ({ Component, pageProps: { ...pageProps } }) => {
   const router = useRouter();
@@ -29,6 +30,7 @@ const MyApp: AppType = ({ Component, pageProps: { ...pageProps } }) => {
       </Head>
       <StateContext>
         <Provider>
+          <Toaster />
           {!isAdmin && <TopBanner />}
           <div className="m-auto max-w-[1280px]">
             {isAdmin ? <AdminNavBar /> : <Navbar />}

@@ -16,8 +16,8 @@ import {
   BsStarHalf,
 } from "react-icons/bs";
 import { TbTruckDelivery } from "react-icons/tb";
-import Heart from "~/components/Global/Heart";
-import Spinner from "~/components/Global/Spinner";
+import Heart from "~/components/global/Heart";
+import Spinner from "~/components/global/Spinner";
 import RelatedItems from "~/components/Products/RelatedItems";
 import { useStateContext } from "~/context/userDetailContext";
 import { getAverage } from "~/lib/helper";

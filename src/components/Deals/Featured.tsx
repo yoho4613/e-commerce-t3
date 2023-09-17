@@ -1,6 +1,6 @@
 import React, { FC } from "react";
 import { api } from "~/utils/api";
-import Spinner from "../Global/Spinner";
+import Spinner from "../global/Spinner";
 import Link from "next/link";
 
 // interface FeaturedProps {}

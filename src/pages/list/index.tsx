@@ -3,7 +3,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { BiFilterAlt } from "react-icons/bi";
 import { ImSortAmountDesc } from "react-icons/im";
-import Searchbar from "~/components/Global/Searchbar";
+import Searchbar from "~/components/global/Searchbar";
 import ProductCard from "~/components/Products/ProductCard";
 import CategoryNavBar from "~/components/navbar/CategoryNavBar";
 import { getAverage } from "~/lib/helper";

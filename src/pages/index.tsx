@@ -4,7 +4,7 @@ import Categories from "~/components/Categories/Categories";
 import Featured from "~/components/Deals/Featured";
 import MonthDeal from "~/components/Deals/MonthDeal";
 import TodayDeal from "~/components/Deals/TodayDeal";
-import Spinner from "~/components/Global/Spinner";
+import Spinner from "~/components/global/Spinner";
 import HotProducts from "~/components/Products/HotProducts";
 import Service from "~/components/Service/Service";
 import HeroBanner from "~/components/banners/HeroBanner";

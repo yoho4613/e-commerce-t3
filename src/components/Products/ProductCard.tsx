@@ -6,7 +6,7 @@ import { AiOutlineEye, AiOutlineHeart, AiFillHeart } from "react-icons/ai";
 import { BsStarHalf, BsStarFill, BsStar } from "react-icons/bs";
 import { useStateContext } from "~/context/userDetailContext";
 import { api } from "~/utils/api";
-import Heart from "../Global/Heart";
+import Heart from "../global/Heart";
 import { toast } from "react-hot-toast";
 import { useRouter } from "next/router";
 

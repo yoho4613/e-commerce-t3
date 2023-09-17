@@ -15,7 +15,7 @@ import { GiCancel } from "react-icons/gi";
 import { BiLogOut } from "react-icons/bi";
 import { useSession } from "next-auth/react";
 import { signOut } from "next-auth/react";
-import Searchbar from "../Global/Searchbar";
+import Searchbar from "../global/Searchbar";
 import { api } from "~/utils/api";
 import { useStateContext } from "~/context/userDetailContext";
 

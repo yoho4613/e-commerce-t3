@@ -21,7 +21,7 @@ export default function Home() {
   const [monthDeal, setMonthDeal] = useState<Sale | null>(null);
 
   useEffect(() => {
-    if (sales && sales.length) {
+    if (sales?.length) {
       if (todayDeal === null) {
         setTodayDeal(sales[sales.length - 1]!);
       }

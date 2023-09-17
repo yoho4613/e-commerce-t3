@@ -19,7 +19,7 @@ import Searchbar from "../Global/Searchbar";
 import { api } from "~/utils/api";
 import { useStateContext } from "~/context/userDetailContext";
 
-interface NavbarProps {}
+// interface NavbarProps {}
 
 interface User {
   name: string | null | undefined;
@@ -27,7 +27,7 @@ interface User {
   image: string | null | undefined;
 }
 
-const Navbar: FC<NavbarProps> = ({}) => {
+const Navbar: FC = ({}) => {
   const [mobileMenuOpened, setMobileMenuOpened] = useState(false);
   const [profileOpened, setProfileOpened] = useState(false);
   const popupRef = useRef<HTMLUListElement>(null);
@@ -167,7 +167,7 @@ const Navbar: FC<NavbarProps> = ({}) => {
                 My Reviews
               </Link>
               <button
-                onClick={() => signOut()}
+                onClick={() => void signOut()}
                 className="flex w-full items-center p-2 text-left"
               >
                 <BiLogOut color="white" className="mr-2 text-xl" />

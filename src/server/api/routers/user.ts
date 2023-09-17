@@ -79,10 +79,8 @@ export const userRouter = createTRPCRouter({
         where: { email: email },
       });
 
-      const passwordMatch = await bcrypt.compare(
-        password,
-        (user as User).password!,
-      );
+      const passwordMatch =
+        user?.password && (await bcrypt.compare(password, user?.password));
 
       const adminAccess =
         email === process.env.ADMIN_EMAIL &&

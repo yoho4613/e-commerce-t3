@@ -29,7 +29,7 @@ const TodayDeal: FC<TodayDealProps> = ({ deal }) => {
   }, [deal]);
   useEffect(() => {
     if (deal?.Products) {
-      setSuffledProducts(shuffle(deal?.Products!));
+      setSuffledProducts(shuffle(deal.Products));
     }
   }, [deal]);
 
@@ -37,7 +37,7 @@ const TodayDeal: FC<TodayDealProps> = ({ deal }) => {
     <div>
       <div className="flex items-center">
         <span className="mr-4 inline-block h-12 w-6 rounded-md bg-redPrimary" />
-        <h2 className="font-bold text-redPrimary">Today's</h2>
+        <h2 className="font-bold text-redPrimary">Today&apos;s</h2>
       </div>
       <div className="my-6 flex w-full flex-col items-start gap-4 pl-4 sm:flex-row sm:items-center sm:gap-0 sm:pl-0">
         <h2 className="text-xl tracking-widest sm:text-2xl md:text-3xl">

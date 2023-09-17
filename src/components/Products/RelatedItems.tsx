@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useState } from 'react'
 import { getAverage, shuffle } from '~/lib/helper'
 import ProductCard from './ProductCard'
 import { Product } from '@prisma/client'
@@ -8,6 +8,8 @@ interface RelatedItemsProps {
 }
 
 const RelatedItems: FC<RelatedItemsProps> = ({products}) => {
+
+  const suffledProducts = products.slice(0, 12)
   return (
     <div>
     <div className="flex items-center">
@@ -18,7 +20,7 @@ const RelatedItems: FC<RelatedItemsProps> = ({products}) => {
       <h2 className="text-xl tracking-widest sm:text-2xl md:text-3xl">Best Selling Products</h2>
     </div>
     <div className="flex flex-wrap justify-between ">
-      {shuffle(products?.slice(0, 12)).map((product, i) => (
+      {suffledProducts.map((product, i) => (
         <ProductCard key={i} product={product} average={getAverage(product.star)} />
       ))}
     </div>

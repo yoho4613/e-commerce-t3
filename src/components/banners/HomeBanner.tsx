@@ -4,9 +4,9 @@ import Link from "next/link";
 import { MdArrowForward } from "react-icons/md";
 import { api } from "~/utils/api";
 
-interface HomeBannerProps {}
+// interface HomeBannerProps {}
 
-const HomeBanner: FC<HomeBannerProps> = ({}) => {
+const HomeBanner: FC= ({}) => {
   const [currentBanner, setCurrentBanner] = useState(0);
   const { data: banners } = api.banner.getTopBanners.useQuery();
   useEffect(() => {

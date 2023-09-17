@@ -3,11 +3,11 @@ import { FC, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 
 interface SearchbarProps {
-  category?: string
-  subCategory?: string
+  category?: string;
+  subCategory?: string;
 }
 
-const Searchbar: FC<SearchbarProps> = ({category, subCategory}) => {
+const Searchbar: FC<SearchbarProps> = ({ category, subCategory }) => {
   const router = useRouter();
   const [input, setInput] = useState("");
   return (
@@ -15,7 +15,14 @@ const Searchbar: FC<SearchbarProps> = ({category, subCategory}) => {
       <form
         onSubmit={(e) => {
           e.preventDefault();
-          router.push(`/list?category=${category || "all"}&subCategory=${subCategory || "all"}&search=${input}`);
+          router
+            .push(
+              `/list?category=${category ?? "all"}&subCategory=${
+                subCategory ?? "all"
+              }&search=${input}`,
+            )
+            .then((res) => res)
+            .catch((err) => console.log(err));
         }}
       >
         <input

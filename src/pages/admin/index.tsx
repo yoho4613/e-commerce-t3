@@ -1,10 +1,10 @@
 import { FC } from 'react'
 
-interface indexProps {
+// interface indexProps {
   
-}
+// }
 
-const index: FC<indexProps> = ({}) => {
+const index: FC = ({}) => {
   return (
      <div>
        index

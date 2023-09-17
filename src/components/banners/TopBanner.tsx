@@ -1,10 +1,7 @@
 import React, { FC } from 'react';
 
-interface TopBannerProps {
-  
-};
 
-const TopBanner:FC<TopBannerProps> = ({}) => {
+const TopBanner:FC = ({}) => {
   
   return (
     <div className='bg-buttonBlack text-whitePrimary text-center py-2 text-sm sm:text-base'>

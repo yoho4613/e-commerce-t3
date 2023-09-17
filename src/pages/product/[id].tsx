@@ -27,6 +27,7 @@ import { api } from "~/utils/api";
 interface IProductDetailProps {
   id: string;
 }
+/* eslint-disable */
 interface Order {
   [key: string]: number | string | undefined;
 }
@@ -86,8 +87,8 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
             )}
           </div>
           <div className="grid grid-cols-5 gap-4">
-            {product.imgUrl.map((img) => (
-              <button onClick={() => setSelectedPhoto(img)}>
+            {product.imgUrl.map((img, i) => (
+              <button key={i} onClick={() => setSelectedPhoto(img)}>
                 <Image
                   className={`h-24 w-full rounded-lg ${
                     selectedPhoto === img && "border-2 border-redPrimary"
@@ -141,8 +142,8 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
           </p>
           <div className="pt-6">
             {product.attributes &&
-              Object.entries(product.attributes).map((attribute) => (
-                <div className="mb-4 flex flex-wrap items-center space-x-2 sm:flex-nowrap">
+              Object.entries(product.attributes).map((attribute, x) => (
+                <div key={x} className="mb-4 flex flex-wrap items-center space-x-2 sm:flex-nowrap">
                   {attribute.map((att, i) =>
                     i === 0 ? (
                       <h3 key={i} className="text-base sm:text-xl">

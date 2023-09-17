@@ -59,7 +59,6 @@ export const authOptions: NextAuthOptions = {
     GoogleProvider({
       clientId: env.GOOGLE_CLIENT_ID,
       clientSecret: env.GOOGLE_CLIENT_SECRET,
-      
     }),
     /**
      * ...add more providers here.
@@ -85,18 +84,20 @@ export const authOptions: NextAuthOptions = {
           where: { email: credentials?.email },
         });
 
-        if(!user || !user?.password) {
-          throw new Error("No user found")
+        if (!user?.password) {
+          throw new Error("No user found");
         }
 
+        const { password } = user;
+
         const passwordMatch = await bcrypt.compare(
-          credentials?.password!,
-          (user as User).password!,
+          credentials.password!,
+          password,
         );
 
         if (!passwordMatch) {
           throw new Error("Password not match");
-        } 
+        }
 
         return user;
       },

@@ -18,26 +18,27 @@ interface ProductCardProps {
 
 const ProductCard: FC<ProductCardProps> = ({ product, average, deal }) => {
   const router = useRouter();
+  // eslint-disable-next-line
   const { data: image } = api.image.getRandomImage.useQuery({
     page: 1,
     query: product?.title,
   });
   const { mutate: updateCart } = api.cart.updateCart.useMutation({
-    onError: (err) => {
+    onError: async (err) => {
       toast.error("You must be logged in in order to add or remove cart");
-      router.push("/login");
+      await router.push("/login");
       return err;
     },
   });
   const { userDetail, updateCartContext } = useStateContext();
-
+  const starArr = [1, 2, 3, 4, 5];
   return (
     <div className="group/item w-32 shrink-0 sm:w-64">
       <div className="relative h-24 overflow-y-hidden rounded-md border-2 sm:h-48">
         <Link href={`/product/${product.id}`}>
           <img
             className="m-auto h-full w-full"
-            src={image || ""}
+            src={(image as string) || ""}
             alt={product.title}
           />
         </Link>
@@ -75,7 +76,7 @@ const ProductCard: FC<ProductCardProps> = ({ product, average, deal }) => {
           </span>
         </p>
         <div className="flex">
-          {[...Array(5)].map((star, i) =>
+          {starArr.map((star, i) =>
             i < average && i + 1 > average ? (
               <BsStarHalf
                 key={i}

@@ -8,6 +8,7 @@ export const imageRouter = createTRPCRouter({
       const { page, query } = input;
       const url = `https://api.unsplash.com/search/photos?page=${page}&query=${query}&client_id=${process.env.IMAGE_API_KEY}`;
       const res = await fetch(url);
+      /* eslint-disable */
       const data = await res.json();
       const image = data.results[0].urls.regular
 

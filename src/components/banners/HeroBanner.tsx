@@ -3,9 +3,9 @@ import React, { FC } from "react";
 import bannerImg from "../../../public/heroBanner.png";
 import { api } from "~/utils/api";
 
-interface IHeroBannerProps {}
+// interface IHeroBannerProps {}
 
-const HeroBanner: FC<IHeroBannerProps> = ({}) => {
+const HeroBanner: FC= ({}) => {
   const { data: banner } = api.banner.getHeroBanner.useQuery();
 
   return (

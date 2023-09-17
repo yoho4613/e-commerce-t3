@@ -18,7 +18,7 @@ const Signup: FC = ({}) => {
     onSuccess: () => router.push("/login"),
   });
 
-  const handleSubmit: FormEventHandler = async (e) => {
+  const handleSubmit: FormEventHandler = (e) => {
     e.preventDefault();
     if (!form.name || !form.email || !form.password || !form.confirmPassword) {
       setWarning("Miss Information");
@@ -33,6 +33,7 @@ const Signup: FC = ({}) => {
         });
       }
     }
+    return;
   };
 
   return (

@@ -1,19 +1,17 @@
 import Image from "next/image";
-import React, { FC, FormEventHandler, useContext, useState } from "react";
+import React, { FC, FormEventHandler, useState } from "react";
 import loginBanner from "../../public/loginBanner.png";
 import { signIn } from "next-auth/react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { FcGoogle } from "react-icons/fc";
-import { api } from "~/utils/api";
-import { useStateContext } from "~/context/userDetailContext";
 
 const Login: FC = ({}) => {
   const router = useRouter();
   const [form, setForm] = useState({ email: "", password: "" });
   const [warning, setWarning] = useState<null | string>(null);
-  const { setUserDetail } = useStateContext();
-
+  
+  /* eslint-disable */
   const handleSubmit: FormEventHandler = async (e) => {
     e.preventDefault();
 
@@ -22,10 +20,12 @@ const Login: FC = ({}) => {
       redirect: false,
     });
 
-    if (!res?.ok) {
-      setWarning(res?.error!);
-    } else {
-      router.push("/");
+    if (res) {
+      if (!res.ok) {
+        setWarning(res.error);
+      } else {
+        await router.push("/");
+      }
     }
   };
 
@@ -99,12 +99,12 @@ const Login: FC = ({}) => {
           {warning && <p className="text-redPrimary">{warning}</p>}
           <button
             className="mt-4 rounded-md  border-2 px-5  py-2.5"
-            onClick={() => signIn("google")}
+            onClick={() => void signIn("google")}
           >
             <FcGoogle size={30} className="inline" /> Sign in with Google
           </button>
           <p className="mt-4 text-center text-sm">
-            Don't have account?{" "}
+            Don&apos;t have account?{" "}
             <Link className="underline" href="/signup">
               Sign Up
             </Link>

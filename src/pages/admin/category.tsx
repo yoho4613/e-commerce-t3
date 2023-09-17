@@ -1,9 +1,9 @@
 import { FC } from "react";
 import { api } from "~/utils/api";
 
-interface categoryProps {}
+// interface categoryProps {}
 
-const category: FC<categoryProps> = ({}) => {
+const category: FC = ({}) => {
   const {data: categories, refetch} = api.category.getAllCategories.useQuery();
   return (
     <div>
@@ -51,7 +51,7 @@ const category: FC<categoryProps> = ({}) => {
             </tr>
           </thead>
           <tbody>
-          {categories && categories.length ? categories.map((category) => (
+          {categories?.length ? categories.map((category) => (
                 <tr
                   key={category.id}
                   className={`border-b bg-white  decoration-red-600 dark:border-gray-700 dark:bg-gray-800`}

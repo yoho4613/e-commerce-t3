@@ -1,10 +1,10 @@
 import { FC } from 'react'
 
-interface settingProps {
+// interface settingProps {
   
-}
+// }
 
-const setting: FC<settingProps> = ({}) => {
+const setting: FC = ({}) => {
   return (
      <div>
        setting

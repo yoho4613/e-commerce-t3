@@ -1,6 +1,6 @@
 import { Product } from "@prisma/client";
 import { useRouter } from "next/router";
-import { FC, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { BiFilterAlt } from "react-icons/bi";
 import { ImSortAmountDesc } from "react-icons/im";
 import Searchbar from "~/components/Global/Searchbar";
@@ -9,13 +9,7 @@ import CategoryNavBar from "~/components/navbar/CategoryNavBar";
 import { getAverage } from "~/lib/helper";
 import { api } from "~/utils/api";
 
-interface FilterProps {
-  // query: { filter: string };
-}
-
-const index: FC<FilterProps> = () => {
-  const router = useRouter();
-  const filter = router.query;
+const ListPage = () => {
   const { data: categories } = api.category.withSubcategory.useQuery();
   const { data: products } = api.product.getAllProducts.useQuery();
   const [productLength, setProductLength] = useState(20);
@@ -48,15 +42,14 @@ const index: FC<FilterProps> = () => {
             </button>
           </div>
         </div>
-        <div className="flex flex-wrap space-y-2 justify-between items-start">
-          {filteredProducts &&
-            filteredProducts.map((product) => (
-              <ProductCard
-                key={product.id}
-                product={product}
-                average={getAverage(product.star)}
-              />
-            ))}
+        <div className="flex flex-wrap items-start justify-between space-y-2">
+          {filteredProducts?.map((product) => (
+            <ProductCard
+              key={product.id}
+              product={product}
+              average={getAverage(product.star)}
+            />
+          ))}
         </div>
         <div className="text-center">
           {filteredProducts &&
@@ -81,14 +74,4 @@ const index: FC<FilterProps> = () => {
   );
 };
 
-// export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-//   console.log("server",query)
-
-//   return {
-//     props: {
-//       query,
-//     },
-//   };
-// };
-
-export default index;
+export default ListPage;

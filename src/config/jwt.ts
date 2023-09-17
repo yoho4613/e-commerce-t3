@@ -18,6 +18,7 @@ const customConfig: {
   redisCacheExpiresIn: 60,
   origin: BASE_URL,
 
+  /* eslint-disable */
   dbUri: process.env.DATABASE_URL as string,
   accessTokenPrivateKey: process.env.ACCESS_TOKEN_PRIVATE_KEY as string,
   accessTokenPublicKey: process.env.ACCESS_TOKEN_PUBLIC_KEY as string,

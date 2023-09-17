@@ -18,9 +18,15 @@ interface ContextProp {
 
 const UserContext = createContext<ContextProp>({
   userDetail: defaultUserDetail,
-  setUserDetail: () => {},
-  updateWatchlistContext: () => {},
-  updateCartContext: () => {},
+  setUserDetail: (str) => {
+    return str;
+  },
+  updateWatchlistContext: (str) => {
+    return str;
+  },
+  updateCartContext: (str) => {
+    return str;
+  },
 });
 
 export const StateContext = ({ children }: { children: ReactNode }) => {

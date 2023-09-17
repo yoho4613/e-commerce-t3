@@ -5,7 +5,7 @@ import { verifyAuth } from "./lib/auth";
 import { prisma } from "./server/db";
 
 // This function can be marked `async` if using `await` inside
-export async function middleware(req: NextRequest) {
+export function middleware(req: NextRequest) {
   const token = req.cookies.get("next-auth.session-token")?.value;
   const adminToken = req.cookies.get("emarket-admin-token")?.value;
   

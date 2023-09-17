@@ -1,10 +1,10 @@
 import { FC } from 'react'
 
-interface productProps {
+// interface productProps {
   
-}
+// }
 
-const product: FC<productProps> = ({}) => {
+const product: FC = ({}) => {
   return (
      <div>
        product

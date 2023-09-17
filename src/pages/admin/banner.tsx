@@ -1,10 +1,10 @@
 import { FC } from 'react'
 
-interface bannerProps {
+// interface bannerProps {
   
-}
+// }
 
-const banner: FC<bannerProps> = ({}) => {
+const banner: FC = ({}) => {
   return (
      <div>
        banner

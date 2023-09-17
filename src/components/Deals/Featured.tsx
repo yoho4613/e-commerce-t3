@@ -3,9 +3,9 @@ import { api } from "~/utils/api";
 import Spinner from "../Global/Spinner";
 import Link from "next/link";
 
-interface FeaturedProps {}
+// interface FeaturedProps {}
 
-const Featured: FC<FeaturedProps> = ({}) => {
+const Featured: FC = ({}) => {
   const { data: banners } = api.banner.getNewBanners.useQuery(4);
 
   return (
@@ -32,9 +32,11 @@ const Featured: FC<FeaturedProps> = ({}) => {
             >
               <h3 className="text-2xl">{banners[0]?.title}</h3>
               <h4 className="w-1/2 text-sm">{banners[0]?.description}</h4>
-              <Link href={banners[0]?.link!} className="underline">
-                Shop Now
-              </Link>
+              {banners[0] && (
+                <Link href={banners[0].link} className="underline">
+                  Shop Now
+                </Link>
+              )}
             </div>
             <div className="flex h-[30rem] w-full flex-col gap-4 sm:w-1/2">
               <div
@@ -47,41 +49,48 @@ const Featured: FC<FeaturedProps> = ({}) => {
               >
                 <h3 className="text-2xl">{banners[1]?.title}</h3>
                 <h4 className="w-1/2 text-sm">{banners[1]?.description}</h4>
-                <Link href={banners[1]?.link!} className="underline">
-                  Shop Now
-                </Link>
+                {banners[1] && (
+                  <Link href={banners[1].link} className="underline">
+                    Shop Now
+                  </Link>
+                )}
               </div>
+
               <div className="flex grow gap-4">
-                <div
-                  style={{
-                    background: `url("${banners[2]?.imgUrl}")`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}
-                  className={
-                    "flex w-1/2 flex-col items-start justify-end gap-4 p-6"
-                  }
-                >
-                  <h3 className="text-2xl">{banners[2]?.title}</h3>
-                  <h4 className="w-1/2 text-sm">{banners[2]?.description}</h4>
-                  <Link href={banners[2]?.link!} className="underline">
-                    Shop Now
-                  </Link>
-                </div>
-                <div
-                  style={{
-                    background: `url("${banners[3]?.imgUrl}")`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                  }}
-                  className={`flex grow flex-col items-start justify-end gap-4 p-6`}
-                >
-                  <h3 className="text-2xl">{banners[3]?.title}</h3>
-                  <h4 className="w-1/2 text-sm">{banners[3]?.description}</h4>
-                  <Link href={banners[3]?.link!} className="underline">
-                    Shop Now
-                  </Link>
-                </div>
+                {banners[2] && (
+                  <div
+                    style={{
+                      background: `url("${banners[2].imgUrl}")`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
+                    className={
+                      "flex w-1/2 flex-col items-start justify-end gap-4 p-6"
+                    }
+                  >
+                    <h3 className="text-2xl">{banners[2].title}</h3>
+                    <h4 className="w-1/2 text-sm">{banners[2].description}</h4>
+                    <Link href={banners[2].link} className="underline">
+                      Shop Now
+                    </Link>
+                  </div>
+                )}
+                {banners[3] && (
+                  <div
+                    style={{
+                      background: `url("${banners[3].imgUrl}")`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
+                    className={`flex grow flex-col items-start justify-end gap-4 p-6`}
+                  >
+                    <h3 className="text-2xl">{banners[3].title}</h3>
+                    <h4 className="w-1/2 text-sm">{banners[3].description}</h4>
+                    <Link href={banners[3].link} className="underline">
+                      Shop Now
+                    </Link>
+                  </div>
+                )}
               </div>
             </div>
           </>

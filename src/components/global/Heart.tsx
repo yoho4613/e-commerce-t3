@@ -20,13 +20,16 @@ const Heart: FC<HeartProps> = ({ productId }) => {
         toast.error(
           "You must be logged in in order to add or remove watchlist",
         );
-        router.push("/login");
+        router
+          .push("/login")
+          .then((res) => res)
+          .catch((err) => console.log(err));
         return err;
       },
     },
   );
 
-  const handleUpdateWatchlist = async () => {
+  const handleUpdateWatchlist = () => {
     updateWatchlistContext(productId);
     updateWatchlist({
       userId: userDetail.id,

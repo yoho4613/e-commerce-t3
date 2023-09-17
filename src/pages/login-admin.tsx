@@ -9,9 +9,8 @@ const LoginAdmin: FC = ({}) => {
     password: "",
   });
   const { mutate: login } = api.admin.loginUser.useMutation({
-    onSuccess: (res) => {
-      console.log(res)
-      router.push("/admin");
+    onSuccess: async (res) => {
+      await router.push("/admin");
     },
     onError: (err) => {
       setWarning(err.message);
@@ -22,11 +21,11 @@ const LoginAdmin: FC = ({}) => {
   //   onSuccess: () => router.push('/')
   // })
 
-  const handleSubmit: FormEventHandler = async (e) => {
+  const handleSubmit: FormEventHandler = (e) => {
     e.preventDefault();
-    if(!form.email || !form.password) {
-      setWarning("Missing Information")
-      return
+    if (!form.email || !form.password) {
+      setWarning("Missing Information");
+      return;
     }
     login(form);
   };
@@ -60,7 +59,7 @@ const LoginAdmin: FC = ({}) => {
                   required
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
-                  className="block w-full p-2 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
@@ -93,7 +92,7 @@ const LoginAdmin: FC = ({}) => {
                   onChange={(e) =>
                     setForm({ ...form, password: e.target.value })
                   }
-                  className="block w-full p-2 rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  className="block w-full rounded-md border-0 p-2 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
                 />
               </div>
             </div>
@@ -107,7 +106,7 @@ const LoginAdmin: FC = ({}) => {
                 Sign in
               </button>
             </div>
-              {warning && <p className="text-redPrimary">{warning}</p>}
+            {warning && <p className="text-redPrimary">{warning}</p>}
           </form>
         </div>
       </div>

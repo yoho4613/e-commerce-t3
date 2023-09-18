@@ -1,13 +1,9 @@
-import { Product } from "@prisma/client";
 import { GetServerSideProps } from "next";
-import { getServerSession } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useState } from "react";
-import { toast } from "react-hot-toast";
 import { AiFillHeart, AiOutlineMinus } from "react-icons/ai";
-import { BiHeart } from "react-icons/bi";
 import {
   BsArrowRepeat,
   BsPlusLg,
@@ -19,9 +15,7 @@ import { TbTruckDelivery } from "react-icons/tb";
 import Heart from "~/components/global/Heart";
 import Spinner from "~/components/global/Spinner";
 import RelatedItems from "~/components/Products/RelatedItems";
-import { useStateContext } from "~/context/userDetailContext";
 import { getAverage } from "~/lib/helper";
-import { getServerAuthSession } from "~/server/auth";
 import { api } from "~/utils/api";
 
 interface IProductDetailProps {
@@ -143,7 +137,10 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
           <div className="pt-6">
             {product.attributes &&
               Object.entries(product.attributes).map((attribute, x) => (
-                <div key={x} className="mb-4 flex flex-wrap items-center space-x-2 sm:flex-nowrap">
+                <div
+                  key={x}
+                  className="mb-4 flex flex-wrap items-center space-x-2 sm:flex-nowrap"
+                >
                   {attribute.map((att, i) =>
                     i === 0 ? (
                       <h3 key={i} className="text-base sm:text-xl">
@@ -247,7 +244,9 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
 
       {/* Related Item */}
       <div>
-        {relatedProducts && <RelatedItems products={relatedProducts} />}
+        {relatedProducts && (
+          <RelatedItems products={relatedProducts} title="Related Item" />
+        )}
       </div>
     </main>
   );

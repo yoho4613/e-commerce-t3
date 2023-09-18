@@ -1,3 +1,4 @@
+import { useRouter } from "next/router";
 import {
   Dispatch,
   ReactNode,
@@ -6,8 +7,10 @@ import {
   useContext,
   useState,
 } from "react";
+import { toast } from "react-hot-toast";
 import { UserDetail } from "~/config/type";
 import { defaultUserDetail } from "~/constant/config";
+import { api } from "~/utils/api";
 
 interface ContextProp {
   userDetail: UserDetail;
@@ -30,6 +33,14 @@ const UserContext = createContext<ContextProp>({
 });
 
 export const StateContext = ({ children }: { children: ReactNode }) => {
+  const router = useRouter();
+  const { mutate: updateCart } = api.cart.updateCart.useMutation({
+    onError: async (err) => {
+      toast.error("You must be logged in in order to add or remove cart");
+      await router.push("/login");
+      return err;
+    },
+  });
   const [userDetail, setUserDetail] = useState<UserDetail>(defaultUserDetail);
 
   const updateWatchlistContext = (productId: string) => {
@@ -46,17 +57,19 @@ export const StateContext = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const updateCartContext = (productId: string) => {
-    if (userDetail.watchlist.includes(productId)) {
+   const updateCartContext = (productId: string) => {
+    if (userDetail.cart.includes(productId)) {
       setUserDetail((prev) => ({
         ...prev,
         cart: prev.cart.filter((id) => id !== productId),
       }));
+      updateCart({ userId: userDetail.id, productId: productId });
     } else {
       setUserDetail((prev) => ({
         ...prev,
         cart: [...prev.cart, productId],
       }));
+      updateCart({ userId: userDetail.id, productId: productId });
     }
   };
 

@@ -39,9 +39,28 @@ export interface Sale {
   Products: Product[];
 }
 
-export interface product {
+export interface Product {
   id: string;
   title: string;
+  type: string;
+  description: string;
+  rrp: string;
+  price: string;
+  imgUrl: string[];
+  attributes?: json;
+  review: String[];
+  star: number[];
+  delivery?: number;
+  stock: number;
+  category: Category;
+  categoryId: string;
+  subcategory?: Subcategory;
+  subcategoryId?: string;
+  order: Order[];
+  Sale?: Sale;
+  saleId?: string;
+  createdAt: Date;
+  updatedAt: Date;
 }
 
 export interface UserDetail {
@@ -54,5 +73,9 @@ export interface UserDetail {
   watchlist: string[];
   purchase: Prisma.JsonValue;
   address: string[];
-  role: string
+  role: string;
+}
+
+export interface CartItem extends Product {
+  quantity: number;
 }

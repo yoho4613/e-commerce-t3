@@ -1,3 +1,6 @@
+import { Product } from "@prisma/client";
+import { CartItem } from "~/config/type";
+
 export const getAverage = (arr: number[]) => {
   const total = arr.reduce((acc, next) => (acc += next), 0);
   const average = total / arr.length;
@@ -41,3 +44,21 @@ export function shuffle(array: any[]) {
 
   return array;
 }
+
+export const getTotalPrice = (cartItems: CartItem[]) => {
+  const subtotal = cartItems.reduce(
+    (acc, next) => (acc += Number(next.price) * next.quantity),
+    0,
+  );
+  const totalDelivery = cartItems.reduce(
+    (acc, next) => (acc += Number(next.delivery)),
+    0,
+  );
+  const totalPrice = subtotal + totalDelivery;
+
+  return {
+    subtotal,
+    totalDelivery: totalDelivery <= 0 ? "Free" : totalDelivery,
+    totalPrice,
+  };
+};

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure, userProcedure } from "../trpc";
+import { createTRPCRouter, userProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 
 export const watchlistRouter = createTRPCRouter({

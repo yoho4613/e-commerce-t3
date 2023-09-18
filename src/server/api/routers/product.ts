@@ -1,6 +1,7 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure, userProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
+
 
 export const productRouter = createTRPCRouter({
   getAllProducts: publicProcedure.query(async ({ ctx }) => {
@@ -85,7 +86,7 @@ export const productRouter = createTRPCRouter({
         });
       }
 
-      if(!category) {
+      if (!category) {
         throw new TRPCError({
           code: "CONFLICT",
           message: "Cannot find Category",
@@ -94,5 +95,30 @@ export const productRouter = createTRPCRouter({
 
       return category.Product;
     }),
-    
+  findProducts: userProcedure
+    .input(z.array(z.string()))
+    .query(async ({ ctx, input }) => {
+      const products = [];
+
+      if (input.length) {
+        for (let i = 0; i < input.length; i++) {
+          const result = await ctx.prisma.product.findFirst({
+            where: {
+              id: input[i],
+            },
+            include: {
+              Sale: true,
+            },
+          });
+          if (result) products.push(result);
+        }
+      } else {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "no product in list",
+        });
+      }
+
+      return products;
+    }),
 });

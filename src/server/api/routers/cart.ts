@@ -7,12 +7,15 @@ export const cartRouter = createTRPCRouter({
     .input(z.object({ userId: z.string(), productId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { userId, productId } = input;
+      console.log(userId)
+      console.log(productId)
 
       const user = await ctx.prisma.user.findFirst({
         where: {
           id: userId,
         },
       });
+
       if (!user) {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -29,7 +32,8 @@ export const cartRouter = createTRPCRouter({
             cart: user.watchlist.filter((id) => id !== productId),
           },
         });
-
+        console.log("remove from cart")
+        console.log(userUpdate.cart)
         return userUpdate;
       } else {
         const userUpdate = await ctx.prisma.user.update({
@@ -42,6 +46,8 @@ export const cartRouter = createTRPCRouter({
             },
           },
         });
+        console.log("add to cart")
+        console.log(userUpdate.cart)
         return userUpdate;
       }
     }),

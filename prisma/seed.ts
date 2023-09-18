@@ -203,7 +203,7 @@ async function main() {
   const products = [];
 
   for (const subcategory of subcategories) {
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 13; i++) {
       const product = {
         title: faker.commerce.productName(),
         type: subcategory.name,
@@ -292,8 +292,8 @@ async function main() {
     },
     {
       title: "Fashion Frenzy",
-      description: products[170]?.title || "",
-      link: `/${products[170]?.title}`,
+      description: products[90]?.title || "",
+      link: `/${products[90]?.title}`,
       imgUrl: image[3].urls.regular,
     },
     {

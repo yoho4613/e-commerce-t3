@@ -1,14 +1,10 @@
 import { Product, Sale } from "@prisma/client";
 import Link from "next/link";
 import React, { FC } from "react";
-import { AiOutlineEye, AiOutlineHeart, AiFillHeart } from "react-icons/ai";
-
 import { BsStarHalf, BsStarFill, BsStar } from "react-icons/bs";
 import { useStateContext } from "~/context/userDetailContext";
 import { api } from "~/utils/api";
 import Heart from "../global/Heart";
-import { toast } from "react-hot-toast";
-import { useRouter } from "next/router";
 
 interface ProductCardProps {
   product: Product;
@@ -17,21 +13,14 @@ interface ProductCardProps {
 }
 
 const ProductCard: FC<ProductCardProps> = ({ product, average, deal }) => {
-  const router = useRouter();
   // eslint-disable-next-line
   const { data: image } = api.image.getRandomImage.useQuery({
     page: 1,
     query: product?.title,
   });
-  const { mutate: updateCart } = api.cart.updateCart.useMutation({
-    onError: async (err) => {
-      toast.error("You must be logged in in order to add or remove cart");
-      await router.push("/login");
-      return err;
-    },
-  });
   const { userDetail, updateCartContext } = useStateContext();
   const starArr = [1, 2, 3, 4, 5];
+
   return (
     <div className="group/item w-32 shrink-0 sm:w-64">
       <div className="relative h-24 overflow-y-hidden rounded-md border-2 sm:h-48">
@@ -52,10 +41,7 @@ const ProductCard: FC<ProductCardProps> = ({ product, average, deal }) => {
         </div>
 
         <button
-          onClick={() => {
-            updateCart({ userId: userDetail.id, productId: product.id });
-            updateCartContext(product.id);
-          }}
+          onClick={() => updateCartContext(product.id)}
           className={`absolute bottom-0 right-0 z-10 w-full translate-y-full bg-buttonBlack py-1.5 text-xs text-whitePrimary transition group-hover/item:translate-y-0 sm:text-base ${
             userDetail.cart.includes(product.id) && "bg-redPrimary"
           }`}

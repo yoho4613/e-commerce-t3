@@ -8,6 +8,7 @@ import ProductCard from "~/components/Products/ProductCard";
 import CategoryNavBar from "~/components/navbar/CategoryNavBar";
 import { getAverage } from "~/lib/helper";
 import { api } from "~/utils/api";
+import Spinner from "~/components/global/Spinner";
 
 const ListPage = () => {
   const { data: categories } = api.category.withSubcategory.useQuery();
@@ -42,14 +43,16 @@ const ListPage = () => {
             </button>
           </div>
         </div>
-        <div className="flex flex-wrap items-start justify-between space-y-2">
-          {filteredProducts?.map((product) => (
+        <div className="flex flex-wrap items-start justify-between gap-4 ">
+          {filteredProducts ? filteredProducts.map((product) => (
             <ProductCard
               key={product.id}
               product={product}
               average={getAverage(product.star)}
             />
-          ))}
+          )) : (
+            <Spinner />
+          )}
         </div>
         <div className="text-center">
           {filteredProducts &&

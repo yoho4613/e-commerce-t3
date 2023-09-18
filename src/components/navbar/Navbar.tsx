@@ -40,7 +40,8 @@ const Navbar: FC = ({}) => {
       }
     },
   });
-  const { setUserDetail } = useStateContext();
+  const { setUserDetail, userDetail } = useStateContext();
+  console.log(userDetail);
 
   useEffect(() => {
     if (session.status === "authenticated") {
@@ -48,8 +49,6 @@ const Navbar: FC = ({}) => {
       getUserDetail({ email: session.data.user.email! });
     }
   }, [session]);
-
-
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -121,12 +120,26 @@ const Navbar: FC = ({}) => {
           <Searchbar />
         </div>
         <div className="relative flex items-center">
-          <button className="sm:mr-4">
-             <AiOutlineHeart className="text-lg sm:text-2xl" />
-          </button>
-          <button className="sm:mr-4">
+          <Link href={"/user/watchlist"} className="relative sm:mr-4">
+            <AiOutlineHeart className="text-lg sm:text-2xl" />
+            {userDetail.watchlist.length ? (
+              <span className="absolute text-center -right-1 -top-1 h-4 w-4 rounded-full bg-redPrimary text-xs text-whitePrimary ">
+                {userDetail.watchlist.length}
+              </span>
+            ) : (
+              ""
+            )}
+          </Link>
+          <Link href={"/user/cart"} className="relative sm:mr-4">
             <AiOutlineShoppingCart className="text-lg sm:text-2xl" />
-          </button>
+            {userDetail.cart.length ? (
+              <span className="absolute text-center -right-1 -top-1 h-4 w-4 rounded-full bg-redPrimary text-xs text-whitePrimary ">
+                {userDetail.cart.length}
+              </span>
+            ) : (
+              ""
+            )}
+          </Link>
           {user && (
             <button onClick={() => setProfileOpened((prev) => !prev)}>
               {(user as User).image ? (

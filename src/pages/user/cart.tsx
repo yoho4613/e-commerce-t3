@@ -29,6 +29,7 @@ const Cart: FC = ({}) => {
             <th>Price</th>
             <th>Quantity</th>
             <th>Subtotal</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody className="">
@@ -66,6 +67,7 @@ const Cart: FC = ({}) => {
                   />
                 </td>
                 <td>${Number(product.price) * product.quantity}</td>
+                <td><input type="checkbox" /></td>
               </tr>
             ))}
         </tbody>

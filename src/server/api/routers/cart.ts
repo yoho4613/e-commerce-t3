@@ -29,7 +29,7 @@ export const cartRouter = createTRPCRouter({
             id: userId,
           },
           data: {
-            cart: user.watchlist.filter((id) => id !== productId),
+            cart: user.cart.filter((id) => id !== productId),
           },
         });
         console.log("remove from cart")

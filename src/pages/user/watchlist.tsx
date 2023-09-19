@@ -2,6 +2,7 @@ import Link from "next/link";
 import { FC, useState } from "react";
 import { BsTrash } from "react-icons/bs";
 import RelatedItems from "~/components/Products/RelatedItems";
+import Spinner from "~/components/global/Spinner";
 import { useStateContext } from "~/context/userDetailContext";
 import { api } from "~/utils/api";
 
@@ -10,21 +11,26 @@ import { api } from "~/utils/api";
 const Watchlist: FC = ({}) => {
   const { userDetail, updateWatchlistContext, updateCartContext } =
     useStateContext();
-  const { data: products } = api.product.findProducts.useQuery(
+  const { data: products, isLoading } = api.product.findProducts.useQuery(
     userDetail.watchlist,
   );
 
   const { data: relatedProducts } = api.product.findRelatedProducts.useQuery({
-    id:
-      userDetail.watchlist[
-        Math.floor(Math.random() * userDetail.watchlist.length)
-      ] ?? "",
+    id: userDetail.watchlist[0] ?? "",
   });
   const [popupProduct, setPopupProduct] = useState<string | null>(null);
 
   const handleUpdateWatchlist = (productId: string) => {
     updateWatchlistContext(productId);
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex h-screen justify-center items-center">
+        <Spinner />
+      </div>
+    );
+  }
 
   const WatchlistPopup = () => {
     return (

@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { createTRPCRouter, publicProcedure } from "../trpc";
+import { createTRPCRouter, publicProcedure, userProcedure } from "../trpc";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { SignJWT } from "jose";
@@ -130,7 +130,9 @@ export const userRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { email } = input;
-      const token = ctx.req.cookies["next-auth.session-token"] ?? ctx.req.cookies["__Secure-next-auth.session-token"];
+      const token =
+        ctx.req.cookies["next-auth.session-token"] ??
+        ctx.req.cookies["__Secure-next-auth.session-token"];
 
       if (!token) {
         throw new TRPCError({
@@ -199,6 +201,59 @@ export const userRouter = createTRPCRouter({
 
     return { session };
   }),
+  addressRegister: userProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        name: z.string(),
+        address: z.string(),
+        city: z.string(),
+        code: z.string(),
+        country: z.string(),
+        contact: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { id, name, address, city, code, country, contact } = input;
+      if (!id) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "User id is missing",
+        });
+      }
+      if (!name || !address || !city || !code || !country || !contact) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Missing Delivery information",
+        });
+      }
+
+      const newAddress = await ctx.prisma.user.update({
+        where: {
+          id,
+        },
+        data: {
+          address: {
+            push: {
+              name,
+              address,
+              city,
+              code,
+              country,
+              contact,
+            },
+          },
+        },
+      });
+      if (!newAddress) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "Failed create new Address",
+        });
+      }
+
+      return newAddress;
+    }),
   // deleteUser: adminProcedure
   //   .input(
   //     z.object({

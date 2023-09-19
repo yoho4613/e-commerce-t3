@@ -45,7 +45,7 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
         setSelectedPhoto(product.imgUrl[0]!);
       }
       if (product.attributes) {
-        setOrderDetail({ quantity: 0 });
+        setOrderDetail({ quantity: 1 });
         Object.keys(product.attributes).map((key) => {
           setOrderDetail((prev) => ({
             ...prev,
@@ -55,6 +55,11 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
       }
     }
   }, [product]);
+  
+  const handleAddCart = async () => {
+    console.log(orderDetail)
+
+  }
 
   if (!product) {
     return (
@@ -212,7 +217,7 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
                 <AiOutlineMinus className="text-sm sm:text-xl" />
               </button>
             </div>
-            <button className="btn--red w-24 text-xs sm:w-36 sm:text-base">
+            <button onClick={handleAddCart} className="btn--red w-24 text-xs sm:w-36 sm:text-base">
               Buy Now
             </button>
             <div className="rounded-md border-2 hover:border-transparent hover:bg-redPrimary hover:text-whitePrimary">

@@ -58,7 +58,7 @@ model User {
     cart          String[]     @default([])
     watchlist     String[]     @default([])
     purchase      Json?
-    address       String[]     @default([])
+    address       Json[]     @default([])
     Order         Order[]
     role          RoleEnumType @default(customer)
 }

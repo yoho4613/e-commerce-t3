@@ -13,13 +13,12 @@ interface ProductCardProps {
 }
 
 const ProductCard: FC<ProductCardProps> = ({ product, average, deal }) => {
-  // eslint-disable-next-line
-  const { data: image } = api.image.getRandomImage.useQuery({
-    page: 1,
-    query: product?.title,
-  });
   const { userDetail, updateCartContext } = useStateContext();
   const starArr = [1, 2, 3, 4, 5];
+
+  if (!product) {
+    return <div></div>;
+  }
 
   return (
     <div className="group/item w-32 shrink-0 sm:w-64">
@@ -27,7 +26,7 @@ const ProductCard: FC<ProductCardProps> = ({ product, average, deal }) => {
         <Link href={`/product/${product.id}`}>
           <img
             className="m-auto h-full w-full"
-            src={(image as string) || ""}
+            src={product.imgUrl[0] || ""}
             alt={product.title}
           />
         </Link>

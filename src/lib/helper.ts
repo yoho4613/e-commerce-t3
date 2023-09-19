@@ -47,11 +47,12 @@ export function shuffle(array: any[]) {
 
 export const getTotalPrice = (cartItems: CartItem[]) => {
   const subtotal = cartItems.reduce(
-    (acc, next) => (acc += Number(next.price) * next.quantity),
+    (acc, next) =>
+      next.checked ? (acc += Number(next.price) * next.quantity) : acc,
     0,
   );
   const totalDelivery = cartItems.reduce(
-    (acc, next) => (acc += Number(next.delivery)),
+    (acc, next) => (next.checked ? (acc += Number(next.delivery)) : acc),
     0,
   );
   const totalPrice = subtotal + totalDelivery;

@@ -72,10 +72,20 @@ export interface UserDetail {
   cart: string[];
   watchlist: string[];
   purchase: Prisma.JsonValue;
-  address: string[];
+  address: Address[];
   role: string;
 }
 
 export interface CartItem extends Product {
   quantity: number;
+  checked: boolean;
+}
+
+export interface Address {
+  name: string;
+  address: string;
+  city: string;
+  code: string;
+  country: string;
+  contact: string;
 }

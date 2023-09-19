@@ -8,7 +8,7 @@ import {
   useState,
 } from "react";
 import { toast } from "react-hot-toast";
-import { UserDetail } from "~/config/type";
+import { Address, UserDetail } from "~/config/type";
 import { defaultUserDetail } from "~/constant/config";
 import { api } from "~/utils/api";
 
@@ -17,6 +17,7 @@ interface ContextProp {
   setUserDetail: Dispatch<SetStateAction<UserDetail>>;
   updateWatchlistContext: (productId: string) => void;
   updateCartContext: (productId: string) => void;
+  addNewAddressContext: ( address: Address) => void;
 }
 
 const UserContext = createContext<ContextProp>({
@@ -30,6 +31,9 @@ const UserContext = createContext<ContextProp>({
   updateCartContext: (str) => {
     return str;
   },
+  addNewAddressContext: (str) => {
+    return str;
+  },
 });
 
 export const StateContext = ({ children }: { children: ReactNode }) => {
@@ -41,6 +45,10 @@ export const StateContext = ({ children }: { children: ReactNode }) => {
       return err;
     },
   });
+  const { mutate: addNewAddress } = api.user.addressRegister.useMutation({
+    onError: (err) => toast.error(err.message),
+  });
+  
   const [userDetail, setUserDetail] = useState<UserDetail>(defaultUserDetail);
 
   const updateWatchlistContext = (productId: string) => {
@@ -57,7 +65,7 @@ export const StateContext = ({ children }: { children: ReactNode }) => {
     }
   };
 
-   const updateCartContext = (productId: string) => {
+  const updateCartContext = (productId: string) => {
     if (userDetail.cart.includes(productId)) {
       setUserDetail((prev) => ({
         ...prev,
@@ -73,6 +81,14 @@ export const StateContext = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const addNewAddressContext = ( address: Address) => {
+    setUserDetail((prev) => ({
+      ...prev,
+      address: [...prev.address, address],
+    }));
+    addNewAddress({ id: userDetail.id, ...address });
+  };
+
   return (
     <UserContext.Provider
       value={{
@@ -80,6 +96,7 @@ export const StateContext = ({ children }: { children: ReactNode }) => {
         setUserDetail,
         updateWatchlistContext,
         updateCartContext,
+        addNewAddressContext
       }}
     >
       {children}

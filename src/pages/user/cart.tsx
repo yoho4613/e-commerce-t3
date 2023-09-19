@@ -19,7 +19,7 @@ const Cart: FC = ({}) => {
   const { data: products, isLoading } = api.product.findProducts.useQuery(
     userDetail.cart,
   );
-  console.log(userDetail);
+
   const { mutate: checkout } = api.checkout.checkoutSession.useMutation({
     onSuccess: (res) => router.push(res.url),
   });

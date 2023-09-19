@@ -42,7 +42,6 @@ const Navbar: FC = ({}) => {
   });
   const { setUserDetail, userDetail } = useStateContext();
 
-
   useEffect(() => {
     if (session.status === "authenticated") {
       setUser(session.data.user);
@@ -123,7 +122,7 @@ const Navbar: FC = ({}) => {
           <Link href={"/user/watchlist"} className="relative sm:mr-4">
             <AiOutlineHeart className="text-lg sm:text-2xl" />
             {userDetail.watchlist.length ? (
-              <span className="absolute text-center -right-1 -top-1 h-4 w-4 rounded-full bg-redPrimary text-xs text-whitePrimary ">
+              <span className="absolute -right-1 -top-1 h-4 w-4 rounded-full bg-redPrimary text-center text-xs text-whitePrimary ">
                 {userDetail.watchlist.length}
               </span>
             ) : (
@@ -133,7 +132,7 @@ const Navbar: FC = ({}) => {
           <Link href={"/user/cart"} className="relative sm:mr-4">
             <AiOutlineShoppingCart className="text-lg sm:text-2xl" />
             {userDetail.cart.length ? (
-              <span className="absolute text-center -right-1 -top-1 h-4 w-4 rounded-full bg-redPrimary text-xs text-whitePrimary ">
+              <span className="absolute -right-1 -top-1 h-4 w-4 rounded-full bg-redPrimary text-center text-xs text-whitePrimary ">
                 {userDetail.cart.length}
               </span>
             ) : (

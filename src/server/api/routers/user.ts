@@ -4,12 +4,11 @@ import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { SignJWT } from "jose";
 import { nanoid } from "nanoid";
-// import { getJwtSecretKey } from "~/lib/auth";
 import cookie from "cookie";
 import { getJwtSecretKey } from "~/lib/auth";
-import { User } from "@prisma/client";
 import { getServerSession } from "next-auth";
 import { authOptions } from "~/server/auth";
+
 
 export const userRouter = createTRPCRouter({
   // getAllUsers: adminProcedure.query(async ({ ctx, input }) => {
@@ -166,6 +165,8 @@ export const userRouter = createTRPCRouter({
         address,
         role,
       } = user;
+
+
 
       return {
         id,

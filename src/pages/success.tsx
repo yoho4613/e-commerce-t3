@@ -1,10 +1,10 @@
 import { FC } from 'react'
 
-interface successProps {
+// interface successProps {
   
-}
+// }
 
-const success: FC<successProps> = ({}) => {
+const success: FC = ({}) => {
   return (
      <div>
        success

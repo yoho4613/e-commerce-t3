@@ -9,6 +9,7 @@ const stripe = new _stripe(process.env.STRIPE_SECRET_KEY!, {
 });
 
 export const checkoutRouter = createTRPCRouter({
+  /* eslint-disable */
   checkoutSession: publicProcedure
     .input(
       z.object({
@@ -99,6 +100,8 @@ export const checkoutRouter = createTRPCRouter({
           success_url: `${input.url}/success`,
           cancel_url: `${input.url}/`,
         });
+
+
 
         console.log(session);
         return {

@@ -2,7 +2,6 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure, userProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 
-
 export const productRouter = createTRPCRouter({
   getAllProducts: publicProcedure.query(async ({ ctx }) => {
     const products = await ctx.prisma.product.findMany();
@@ -101,10 +100,10 @@ export const productRouter = createTRPCRouter({
       const products = [];
 
       if (input.length) {
-        for (let i = 0; i < input.length; i++) {
+        for (const id of input) {
           const result = await ctx.prisma.product.findFirst({
             where: {
-              id: input[i],
+              id,
             },
             include: {
               Sale: true,

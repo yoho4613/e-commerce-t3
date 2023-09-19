@@ -5,9 +5,9 @@ import RelatedItems from "~/components/Products/RelatedItems";
 import { useStateContext } from "~/context/userDetailContext";
 import { api } from "~/utils/api";
 
-interface WatchlistProps {}
+// interface WatchlistProps {}
 
-const Watchlist: FC<WatchlistProps> = ({}) => {
+const Watchlist: FC = ({}) => {
   const { userDetail, updateWatchlistContext, updateCartContext } =
     useStateContext();
   const { data: products } = api.product.findProducts.useQuery(
@@ -18,7 +18,7 @@ const Watchlist: FC<WatchlistProps> = ({}) => {
     id:
       userDetail.watchlist[
         Math.floor(Math.random() * userDetail.watchlist.length)
-      ] || "",
+      ] ?? "",
   });
   const [popupProduct, setPopupProduct] = useState<string | null>(null);
 
@@ -76,7 +76,7 @@ const Watchlist: FC<WatchlistProps> = ({}) => {
               <Link href={`/product/${product.id}`}>
                 <img
                   className="m-auto h-full w-full"
-                  src={(product.imgUrl[0] as string) || ""}
+                  src={product.imgUrl[0]! || ""}
                   alt={product.title}
                 />
               </Link>

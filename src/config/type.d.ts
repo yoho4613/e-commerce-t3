@@ -48,7 +48,7 @@ export interface Product {
   price: string;
   imgUrl: string[];
   attributes?: json;
-  review: String[];
+  review: string[];
   star: number[];
   delivery?: number;
   stock: number;

@@ -122,7 +122,7 @@ export const adminRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const { email } = input;
-      const token = ctx.req.cookies["next-auth.session-token"];
+      const token = ctx.req.cookies["next-auth.session-token"] ?? ctx.req.cookies["__Secure-next-auth.session-token"];
 
       if (!token) {
         throw new TRPCError({

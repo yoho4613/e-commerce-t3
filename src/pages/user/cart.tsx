@@ -21,11 +21,11 @@ const Cart: FC = ({}) => {
   }, [products]);
   console.log(products);
   return (
-    <div className="m-auto py-12 max-w-[1280px]">
+    <div className="m-auto max-w-[1280px] py-12">
       <table className="relative w-full space-y-2 sm:mx-auto  ">
         <thead>
           <tr className="mx-6 border-2">
-            <th className="text-start px-4">Product</th>
+            <th className="px-4 text-start">Product</th>
             <th>Price</th>
             <th>Quantity</th>
             <th>Subtotal</th>
@@ -33,43 +33,44 @@ const Cart: FC = ({}) => {
           </tr>
         </thead>
         <tbody className="">
-          {cartItems &&
-            cartItems.map((product) => (
-              <tr
-                key={product.id}
-                className="mx-6 h-24 overflow-hidden border-2 text-center"
-              >
-                <th className="text-start px-4">
-                  <Image
-                    className="mr-4 inline h-full"
-                    src={product.imgUrl[0]!}
-                    alt={product.title}
-                    width={100}
-                    height={100}
-                  />
-                  <span>{product.title}</span>
-                </th>
-                <td>${product.price}</td>
-                <td>
-                  <input
-                    className="w-12 rounded-md border-2 p-1"
-                    type="number"
-                    value={product.quantity}
-                    onChange={(e) =>
-                      setCartItems((prev) =>
-                        prev.map((p) =>
-                          p.id === product.id
-                            ? { ...p, quantity: Number(e.target.value) }
-                            : p,
-                        ),
-                      )
-                    }
-                  />
-                </td>
-                <td>${Number(product.price) * product.quantity}</td>
-                <td><input type="checkbox" /></td>
-              </tr>
-            ))}
+          {cartItems.map((product) => (
+            <tr
+              key={product.id}
+              className="mx-6 h-24 overflow-hidden border-2 text-center"
+            >
+              <th className="px-4 text-start">
+                <Image
+                  className="mr-4 inline h-full"
+                  src={product.imgUrl[0]!}
+                  alt={product.title}
+                  width={100}
+                  height={100}
+                />
+                <span>{product.title}</span>
+              </th>
+              <td>${product.price}</td>
+              <td>
+                <input
+                  className="w-12 rounded-md border-2 p-1"
+                  type="number"
+                  value={product.quantity}
+                  onChange={(e) =>
+                    setCartItems((prev) =>
+                      prev.map((p) =>
+                        p.id === product.id
+                          ? { ...p, quantity: Number(e.target.value) }
+                          : p,
+                      ),
+                    )
+                  }
+                />
+              </td>
+              <td>${Number(product.price) * product.quantity}</td>
+              <td>
+                <input type="checkbox" />
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
       <div className="my-8 flex justify-between">
@@ -78,11 +79,11 @@ const Cart: FC = ({}) => {
         </button>
         <button className="rounded-sm border-2 px-4 py-2">Update Cart</button>
       </div>
-      <div className="flex w-full mt-12 justify-between">
+      <div className="mt-12 flex w-full justify-between">
         <div>
           <input
             type="text"
-            className="mr-2 rounded-sm border-2 p-1 w-64"
+            className="mr-2 w-64 rounded-sm border-2 p-1"
             placeholder="Coupon Code"
           />
           <button className="btn--red px-7 py-2">Apply Coupon</button>
@@ -101,7 +102,9 @@ const Cart: FC = ({}) => {
             <p className="pb-4">Total:</p>
             <span>${getTotalPrice(cartItems).totalPrice}</span>
           </div>
-          <Link href="" className="btn--red px-4 py-2 text-center">Process to Checkout</Link>
+          <Link href="" className="btn--red px-4 py-2 text-center">
+            Process to Checkout
+          </Link>
         </div>
       </div>
     </div>

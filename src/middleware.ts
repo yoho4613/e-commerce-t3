@@ -1,12 +1,10 @@
 // middleware.ts
 import type { NextRequest } from "next/server";
 import { NextResponse } from "next/server";
-import { verifyAuth } from "./lib/auth";
-import { prisma } from "./server/db";
-
+// __Secure-next-auth.session-token
 // This function can be marked `async` if using `await` inside
 export function middleware(req: NextRequest) {
-  const token = req.cookies.get("next-auth.session-token")?.value;
+  const token = req.cookies.get("next-auth.session-token")?.value ?? req.cookies.get("__Secure-next-auth.session-token")?.value;
   const adminToken = req.cookies.get("emarket-admin-token")?.value;
   
   // validate the user is authenticated

@@ -117,7 +117,7 @@ const isAdmin = t.middleware(async ({ ctx, next }) => {
 
 const isUser = t.middleware(async ({ ctx, next }) => {
   const { req } = ctx;
-  const token = req.cookies["next-auth.session-token"];
+  const token = req.cookies["next-auth.session-token"] ?? req.cookies["__Secure-next-auth.session-token"];
 
   if (!token) {
     throw new TRPCError({

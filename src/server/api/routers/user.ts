@@ -130,7 +130,7 @@ export const userRouter = createTRPCRouter({
     )
     .mutation(async ({ ctx, input }) => {
       const { email } = input;
-      const token = ctx.req.cookies["next-auth.session-token"];
+      const token = ctx.req.cookies["next-auth.session-token"] ?? ctx.req.cookies["__Secure-next-auth.session-token"];
 
       if (!token) {
         throw new TRPCError({

@@ -72,7 +72,7 @@ export interface UserDetail {
   cart: string[];
   watchlist: string[];
   purchase: Prisma.JsonValue;
-  address: Address[];
+  address: Prisma.JsonArray;
   role: string;
 }
 

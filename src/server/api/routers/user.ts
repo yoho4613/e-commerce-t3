@@ -8,7 +8,8 @@ import cookie from "cookie";
 import { getJwtSecretKey } from "~/lib/auth";
 import { getServerSession } from "next-auth";
 import { authOptions } from "~/server/auth";
-
+import { Prisma } from "@prisma/client";
+import { Address } from "~/config/type";
 
 export const userRouter = createTRPCRouter({
   // getAllUsers: adminProcedure.query(async ({ ctx, input }) => {
@@ -146,12 +147,15 @@ export const userRouter = createTRPCRouter({
         },
       });
 
+
       if (!user) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "No user found",
         });
       }
+   
+      
 
       const {
         id,
@@ -165,8 +169,6 @@ export const userRouter = createTRPCRouter({
         address,
         role,
       } = user;
-
-
 
       return {
         id,

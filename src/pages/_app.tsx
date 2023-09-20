@@ -30,14 +30,16 @@ const MyApp: AppType = ({ Component, pageProps: { ...pageProps } }) => {
       </Head>
       <StateContext>
         <Provider>
-          <Toaster />
-          {!isAdmin && <TopBanner />}
-          <div className="m-auto max-w-[1280px]">
-            {isAdmin ? <AdminNavBar /> : <Navbar />}
-            <div className="absolute left-0 w-[100vw] border-b-2" />
-          </div>
-          <Component {...pageProps} />
-          <Footer />
+          <main className="overflow-hidden w-screen">
+            <Toaster />
+            {!isAdmin && <TopBanner />}
+            <div className="m-auto w-full max-w-[1280px]">
+              {isAdmin ? <AdminNavBar /> : <Navbar />}
+              <div className="absolute left-0 w-[100vw] border-b-2"></div>
+            </div>
+            <Component {...pageProps} />
+            <Footer />
+          </main>
         </Provider>
       </StateContext>
     </>

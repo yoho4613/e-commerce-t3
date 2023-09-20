@@ -41,7 +41,7 @@ export default function Home() {
 
   return (
     <>
-      <main className="m-auto w-screen max-w-[1280px] md:px-6">
+      <div className="m-auto w-screen max-w-[1280px] md:px-6">
         <div className="flex w-full flex-col md:flex-row ">
           {withSubCategory ? (
             <CategoryNavBar categories={withSubCategory} />
@@ -68,7 +68,7 @@ export default function Home() {
           <Featured />
         </div>
         <Service />
-      </main>
+      </div>
     </>
   );
 }

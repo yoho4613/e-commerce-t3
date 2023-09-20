@@ -27,7 +27,7 @@ const ListPage = () => {
   }, [products]);
 
   return (
-    <div className="flex">
+    <div className="flex flex-col sm:flex-row">
       {categories && <CategoryNavBar categories={categories} />}
       <div className="w-full p-4">
         <div className="relative mb-6 flex grow">

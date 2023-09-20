@@ -18,6 +18,7 @@ import { signOut } from "next-auth/react";
 import Searchbar from "../global/Searchbar";
 import { api } from "~/utils/api";
 import { useStateContext } from "~/context/userDetailContext";
+import { useRouter } from "next/router";
 
 // interface NavbarProps {}
 
@@ -48,6 +49,7 @@ const Navbar: FC = ({}) => {
       getUserDetail({ email: session.data.user.email! });
     }
   }, [session]);
+
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -83,12 +85,12 @@ const Navbar: FC = ({}) => {
           }`}
         >
           <li className="hover-underline-animation bg-slate-200 p-2.5 md:bg-transparent md:p-0">
-            <Link className="inline-block w-full" href="/">
+            <Link onClick={() => setMobileMenuOpened(false)} className="inline-block w-full" href="/">
               Home
             </Link>
           </li>
           <li className="hover-underline-animation bg-slate-200 p-2.5 md:bg-transparent md:p-0">
-            <Link
+            <Link onClick={() => setMobileMenuOpened(false)}
               className="inline-block w-full"
               href="/list?category=all&subcategory=all"
             >
@@ -96,18 +98,18 @@ const Navbar: FC = ({}) => {
             </Link>
           </li>
           <li className="hover-underline-animation bg-slate-200 p-2.5 md:bg-transparent md:p-0">
-            <Link className="inline-block w-full" href="/contact">
+            <Link onClick={() => setMobileMenuOpened(false)} className="inline-block w-full" href="/contact">
               Contact
             </Link>
           </li>
           <li className="hover-underline-animation bg-slate-200 p-2.5 md:bg-transparent md:p-0">
-            <Link className="inline-block w-full" href="/">
+            <Link onClick={() => setMobileMenuOpened(false)} className="inline-block w-full" href="/">
               About
             </Link>
           </li>
           {!user && (
             <li className="hover-underline-animation bg-slate-200 p-2.5 md:bg-transparent md:p-0">
-              <Link className="inline-block w-full" href="/login">
+              <Link onClick={() => setMobileMenuOpened(false)} className="inline-block w-full" href="/login">
                 Login
               </Link>
             </li>

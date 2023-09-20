@@ -1,6 +1,6 @@
-import React, { FC, useState } from "react";
+import React, { FC } from "react";
 import ProductCard from "../Products/ProductCard";
-import { getAverage, shuffle } from "~/lib/helper";
+import {  shuffle } from "~/lib/helper";
 import { Sale } from "~/config/type";
 import { Product } from "@prisma/client";
 
@@ -34,7 +34,6 @@ const MonthDeal: FC<MonthDealProps> = ({ deal }) => {
             <ProductCard
               key={i}
               product={product}
-              average={getAverage(product.star)}
               deal={deal}
             />
           ))}

@@ -13,12 +13,10 @@ import { BsPerson } from "react-icons/bs";
 import { PiShoppingBagOpenLight } from "react-icons/pi";
 import { GiCancel } from "react-icons/gi";
 import { BiLogOut } from "react-icons/bi";
-import { useSession } from "next-auth/react";
-import { signOut } from "next-auth/react";
+import { useSession, signOut } from "next-auth/react";
 import Searchbar from "../global/Searchbar";
 import { api } from "~/utils/api";
 import { useStateContext } from "~/context/userDetailContext";
-import { useRouter } from "next/router";
 
 // interface NavbarProps {}
 
@@ -32,6 +30,7 @@ const Navbar: FC = ({}) => {
   const [mobileMenuOpened, setMobileMenuOpened] = useState(false);
   const [profileOpened, setProfileOpened] = useState(false);
   const popupRef = useRef<HTMLUListElement>(null);
+  const profileRef = useRef<HTMLDivElement>(null)
   const [user, setUser] = useState<User | { id: string } | null>(null);
   const session = useSession();
   const { mutate: getUserDetail } = api.user.findUser.useMutation({
@@ -50,6 +49,18 @@ const Navbar: FC = ({}) => {
     }
   }, [session]);
 
+
+  useEffect(() => {
+    const handleClickOutside = (e: MouseEvent) => {
+      if (e.target instanceof HTMLElement) {
+        if (profileRef.current && !profileRef.current.contains(e.target)) {
+          setProfileOpened(false);
+          document.removeEventListener("mousedown", handleClickOutside);
+        }
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+  }, [profileOpened]);
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -138,7 +149,7 @@ const Navbar: FC = ({}) => {
                 {userDetail.cart.length}
               </span>
             ) : (
-              ""
+              <></>
             )}
           </Link>
           {user && (
@@ -158,6 +169,7 @@ const Navbar: FC = ({}) => {
           )}
           {profileOpened && (
             <div
+              ref={profileRef}
               className="absolute right-0 top-6 z-[999] flex w-32 flex-col rounded-sm px-2.5 text-sm text-whitePrimary sm:w-[20rem] sm:text-lg"
               style={{ background: "rgba(0,0,0,0.5)" }}
             >

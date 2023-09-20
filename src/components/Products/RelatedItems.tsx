@@ -1,5 +1,4 @@
-import { FC, useState } from "react";
-import { getAverage, shuffle } from "~/lib/helper";
+import { FC } from "react";
 import ProductCard from "./ProductCard";
 import { Product } from "@prisma/client";
 
@@ -26,7 +25,6 @@ const RelatedItems: FC<RelatedItemsProps> = ({ products, title }) => {
           <ProductCard
             key={i}
             product={product}
-            average={getAverage(product.star)}
           />
         ))}
       </div>

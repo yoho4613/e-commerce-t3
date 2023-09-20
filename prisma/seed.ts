@@ -1,4 +1,4 @@
-import { PrismaClient, RoleEnumType } from "@prisma/client";
+import { PrismaClient, Product, RoleEnumType } from "@prisma/client";
 import bcrypt from "bcryptjs";
 import faker from "faker";
 import axios from "axios";
@@ -34,6 +34,17 @@ async function main() {
     }),
   );
 
+  const userPassword = await bcrypt.hash("1234", 10)
+
+  await prisma.user.create({
+    data:    {
+      id: "clhkg2ksn000o035oyriu3u9u",
+      email: "jiho@email.com",
+      password: userPassword,
+      name: "jiho park",
+    }
+  })
+
   const categories = [
     {
       id: "clhkg2ksn000o035oyriu3u9y",
@@ -56,7 +67,7 @@ async function main() {
       product: [],
     },
     {
-      id: "clhkg2ksn000o035oyriu3u9z",
+      id: "u",
       name: "Beauty and Personal Care",
       product: [],
     },
@@ -220,12 +231,6 @@ async function main() {
           ],
           size: ["S", "M", "L", "XL"],
         },
-        review: [...Array(faker.datatype.number({ min: 20, max: 98 }))].map(
-          () => faker.lorem.sentence(),
-        ),
-        star: [...Array(faker.datatype.number({ min: 20, max: 98 }))].map(() =>
-          faker.datatype.number({ min: 1, max: 5 }),
-        ),
         delivery: faker.datatype.number({ min: 1, max: 7 }),
         stock: faker.datatype.number({ min: 1, max: 100 }),
         categoryId: subcategory.categoryId,
@@ -235,10 +240,10 @@ async function main() {
       products.push(product);
     }
   }
-
   
   const getRandomIndex = (length: number) => Math.floor(Math.random() * length);
 
+  const productData: Product[] = []
   // Insert mock products into the database
   await Promise.all(
     products.map(
@@ -258,8 +263,6 @@ async function main() {
               image[getRandomIndex(image.length)].urls.regular,
             ],
             attributes: product.attributes,
-            review: product.review,
-            star: product.star,
             delivery: product.delivery,
             stock: product.stock,
             categoryId: product.categoryId!,
@@ -267,7 +270,9 @@ async function main() {
             saleId:
               product.categoryId === categories[1]?.id ? saleData.id : null,
           },
-        }),
+        }).then((res) => {
+          productData.push(res)
+        })
     ),
   );
 
@@ -322,6 +327,46 @@ async function main() {
       position: "heroAlone",
     },
   });
+
+  for (let i = 0; i < productData.length; i++) {
+    const randomLengthArr = [...Array(faker.datatype.number({ min: 20, max: 68 }))]
+    const review = {
+      comment: randomLengthArr.map(
+        () => faker.lorem.sentence(),
+      ),
+      star: randomLengthArr.map(() =>
+        faker.datatype.number({ min: 1, max: 5 }),
+      ),
+    }
+    await prisma.review.create({
+      data: {
+        comment: review.comment[i] || "",
+        star: review.star[i] || 1,
+        productId: productData[i]?.id || productData[0]!.id,
+        userId: "clhkg2ksn000o035oyriu3u9u"
+      }
+    })
+  }
+
+  // Promise.all(productData.map((product) => {
+  //   const randomLengthArr = [...Array(faker.datatype.number({ min: 20, max: 68 }))]
+  //         const review = {
+  //           comment: randomLengthArr.map(
+  //             () => faker.lorem.sentence(),
+  //           ),
+  //           star: randomLengthArr.map(() =>
+  //             faker.datatype.number({ min: 1, max: 5 }),
+  //           ),
+  //         }
+  //         randomLengthArr.map(async (el, i) => await prisma.review.create({
+  //           data: {
+  //             comment: review.comment[i] || "",
+  //             star: review.star[i] || 1,
+  //             productId: product.id,
+  //             userId: "clhkg2ksn000o035oyriu3u9u"
+  //           }
+  //         }))
+  // }))
 
   await prisma.$disconnect();
 }

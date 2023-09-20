@@ -1,20 +1,32 @@
 import { Product, Sale } from "@prisma/client";
 import Link from "next/link";
-import React, { FC } from "react";
+import React, { FC, useEffect, useState } from "react";
 import { BsStarHalf, BsStarFill, BsStar } from "react-icons/bs";
 import { useStateContext } from "~/context/userDetailContext";
 import { api } from "~/utils/api";
 import Heart from "../global/Heart";
+import { getAverage } from "~/lib/helper";
 
 interface ProductCardProps {
   product: Product;
-  average: number;
   deal?: Sale;
 }
 
-const ProductCard: FC<ProductCardProps> = ({ product, average, deal }) => {
+const ProductCard: FC<ProductCardProps> = ({ product, deal }) => {
   const { userDetail, updateCartContext } = useStateContext();
   const starArr = [1, 2, 3, 4, 5];
+  const { data: reviews } = api.review.findProductReview.useQuery({id: product.id});
+  const [stars, setStars] = useState<number[]>([])
+  const [comments, setComments] = useState<string[]>([])
+  const [average, setAverage] = useState<number>(0)
+
+  useEffect(() => {
+    if(reviews) {
+      setStars(reviews.map(review => review.star))
+      setComments(reviews.map(review => review.comment))
+      setAverage(getAverage(reviews.map((review => review.star))))
+    }
+  }, [reviews])
 
   if (!product) {
     return <div></div>;
@@ -78,7 +90,7 @@ const ProductCard: FC<ProductCardProps> = ({ product, average, deal }) => {
               />
             ),
           )}
-          <span className="text-grayPrimary">({product.review.length})</span>
+          <span className="text-grayPrimary">({reviews?.length})</span>
         </div>
       </div>
     </div>

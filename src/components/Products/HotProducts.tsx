@@ -1,9 +1,6 @@
 import React, { FC, useState } from "react";
-import { IoMdArrowBack, IoMdArrowForward } from "react-icons/io";
 import ProductCard from "../Products/ProductCard";
-import { api } from "~/utils/api";
 import { Product } from "@prisma/client";
-import { getAverage } from "~/lib/helper";
 
 interface HotProductsProps {
   products: Product[]
@@ -26,8 +23,6 @@ const HotProducts: FC<HotProductsProps> = ({products}) => {
       <div className={`flex flex-wrap justify-between gap-6 transition -translate-x-[${cardLocation}%]`}>
         {products?.map((product, i) => ( 
           <ProductCard key={i} product={product} 
-          average={getAverage(product.star)}
-          // deal={product}
           />
         ))}
       </div>

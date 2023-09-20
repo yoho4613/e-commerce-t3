@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from "react";
 import { IoMdArrowBack, IoMdArrowForward } from "react-icons/io";
 import ProductCard from "../Products/ProductCard";
 import { Sale } from "~/config/type";
-import { getAverage, shuffle, startCountdown } from "~/lib/helper";
+import { shuffle, startCountdown } from "~/lib/helper";
 import { Product } from "@prisma/client";
 
 interface TodayDealProps {
@@ -90,7 +90,6 @@ const TodayDeal: FC<TodayDealProps> = ({ deal }) => {
             <ProductCard
               key={i}
               product={product}
-              average={getAverage(product.star)}
               deal={deal}
             />
           ))}

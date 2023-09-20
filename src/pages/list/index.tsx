@@ -1,12 +1,10 @@
 import { Product } from "@prisma/client";
-import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { BiFilterAlt } from "react-icons/bi";
 import { ImSortAmountDesc } from "react-icons/im";
 import Searchbar from "~/components/global/Searchbar";
 import ProductCard from "~/components/Products/ProductCard";
 import CategoryNavBar from "~/components/navbar/CategoryNavBar";
-import { getAverage } from "~/lib/helper";
 import { api } from "~/utils/api";
 import Spinner from "~/components/global/Spinner";
 
@@ -48,7 +46,6 @@ const ListPage = () => {
             <ProductCard
               key={product.id}
               product={product}
-              average={getAverage(product.star)}
             />
           )) : (
             <Spinner />

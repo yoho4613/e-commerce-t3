@@ -35,6 +35,7 @@ export const checkoutRouter = createTRPCRouter({
           });
         }
 
+        console.log(input.url)
         if (
           !input.address.name ||
           !input.address.address ||
@@ -100,7 +101,7 @@ export const checkoutRouter = createTRPCRouter({
           success_url: `${input.url}/success`,
           cancel_url: `${input.url}/`,
         });
-
+        
 
 
         console.log(session);

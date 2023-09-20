@@ -31,13 +31,15 @@ interface OrderDetail extends Order {
 }
 
 const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
-  const router = useRouter();
   const { data: product } = api.product.findProduct.useQuery({ id });
   const { data: relatedProducts } = api.product.findRelatedProducts.useQuery({
     id,
   });
+  const { data: reviews } = api.review.findProductReview.useQuery({id});
   const [selectedPhoto, setSelectedPhoto] = useState("");
   const [orderDetail, setOrderDetail] = useState<OrderDetail>({ quantity: 0 });
+  const [stars, setStars] = useState<number[]>([])
+  const [comments, setComments] = useState<string[]>([])
 
   useEffect(() => {
     if (product) {
@@ -55,6 +57,13 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
       }
     }
   }, [product]);
+
+  useEffect(() => {
+    if(reviews) {
+      setStars(reviews.map(review => review.star))
+      setComments(reviews.map(review => review.comment))
+    }
+  }, [reviews])
   
   const handleAddCart = async () => {
     console.log(orderDetail)
@@ -108,14 +117,14 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
           <h2 className="text-2xl font-bold">{product.title}</h2>
           <div className="flex items-center">
             {[...Array(5)].map((star, i) =>
-              i < getAverage(product.star) &&
-              i + 1 > getAverage(product.star) ? (
+              i < getAverage(stars) &&
+              i + 1 > getAverage(stars) ? (
                 <BsStarHalf
                   key={i}
                   size={15}
                   className="text-[#ffc107] sm:mr-1"
                 />
-              ) : i > getAverage(product.star) ? (
+              ) : i > getAverage(stars) ? (
                 <BsStar key={i} size={15} className="text-[#ffc107] sm:mr-1" />
               ) : (
                 <BsStarFill
@@ -126,7 +135,7 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
               ),
             )}
             <span className="ml-2 text-sm text-grayPrimary">
-              ({product && product.review.length} Reviews)
+              ({stars.length} Reviews)
             </span>
             <span className="mx-4 text-grayPrimary">|</span>
             {product.stock > 0 ? (

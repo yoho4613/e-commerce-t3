@@ -48,7 +48,7 @@ export const StateContext = ({ children }: { children: ReactNode }) => {
   const { mutate: addNewAddress } = api.user.addressRegister.useMutation({
     onError: (err) => toast.error(err.message),
   });
-  
+
   const [userDetail, setUserDetail] = useState<UserDetail>(defaultUserDetail);
 
   const updateWatchlistContext = (productId: string) => {
@@ -84,6 +84,7 @@ export const StateContext = ({ children }: { children: ReactNode }) => {
   const addNewAddressContext = ( address: Address) => {
     setUserDetail((prev) => ({
       ...prev,
+      /* eslint-disable */
       address: [...prev.address, address],
     }));
     addNewAddress({ id: userDetail.id, ...address });

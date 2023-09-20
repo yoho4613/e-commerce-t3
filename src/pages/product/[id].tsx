@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import React, { FC, useEffect, useState } from "react";
-import { AiFillHeart, AiOutlineMinus } from "react-icons/ai";
+import { AiOutlineMinus } from "react-icons/ai";
 import {
   BsArrowRepeat,
   BsPlusLg,

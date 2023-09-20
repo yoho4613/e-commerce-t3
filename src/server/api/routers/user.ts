@@ -154,8 +154,6 @@ export const userRouter = createTRPCRouter({
           message: "No user found",
         });
       }
-   
-      
 
       const {
         id,

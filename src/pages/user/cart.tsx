@@ -58,6 +58,7 @@ const Cart: FC = ({}) => {
     setFormOpened(false);
   };
 
+  /* eslint-disable */
   const submitCheckout = () => {
     if (!userDetail.address.length) {
       return toast.error("Please Check Your Delivery Address");

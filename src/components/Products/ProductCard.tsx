@@ -26,7 +26,7 @@ const ProductCard: FC<ProductCardProps> = ({ product, average, deal }) => {
         <Link href={`/product/${product.id}`}>
           <img
             className="m-auto h-full w-full"
-            src={product.imgUrl[0] || ""}
+            src={product.imgUrl[0] ?? ""}
             alt={product.title}
           />
         </Link>

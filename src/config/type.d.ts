@@ -74,6 +74,7 @@ export interface UserDetail {
   purchase: Prisma.JsonValue;
   address: Prisma.JsonValue[];
   role: string;
+  createdAt: Date;
 }
 
 export interface CartItem extends Product {

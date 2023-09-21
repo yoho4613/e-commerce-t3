@@ -4,17 +4,20 @@ import { TRPCError } from "@trpc/server";
 
 export const reviewRouter = createTRPCRouter({
   findProductReview: publicProcedure
-    .input(z.object({ id: z.string()}))
+    .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
       const { id } = input;
 
+
       const reviews = await ctx.prisma.review.findMany({
         where: {
-          productId: id
-        }
-      })
+          productId: id,
+        },
+        include: {
+          author: true,
+        },
+      });
 
-      return reviews ? reviews : []
+      return reviews ? reviews : [];
     }),
-    
 });

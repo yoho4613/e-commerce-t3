@@ -13,7 +13,7 @@ const Star: FC<StarProps> = ({ average }) => {
       {starArr.map((star, i) =>
         i < average && i + 1 > average ? (
           <BsStarHalf key={i} size={20} className="text-[#ffc107] sm:mr-2" />
-        ) : i > average ? (
+        ) : i + 1 > average ? (
           <BsStar key={i} size={20} className="text-[#ffc107] sm:mr-2" />
         ) : (
           <BsStarFill key={i} size={20} className="text-[#ffc107] sm:mr-2" />

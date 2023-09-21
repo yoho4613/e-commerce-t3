@@ -147,7 +147,6 @@ export const userRouter = createTRPCRouter({
         },
       });
 
-
       if (!user) {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -166,6 +165,7 @@ export const userRouter = createTRPCRouter({
         purchase,
         address,
         role,
+        createdAt,
       } = user;
 
       return {
@@ -179,9 +179,18 @@ export const userRouter = createTRPCRouter({
         purchase,
         address,
         role,
+        createdAt,
       };
     }),
+  findManyUsers: publicProcedure
+    .input(z.array(z.string()))
+    .query(async ({ ctx, input }) => {
+      const users = input.map(
+        async (id) => await ctx.prisma.user.findFirst({ where: { id } }),
+      );
 
+      return users;
+    }),
   logout: publicProcedure.mutation(({ ctx }) => {
     const { res } = ctx;
 

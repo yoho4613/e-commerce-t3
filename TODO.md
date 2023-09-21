@@ -1,6 +1,6 @@
 <!-- CLIENT -->
 LISTING PAGE Filtering
-PROFILE PAGE 
+PROFILE PAGE  (Purchase hardcoded)
 COMMENT & REVIEW
 
 

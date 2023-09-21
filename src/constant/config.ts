@@ -1,4 +1,5 @@
-export const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
+export const BASE_URL =
+  process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
 
 export const defaultUserDetail = {
   id: "",
@@ -11,4 +12,5 @@ export const defaultUserDetail = {
   purchase: [],
   address: [],
   role: "customer",
+  createdAt: new Date(),
 };

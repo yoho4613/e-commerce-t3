@@ -332,16 +332,16 @@ async function main() {
     },
   });
 
-  for (let i = 0; i < productData.length; i++) {
-    await prisma.review.create({
-      data: {
-        comment: faker.lorem.sentence(),
-        star: faker.datatype.number({ min: 1, max: 5 }),
-        productId: productData[i]?.id || productData[0]!.id,
-        userId: "clhkg2ksn000o035oyriu3u9u",
-      },
-    });
-  }
+  // for (let i = 0; i < productData.length; i++) {
+  //   await prisma.review.create({
+  //     data: {
+  //       comment: faker.lorem.sentence(),
+  //       star: faker.datatype.number({ min: 1, max: 5 }),
+  //       productId: productData[i]?.id || productData[0]!.id,
+  //       userId: "clhkg2ksn000o035oyriu3u9u",
+  //     },
+  //   });
+  // }
 
   for (let i = 0; i < productData.length; i++) {
     for (let x = 0; x < faker.datatype.number({ min: 9, max: 28 }); i++) {

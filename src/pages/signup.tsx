@@ -123,6 +123,7 @@ const Signup: FC = ({}) => {
               required
             />
           </div>
+          {warning && <p className="text-red-500">{warning}</p>}
           <button
             type="submit"
             className="w-full rounded-lg bg-[#3A5B22] px-5 py-2.5 text-center text-sm font-medium text-white hover:bg-[#2e491b] focus:outline-none focus:ring-4 focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"

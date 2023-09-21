@@ -6,6 +6,7 @@ import { useStateContext } from "~/context/userDetailContext";
 import { api } from "~/utils/api";
 import Heart from "../global/Heart";
 import { getAverage } from "~/lib/helper";
+import Star from "../global/Star";
 
 interface ProductCardProps {
   product: Product;
@@ -74,26 +75,7 @@ const ProductCard: FC<ProductCardProps> = ({ product, deal }) => {
             ${product.rrp}
           </span>
         </p>
-        <div className="flex">
-          {starArr.map((star, i) =>
-            i < average && i + 1 > average ? (
-              <BsStarHalf
-                key={i}
-                size={20}
-                className="text-[#ffc107] sm:mr-2"
-              />
-            ) : i > average ? (
-              <BsStar key={i} size={20} className="text-[#ffc107] sm:mr-2" />
-            ) : (
-              <BsStarFill
-                key={i}
-                size={20}
-                className="text-[#ffc107] sm:mr-2"
-              />
-            ),
-          )}
-          <span className="text-grayPrimary">({reviews?.length})</span>
-        </div>
+        <Star average={average} />
       </div>
     </div>
   );

@@ -173,7 +173,7 @@ const Navbar: FC = ({}) => {
               className="absolute right-0 top-6 z-[999] flex w-32 flex-col rounded-sm px-2.5 text-sm text-whitePrimary sm:w-[20rem] sm:text-lg"
               style={{ background: "rgba(0,0,0,0.5)" }}
             >
-              <Link href="/" className="flex w-full items-center p-2 text-left">
+              <Link href="/user/profile" className="flex w-full items-center p-2 text-left">
                 <BsPerson color="white" className="mr-2 text-xl" />
                 Manage My Profile
               </Link>

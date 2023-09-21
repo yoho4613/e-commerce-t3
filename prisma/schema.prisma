@@ -62,6 +62,7 @@ model User {
     Order         Order[]
     role          RoleEnumType @default(customer)
     Review        Review[]
+    createdAt     DateTime     @default(now())
 }
 
 enum RoleEnumType {

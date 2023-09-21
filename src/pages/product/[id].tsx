@@ -1,7 +1,7 @@
 import { GetServerSideProps } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
+import defaultAvatar from "../../../public/avatar.png";
 import React, { FC, useEffect, useState } from "react";
 import { AiOutlineMinus } from "react-icons/ai";
 import {
@@ -41,7 +41,6 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
   const [orderDetail, setOrderDetail] = useState<OrderDetail>({ quantity: 0 });
   const [stars, setStars] = useState<number[]>([]);
   const [comments, setComments] = useState<string[]>([]);
-  console.log(reviews?.map((review) => review.star));
 
   useEffect(() => {
     if (product) {
@@ -259,13 +258,33 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
         </div>
       </div>
       {/* Comments */}
-      <div className="w-wull rounded-sm border-2">
-        <div className="">
+      <div className="flex items-center">
+        <span className="mr-4 inline-block h-12 w-6 rounded-md bg-redPrimary" />
+        <h2 className="font-bold text-redPrimary">Reviews</h2>
+      </div>
+      <div className="w-full rounded-sm border-2">
+        <div className="space-y-4 w-full p-2.5">
           {reviews ? (
-            reviews.map((review) => (
-              <div key={review.id} className="">
-                <h3>{review.comment}</h3>
-                <Star average={review.star} />
+            reviews.slice(0,10).map((review) => (
+              <div key={review.id} className="flex flex-col sm:flex-row items-start w-full gap-4 sm:gap-0 sm:items-center border-b-2 pb-4">
+                <Image
+                  className="h-14 w-14 rounded-full mr-4"
+                  src={review.author.image || defaultAvatar}
+                  alt="author"
+                  width={100}
+                  height={100}
+                />
+                <div>
+                  <h3 className="text-sm sm:text-base">
+                    Author: <strong>{review.author.name}</strong>
+                  </h3>
+                  <h4 className="text-sm sm:text-base">{review.comment}</h4>
+                  <Star average={review.star} />
+                </div>
+                <div className="self-start grow text-right text-xs">
+                  <p>Posted at: <span>{review.createdAt.toLocaleString()}</span></p>
+                  {review.updatedAt.getTime() > review.createdAt.getTime() && <p>Edited at: <span>{review.updatedAt.toLocaleString()}</span></p>}
+                </div>
               </div>
             ))
           ) : (

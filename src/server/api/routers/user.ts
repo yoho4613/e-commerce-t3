@@ -184,7 +184,7 @@ export const userRouter = createTRPCRouter({
     }),
   findManyUsers: publicProcedure
     .input(z.array(z.string()))
-    .query(async ({ ctx, input }) => {
+    .query(({ ctx, input }) => {
       const users = input.map(
         async (id) => await ctx.prisma.user.findFirst({ where: { id } }),
       );

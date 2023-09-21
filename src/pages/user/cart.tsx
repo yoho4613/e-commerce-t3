@@ -16,9 +16,11 @@ import { api } from "~/utils/api";
 const Cart: FC = ({}) => {
   const router = useRouter();
   const { userDetail, addNewAddressContext } = useStateContext();
-  const { data: products, isLoading } = api.product.findProducts.useQuery(
-    userDetail.cart,
-  );
+  const {
+    data: products,
+    isLoading,
+    isError,
+  } = api.product.findProducts.useQuery(userDetail.cart);
 
   const { mutate: checkout } = api.checkout.checkoutSession.useMutation({
     onSuccess: (res) => router.push(res.url),
@@ -148,6 +150,13 @@ const Cart: FC = ({}) => {
               </td>
             </tr>
           ))}
+          {isError && (
+            <tr>
+              <td className="flex w-screen justify-center">
+                No Data...
+              </td>
+            </tr>
+          )}
         </tbody>
       </table>
       <div className="my-8 flex flex-col items-center justify-between gap-4 sm:flex-row">

@@ -7,6 +7,10 @@ import ProductCard from "~/components/Products/ProductCard";
 import CategoryNavBar from "~/components/navbar/CategoryNavBar";
 import { api } from "~/utils/api";
 import Spinner from "~/components/global/Spinner";
+import { GetServerSideProps } from "next";
+
+import { FC } from "react";
+import { useRouter } from "next/router";
 
 const ListPage = () => {
   const { data: categories } = api.category.withSubcategory.useQuery();
@@ -15,8 +19,38 @@ const ListPage = () => {
   const [filteredProducts, setFilteredProducts] = useState<Product[] | null>(
     null,
   );
-  const [category, setCategory] = useState("all");
-  const [subCategory, setSubCategory] = useState("all");
+  const [category, setCategory] = useState<string | string[]>("all");
+  const [subcategory, setSubcategory] = useState<string | string[]>("all");
+  const [search, setSearch] = useState<string | string[]>("all");
+  const router = useRouter();
+
+  useEffect(() => {
+    if (router.query) {
+      const { category, subcategory, search } = router.query;
+
+      if (!category) {
+        setCategory("all");
+      } else {
+        setCategory(category);
+      }
+      if (!subcategory) {
+        setSubcategory("all");
+      } else {
+        setSubcategory(subcategory);
+      }
+      if (!search) {
+        setSearch("all");
+      } else {
+        setSearch(search);
+      }
+
+      console.log(category);
+      console.log(subcategory);
+      console.log(search);
+
+      
+    }
+  }, [router]);
 
   useEffect(() => {
     if (products) {
@@ -42,12 +76,11 @@ const ListPage = () => {
           </div>
         </div>
         <div className="flex flex-wrap items-start justify-between gap-4 ">
-          {filteredProducts ? filteredProducts.map((product) => (
-            <ProductCard
-              key={product.id}
-              product={product}
-            />
-          )) : (
+          {filteredProducts ? (
+            filteredProducts.map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))
+          ) : (
             <Spinner />
           )}
         </div>

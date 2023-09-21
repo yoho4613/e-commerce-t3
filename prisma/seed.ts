@@ -34,16 +34,16 @@ async function main() {
     }),
   );
 
-  const userPassword = await bcrypt.hash("1234", 10)
+  const userPassword = await bcrypt.hash("1234", 10);
 
   await prisma.user.create({
-    data:    {
+    data: {
       id: "clhkg2ksn000o035oyriu3u9u",
       email: "jiho@email.com",
       password: userPassword,
       name: "jiho park",
-    }
-  })
+    },
+  });
 
   const categories = [
     {
@@ -240,39 +240,43 @@ async function main() {
       products.push(product);
     }
   }
-  
+
   const getRandomIndex = (length: number) => Math.floor(Math.random() * length);
 
-  const productData: Product[] = []
+  const productData: Product[] = [];
   // Insert mock products into the database
   await Promise.all(
     products.map(
       async (product) =>
-        await prisma.product.create({
-          data: {
-            title: product.title,
-            type: product.type,
-            description: product.description,
-            rrp: product.rrp,
-            price: product.price,
-            imgUrl: [
-              image[getRandomIndex(image.length)].urls.regular,
-              image[getRandomIndex(image.length)].urls.regular,
-              image[getRandomIndex(image.length)].urls.regular,
-              image[getRandomIndex(image.length)].urls.regular,
-              image[getRandomIndex(image.length)].urls.regular,
-            ],
-            attributes: product.attributes,
-            delivery: product.delivery,
-            stock: product.stock,
-            categoryId: product.categoryId!,
-            subcategoryId: product.subcategoryId ? product.subcategoryId : null,
-            saleId:
-              product.categoryId === categories[1]?.id ? saleData.id : null,
-          },
-        }).then((res) => {
-          productData.push(res)
-        })
+        await prisma.product
+          .create({
+            data: {
+              title: product.title,
+              type: product.type,
+              description: product.description,
+              rrp: product.rrp,
+              price: product.price,
+              imgUrl: [
+                image[getRandomIndex(image.length)].urls.regular,
+                image[getRandomIndex(image.length)].urls.regular,
+                image[getRandomIndex(image.length)].urls.regular,
+                image[getRandomIndex(image.length)].urls.regular,
+                image[getRandomIndex(image.length)].urls.regular,
+              ],
+              attributes: product.attributes,
+              delivery: product.delivery,
+              stock: product.stock,
+              categoryId: product.categoryId!,
+              subcategoryId: product.subcategoryId
+                ? product.subcategoryId
+                : null,
+              saleId:
+                product.categoryId === categories[1]?.id ? saleData.id : null,
+            },
+          })
+          .then((res) => {
+            productData.push(res);
+          }),
     ),
   );
 
@@ -329,23 +333,29 @@ async function main() {
   });
 
   for (let i = 0; i < productData.length; i++) {
-    const randomLengthArr = [...Array(faker.datatype.number({ min: 20, max: 68 }))]
-    const review = {
-      comment: randomLengthArr.map(
-        () => faker.lorem.sentence(),
-      ),
-      star: randomLengthArr.map(() =>
-        faker.datatype.number({ min: 1, max: 5 }),
-      ),
-    }
     await prisma.review.create({
       data: {
-        comment: review.comment[i] || "",
-        star: review.star[i] || 1,
+        comment: faker.lorem.sentence(),
+        star: faker.datatype.number({ min: 1, max: 5 }),
         productId: productData[i]?.id || productData[0]!.id,
-        userId: "clhkg2ksn000o035oyriu3u9u"
+        userId: "clhkg2ksn000o035oyriu3u9u",
+      },
+    });
+  }
+
+  for (let i = 0; i < productData.length; i++) {
+    for (let x = 0; x < faker.datatype.number({ min: 9, max: 28 }); i++) {
+      if (productData[i] !== undefined && productData[i]?.id !== undefined) {
+        await prisma.review.create({
+          data: {
+            comment: faker.lorem.sentence(),
+            star: faker.datatype.number({ min: 1, max: 5 }),
+            productId: productData[i]!.id,
+            userId: "clhkg2ksn000o035oyriu3u9u",
+          },
+        });
       }
-    })
+    }
   }
 
   // Promise.all(productData.map((product) => {

@@ -14,6 +14,7 @@ import {
 import { TbTruckDelivery } from "react-icons/tb";
 import Heart from "~/components/global/Heart";
 import Spinner from "~/components/global/Spinner";
+import Star from "~/components/global/Star";
 import RelatedItems from "~/components/Products/RelatedItems";
 import { getAverage } from "~/lib/helper";
 import { api } from "~/utils/api";
@@ -35,11 +36,12 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
   const { data: relatedProducts } = api.product.findRelatedProducts.useQuery({
     id,
   });
-  const { data: reviews } = api.review.findProductReview.useQuery({id});
+  const { data: reviews } = api.review.findProductReview.useQuery({ id });
   const [selectedPhoto, setSelectedPhoto] = useState("");
   const [orderDetail, setOrderDetail] = useState<OrderDetail>({ quantity: 0 });
-  const [stars, setStars] = useState<number[]>([])
-  const [comments, setComments] = useState<string[]>([])
+  const [stars, setStars] = useState<number[]>([]);
+  const [comments, setComments] = useState<string[]>([]);
+  console.log(reviews?.map((review) => review.star));
 
   useEffect(() => {
     if (product) {
@@ -59,16 +61,15 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
   }, [product]);
 
   useEffect(() => {
-    if(reviews) {
-      setStars(reviews.map(review => review.star))
-      setComments(reviews.map(review => review.comment))
+    if (reviews) {
+      setStars(reviews.map((review) => review.star));
+      setComments(reviews.map((review) => review.comment));
     }
-  }, [reviews])
-  
-  const handleAddCart = async () => {
-    console.log(orderDetail)
+  }, [reviews]);
 
-  }
+  const handleAddCart = async () => {
+    console.log(orderDetail);
+  };
 
   if (!product) {
     return (
@@ -79,7 +80,7 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
   }
 
   return (
-    <main className="m-auto mt-4 w-screen max-w-[1280px] px-2 sm:mt-12 sm:px-10">
+    <div className="m-auto mt-4 w-screen max-w-[1280px] space-y-6 px-2 sm:mt-12 sm:px-10">
       <div className="flex  flex-col md:flex-row">
         {/* Gallery */}
         <div className="mb-8 mr-8 grid w-full gap-4 md:mb-0 md:w-3/5">
@@ -117,8 +118,7 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
           <h2 className="text-2xl font-bold">{product.title}</h2>
           <div className="flex items-center">
             {[...Array(5)].map((star, i) =>
-              i < getAverage(stars) &&
-              i + 1 > getAverage(stars) ? (
+              i < getAverage(stars) && i + 1 > getAverage(stars) ? (
                 <BsStarHalf
                   key={i}
                   size={15}
@@ -226,7 +226,10 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
                 <AiOutlineMinus className="text-sm sm:text-xl" />
               </button>
             </div>
-            <button onClick={handleAddCart} className="btn--red w-24 text-xs sm:w-36 sm:text-base">
+            <button
+              onClick={handleAddCart}
+              className="btn--red w-24 text-xs sm:w-36 sm:text-base"
+            >
               Buy Now
             </button>
             <div className="rounded-md border-2 hover:border-transparent hover:bg-redPrimary hover:text-whitePrimary">
@@ -255,14 +258,28 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
           </div>
         </div>
       </div>
-
+      {/* Comments */}
+      <div className="w-wull rounded-sm border-2">
+        <div className="">
+          {reviews ? (
+            reviews.map((review) => (
+              <div key={review.id} className="">
+                <h3>{review.comment}</h3>
+                <Star average={review.star} />
+              </div>
+            ))
+          ) : (
+            <Spinner />
+          )}
+        </div>
+      </div>
       {/* Related Item */}
       <div>
         {relatedProducts && (
           <RelatedItems products={relatedProducts} title="Related Item" />
         )}
       </div>
-    </main>
+    </div>
   );
 };
 

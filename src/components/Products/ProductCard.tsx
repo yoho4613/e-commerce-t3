@@ -15,18 +15,20 @@ interface ProductCardProps {
 const ProductCard: FC<ProductCardProps> = ({ product, deal }) => {
   const { userDetail, updateCartContext } = useStateContext();
   const starArr = [1, 2, 3, 4, 5];
-  const { data: reviews } = api.review.findProductReview.useQuery({id: product.id});
-  const [stars, setStars] = useState<number[]>([])
-  const [comments, setComments] = useState<string[]>([])
-  const [average, setAverage] = useState<number>(0)
+  const { data: reviews } = api.review.findProductReview.useQuery({
+    id: product.id,
+  });
+  const [stars, setStars] = useState<number[]>([]);
+  const [comments, setComments] = useState<string[]>([]);
+  const [average, setAverage] = useState<number>(0);
 
   useEffect(() => {
-    if(reviews) {
-      setStars(reviews.map(review => review.star))
-      setComments(reviews.map(review => review.comment))
-      setAverage(getAverage(reviews.map((review => review.star))))
+    if (reviews) {
+      setStars(reviews.map((review) => review.star));
+      setComments(reviews.map((review) => review.comment));
+      setAverage(getAverage(reviews.map((review) => review.star)));
     }
-  }, [reviews])
+  }, [reviews]);
 
   if (!product) {
     return <div></div>;

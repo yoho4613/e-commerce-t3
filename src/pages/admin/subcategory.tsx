@@ -4,12 +4,12 @@ import { api } from "~/utils/api";
 
 // interface categoryProps {}
 
-const category: FC = ({}) => {
+const Subcategory: FC = ({}) => {
   const {
     data: categories,
     isLoading,
     refetch,
-  } = api.category.getAllCategories.useQuery();
+  } = api.subCategory.getAllCategories.useQuery();
   const { mutate: addCategory } = api.category.addCategory.useMutation({
     onSuccess: () => refetch(),
   });
@@ -34,7 +34,7 @@ const category: FC = ({}) => {
               addCategory({ name: formName });
             }}
           >
-            Add Category
+            Add Subcategory
           </button>
         </div>
       </div>
@@ -42,13 +42,13 @@ const category: FC = ({}) => {
         <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
           <tr>
             <th scope="col" className="px-6 py-3">
-              Category Id
+              Subcategory Id
             </th>
             <th scope="col" className="px-6 py-3">
               Name
             </th>
             <th scope="col" className="px-6 py-3">
-              SubCategories
+              Category
             </th>
             <th scope="col" className="px-6 py-3">
               Cancel
@@ -76,7 +76,7 @@ const category: FC = ({}) => {
                 </th>
                 <td className="px-6 py-4 font-bold">{category.name}</td>
                 <td className="line-clamp-4 px-6 py-4">
-                  {category.subcategory?.map((category) => `${category.name},`)}
+                  {category.category.name}
                 </td>
 
                 <td className="px-6 py-4">
@@ -101,4 +101,4 @@ const category: FC = ({}) => {
   );
 };
 
-export default category;
+export default Subcategory;

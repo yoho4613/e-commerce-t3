@@ -4,14 +4,16 @@ import { TRPCError } from "@trpc/server";
 
 export const subcategoryRouter = createTRPCRouter({
   getAllCategories: publicProcedure.query(async ({ ctx }) => {
-    const categories = await ctx.prisma.subcategory.findMany();
+    const categories = await ctx.prisma.subcategory.findMany({
+      include: { category: true },
+    });
     return categories;
   }),
   addCategory: adminProcedure
     .input(
       z.object({
         name: z.string(),
-        categoryId: z.string()
+        categoryId: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -20,10 +22,10 @@ export const subcategoryRouter = createTRPCRouter({
       const category = await ctx.prisma.subcategory.create({
         data: {
           name,
-          categoryId
+          categoryId,
         },
       });
-      return category
+      return category;
     }),
   deleteCategory: adminProcedure
     .input(
@@ -54,7 +56,7 @@ export const subcategoryRouter = createTRPCRouter({
       z.object({
         id: z.string(),
         name: z.string(),
-        categoryId: z.string()
+        categoryId: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -66,9 +68,9 @@ export const subcategoryRouter = createTRPCRouter({
         },
         data: {
           name,
-          categoryId
+          categoryId,
         },
       });
-      return category
+      return category;
     }),
 });

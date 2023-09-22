@@ -6,14 +6,20 @@ export const categoryRouter = createTRPCRouter({
   withSubcategory: publicProcedure.query(async ({ ctx }) => {
     const categories = await ctx.prisma.category.findMany({
       include: {
-        subcategory: true
-      }
+        subcategory: true,
+      },
     });
-    
-    return categories.sort((a,b) => b.subcategory.length - a.subcategory.length)
+
+    return categories.sort(
+      (a, b) => b.subcategory.length - a.subcategory.length,
+    );
   }),
   getAllCategories: publicProcedure.query(async ({ ctx }) => {
-    const categories = await ctx.prisma.category.findMany();
+    const categories = await ctx.prisma.category.findMany({
+      include: {
+        subcategory: true,
+      },
+    });
 
     return categories;
   }),

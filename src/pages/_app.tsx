@@ -13,6 +13,7 @@ import { useRouter } from "next/router";
 import AdminNavBar from "~/components/navbar/AdminNavbar";
 import { StateContext } from "~/context/userDetailContext";
 import { Toaster } from "react-hot-toast";
+import AdminFooter from "~/components/Footer/AdminFooter";
 
 const MyApp: AppType = ({ Component, pageProps: { ...pageProps } }) => {
   const router = useRouter();
@@ -30,7 +31,7 @@ const MyApp: AppType = ({ Component, pageProps: { ...pageProps } }) => {
       </Head>
       <StateContext>
         <Provider>
-          <main className="overflow-hidden w-screen">
+          <main className="w-screen overflow-hidden">
             <Toaster />
             {!isAdmin && <TopBanner />}
             <div className="m-auto w-full max-w-[1280px]">
@@ -38,7 +39,7 @@ const MyApp: AppType = ({ Component, pageProps: { ...pageProps } }) => {
               <div className="absolute left-0 w-[100vw] border-b-2"></div>
             </div>
             <Component {...pageProps} />
-            <Footer />
+            {isAdmin ? <AdminFooter /> : <Footer />}
           </main>
         </Provider>
       </StateContext>

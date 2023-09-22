@@ -21,6 +21,7 @@ const AdminNavBar: FC = () => {
   const [navigation, setNavigation] = useState([
     { name: "Dashboard", href: "/admin", current: true },
     { name: "Category", href: "/admin/category", current: false },
+    { name: "Subcategory", href: "/admin/subcategory", current: false },
     { name: "Product", href: "/admin/product", current: false },
     { name: "Banner", href: "/admin/banner", current: false },
   ]);

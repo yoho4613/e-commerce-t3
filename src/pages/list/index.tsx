@@ -87,13 +87,13 @@ const ListPage: FC<ListPageProps> = ({ category, subcategory, search }) => {
   );
 };
 
+/* eslint-disable-next-line */
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  console.log(query);
   return {
     props: {
-      category: query.category || "all",
-      subcategory: query.subcategory || "all",
-      search: query.search || "all",
+      category: query.category ?? "all",
+      subcategory: query.subcategory ?? "all",
+      search: query.search ?? "all",
     },
   };
 };

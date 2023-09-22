@@ -29,11 +29,11 @@ const Footer: FC = ({}) => {
 
       <div className="flex flex-col gap-1 md:gap-4">
         <h2 className="text-xl font-light">Account</h2>
-        <Link href="/">My Account</Link>
-        <Link href="/">Login / Register</Link>
-        <Link href="/">Cart</Link>
-        <Link href="/">Wishlist</Link>
-        <Link href="/">Shop</Link>
+        <Link href="/user/profile">My Account</Link>
+        <Link href="/login">Login / Register</Link>
+        <Link href="/user/cart">Cart</Link>
+        <Link href="/user/watchlist">Wishlist</Link>
+        <Link href="/list">Shop</Link>
       </div>
 
       <div className="flex flex-col gap-1 md:gap-4">
@@ -41,7 +41,7 @@ const Footer: FC = ({}) => {
         <Link href="/">Privacy Policy</Link>
         <Link href="/">Terms Of Use</Link>
         <Link href="/">FAQ</Link>
-        <Link href="/">Contact</Link>
+        <Link href="/contact">Contact</Link>
       </div>
     </footer>
   );

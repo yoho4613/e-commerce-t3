@@ -27,7 +27,7 @@ const CategoryNavBar: FC<CategoryNavBarProps> = ({ categories }) => {
           >
             <Link
               className="flex w-full justify-between"
-              href={`/list?category=${category.name}`}
+              href={`/list?category=${category.id}`}
             >
               <span>{category.name}</span>
               {category.subcategory.length ? (
@@ -47,7 +47,7 @@ const CategoryNavBar: FC<CategoryNavBarProps> = ({ categories }) => {
                   >
                     <Link
                       className="w-full"
-                      href={`?category=${category.name}&subCategory=${sub.name}`}
+                      href={`?category=${category.id}&subCategory=${sub.id}`}
                     >
                       {sub.name}
                     </Link>

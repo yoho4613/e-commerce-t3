@@ -12,49 +12,32 @@ import { GetServerSideProps } from "next";
 import { FC } from "react";
 import { useRouter } from "next/router";
 
-const ListPage = () => {
+interface ListPageProps {
+  category: string;
+  subcategory: string;
+  search: string;
+}
+
+const ListPage: FC<ListPageProps> = ({ category, subcategory, search }) => {
   const { data: categories } = api.category.withSubcategory.useQuery();
-  const { data: products } = api.product.getAllProducts.useQuery();
+  const { data: products, isLoading } = api.product.findByFilter.useQuery({
+    category,
+    subcategory,
+    search,
+  });
   const [productLength, setProductLength] = useState(20);
-  const [filteredProducts, setFilteredProducts] = useState<Product[] | null>(
-    null,
-  );
-  const [category, setCategory] = useState<string | string[]>("all");
-  const [subcategory, setSubcategory] = useState<string | string[]>("all");
-  const [search, setSearch] = useState<string | string[]>("all");
+  const [slicedProducts, setSlicedProducts] = useState<Product[] | null>(null);
   const router = useRouter();
 
   useEffect(() => {
-    if (router.query) {
-      const { category, subcategory, search } = router.query;
-
-      if (!category) {
-        setCategory("all");
-      } else {
-        setCategory(category);
-      }
-      if (!subcategory) {
-        setSubcategory("all");
-      } else {
-        setSubcategory(subcategory);
-      }
-      if (!search) {
-        setSearch("all");
-      } else {
-        setSearch(search);
-      }
-
-      console.log(category);
-      console.log(subcategory);
-      console.log(search);
-
-      
-    }
-  }, [router]);
+    console.log(category);
+    console.log(subcategory);
+    console.log(search);
+  }, [products, router]);
 
   useEffect(() => {
     if (products) {
-      setFilteredProducts(products.slice(0, productLength));
+      setSlicedProducts(products.slice(0, productLength));
     }
   }, [products]);
 
@@ -76,22 +59,19 @@ const ListPage = () => {
           </div>
         </div>
         <div className="flex flex-wrap items-start justify-between gap-4 ">
-          {filteredProducts ? (
-            filteredProducts.map((product) => (
-              <ProductCard key={product.id} product={product} />
-            ))
-          ) : (
-            <Spinner />
-          )}
+          {slicedProducts?.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+          {isLoading && <Spinner />}
         </div>
         <div className="text-center">
-          {filteredProducts &&
+          {slicedProducts &&
             products &&
-            filteredProducts.length < products.length && (
+            slicedProducts.length < products.length && (
               <button
                 onClick={() => {
                   if (products) {
-                    setFilteredProducts(products?.slice(0, productLength + 20));
+                    setSlicedProducts(products?.slice(0, productLength + 20));
                     setProductLength((prev) => prev + 20);
                   }
                 }}
@@ -105,6 +85,17 @@ const ListPage = () => {
       </div>
     </div>
   );
+};
+
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  console.log(query);
+  return {
+    props: {
+      category: query.category || "all",
+      subcategory: query.subcategory || "all",
+      search: query.search || "all",
+    },
+  };
 };
 
 export default ListPage;

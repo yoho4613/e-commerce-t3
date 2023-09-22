@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure, userProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
+import { Product } from "~/config/type";
 
 export const productRouter = createTRPCRouter({
   getAllProducts: publicProcedure.query(async ({ ctx }) => {
@@ -117,6 +118,60 @@ export const productRouter = createTRPCRouter({
           message: "no product in list",
         });
       }
+
+      return products;
+    }),
+  findByFilter: publicProcedure
+    .input(
+      z.object({
+        category: z.string(),
+        subcategory: z.string(),
+        search: z.string(),
+      }),
+    )
+    .query(async ({ ctx, input }) => {
+      const { category, subcategory, search } = input;
+      let products;
+
+      const categoryCheck = category === "all";
+      const subcategoryCheck = subcategory === "all";
+      const searchCheck = search === "all";
+      const searchInput = search.toLowerCase();
+      console.log(categoryCheck, subcategoryCheck, searchCheck)
+
+      if (categoryCheck && subcategoryCheck) {
+        products = await ctx.prisma.product.findMany();
+      } else if (categoryCheck) {
+        products = await ctx.prisma.product.findMany({
+          where: {
+            subcategoryId: subcategory,
+          },
+        });
+      } else if (category) {
+        products = await ctx.prisma.product.findMany({
+          where: {
+            categoryId: category,
+          },
+        });
+      } else {
+        products = await ctx.prisma.product.findMany({
+          where: {
+            categoryId: category,
+            subcategoryId: subcategory,
+          },
+        });
+      }
+
+      console.log(searchInput)
+      if (!searchCheck) {
+       return products.filter(
+          (product) =>
+            product.title.toLowerCase().includes(searchInput) ||
+            product.type.toLowerCase().includes(searchInput) ||
+            product.description.toLowerCase().includes(searchInput),
+        );
+      }
+      console.log(products.length)
 
       return products;
     }),

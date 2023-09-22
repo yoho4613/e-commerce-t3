@@ -1,8 +1,8 @@
 import { FC } from "react";
 
-interface AdminFooterProps {}
 
-const AdminFooter: FC<AdminFooterProps> = ({}) => {
+
+const AdminFooter: FC = ({}) => {
   return (
     <footer className="bg-gray-800 py-2 text-white">
       <div className="mx-auto max-w-7xl px-2 sm:px-6 lg:px-8">

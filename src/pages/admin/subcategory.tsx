@@ -1,4 +1,5 @@
 import { FC, useState } from "react";
+import { toast } from "react-hot-toast";
 import Spinner from "~/components/global/Spinner";
 import { api } from "~/utils/api";
 
@@ -10,28 +11,57 @@ const Subcategory: FC = ({}) => {
     isLoading,
     refetch,
   } = api.subCategory.getAllCategories.useQuery();
-  const { mutate: addCategory } = api.category.addCategory.useMutation({
-    onSuccess: () => refetch(),
+  const { data: mainCategories } = api.category.getAllCategories.useQuery();
+  const { mutate: addCategory } = api.subCategory.addCategory.useMutation({
+    onSuccess: () => {
+      refetch()
+        .then((res) => res)
+        .catch((err) => console.log(err));
+      setForm({ name: "", categoryId: "" });
+      toast.success("sucessfully added subcategory");
+    },
   });
-  const [formName, setFormName] = useState("");
+  const [form, setForm] = useState({
+    name: "",
+    categoryId: "",
+  });
   return (
     <div>
       <div className="p-6">
         <div className="mx-auto flex max-w-xl flex-col gap-2">
+          <label>Name</label>
           <input
             name="name"
             className="h-12 rounded-sm border-none bg-gray-200"
             type="text"
             placeholder="name"
-            onChange={(e) => setFormName(e.target.value)}
-            value={formName}
+            onChange={(e) =>
+              setForm((prev) => ({ ...prev, name: e.target.value }))
+            }
+            value={form.name}
           />
+          <label>Category</label>
+          <select
+            onChange={(e) =>
+              setForm((prev) => ({ ...prev, categoryId: e.target.value }))
+            }
+            className="border-2 p-1"
+          >
+            <option selected value="" disabled>
+              Select Category
+            </option>
+            {mainCategories?.map((category) => (
+              <option key={category.id} value={category.id}>
+                {category.name}
+              </option>
+            ))}
+          </select>
 
           <button
             className="h-12 rounded-sm bg-gray-200 disabled:cursor-not-allowed"
-            disabled={!formName}
+            disabled={!form.name || !form.categoryId}
             onClick={() => {
-              addCategory({ name: formName });
+              addCategory({ name: form.name, categoryId: form.categoryId });
             }}
           >
             Add Subcategory

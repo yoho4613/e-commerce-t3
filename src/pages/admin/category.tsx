@@ -1,17 +1,22 @@
 import { FC, useState } from "react";
+import { toast } from "react-hot-toast";
 import Spinner from "~/components/global/Spinner";
 import { api } from "~/utils/api";
 
 // interface categoryProps {}
 
-const category: FC = ({}) => {
+const Category: FC = ({}) => {
   const {
     data: categories,
     isLoading,
     refetch,
   } = api.category.getAllCategories.useQuery();
   const { mutate: addCategory } = api.category.addCategory.useMutation({
-    onSuccess: () => refetch(),
+    onSuccess: () => {
+      refetch().then(res => res).catch(err => console.log(err))
+      setFormName("")
+      toast.success("sucessfully added subcategory");
+    },
   });
   const [formName, setFormName] = useState("");
   return (
@@ -101,4 +106,4 @@ const category: FC = ({}) => {
   );
 };
 
-export default category;
+export default Category;

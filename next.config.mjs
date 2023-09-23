@@ -7,7 +7,6 @@ await import("./src/env.mjs");
 /** @type {import("next").NextConfig} */
 const config = {
   reactStrictMode: false,
-  
 
   /**
    * If you are using `appDir` then you must comment the below `i18n` config out.
@@ -19,8 +18,14 @@ const config = {
     defaultLocale: "en",
   },
   images: {
-    domains: ["lh3.googleusercontent.com", "images.unsplash.com", "blogger.googleusercontent.com", "placeimg.com"]
-  }
+    domains: [
+      "lh3.googleusercontent.com",
+      "images.unsplash.com",
+      "blogger.googleusercontent.com",
+      "placeimg.com",
+      "e-market-jiho.s3.ap-southeast-2.amazonaws.com",
+    ],
+  },
 };
 
 export default config;

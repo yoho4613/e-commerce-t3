@@ -1,5 +1,6 @@
 import { Product } from "@prisma/client";
 import { CartItem } from "~/config/type";
+import { s3 } from "./s3";
 
 export const getAverage = (arr: number[]) => {
   const total = arr.reduce((acc, next) => (acc += next), 0);
@@ -62,4 +63,18 @@ export const getTotalPrice = (cartItems: CartItem[]) => {
     totalDelivery: totalDelivery <= 0 ? "Free" : totalDelivery,
     totalPrice,
   };
+};
+
+export const getImgUrl = async (product: Product) => {
+  const withUrls = await Promise.all(
+    product.imgUrl.map(async (url) => {
+      return !url.includes("unsplash")
+        ? await s3.getSignedUrlPromise("getObject", {
+            Bucket: "e-market-jiho",
+            Key: url,
+          })
+        : url;
+    }),
+  );
+  return { ...product, imgUrl: withUrls };
 };

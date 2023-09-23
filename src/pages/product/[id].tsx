@@ -73,7 +73,7 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
   if (!product) {
     return (
       <div className="flex h-screen w-screen items-center justify-center">
-        <Spinner />;
+        <Spinner />
       </div>
     );
   }
@@ -263,12 +263,15 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
         <h2 className="font-bold text-redPrimary">Reviews</h2>
       </div>
       <div className="w-full rounded-sm border-2">
-        <div className="space-y-4 w-full p-2.5">
+        <div className="w-full space-y-4 p-2.5">
           {reviews ? (
-            reviews.slice(0,10).map((review) => (
-              <div key={review.id} className="flex flex-col sm:flex-row items-start w-full gap-4 sm:gap-0 sm:items-center border-b-2 pb-4">
+            reviews.slice(0, 10).map((review) => (
+              <div
+                key={review.id}
+                className="flex w-full flex-col items-start gap-4 border-b-2 pb-4 sm:flex-row sm:items-center sm:gap-0"
+              >
                 <Image
-                  className="h-14 w-14 rounded-full mr-4"
+                  className="mr-4 h-14 w-14 rounded-full"
                   src={review.author.image || defaultAvatar}
                   alt="author"
                   width={100}
@@ -281,9 +284,16 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
                   <h4 className="text-sm sm:text-base">{review.comment}</h4>
                   <Star average={review.star} />
                 </div>
-                <div className="self-start grow text-right text-xs">
-                  <p>Posted at: <span>{review.createdAt.toLocaleString()}</span></p>
-                  {review.updatedAt.getTime() > review.createdAt.getTime() && <p>Edited at: <span>{review.updatedAt.toLocaleString()}</span></p>}
+                <div className="grow self-start text-right text-xs">
+                  <p>
+                    Posted at: <span>{review.createdAt.toLocaleString()}</span>
+                  </p>
+                  {review.updatedAt.getTime() > review.createdAt.getTime() && (
+                    <p>
+                      Edited at:{" "}
+                      <span>{review.updatedAt.toLocaleString()}</span>
+                    </p>
+                  )}
                 </div>
               </div>
             ))

@@ -38,11 +38,8 @@ const initialForm = {
 // const DynamicSelect = dynamic(() => import("react-select"), { ssr: false });
 
 const ProductForm: FC = ({}) => {
-  const {
-    data: categories,
-    isLoading,
-    refetch,
-  } = api.category.getAllCategories.useQuery();
+  const { data: categories, refetch } =
+    api.category.getAllCategories.useQuery();
   const { data: sales } = api.sale.getAllSales.useQuery();
   const { mutateAsync: createPresignedUrl } =
     api.product.createPresignedUrl.useMutation();
@@ -82,18 +79,21 @@ const ProductForm: FC = ({}) => {
     () => objectUrl.map((img) => URL.revokeObjectURL(img)) || "";
   }, [photos]);
 
-  const handleImageUpload = () => {
-    if (!photos || !photos.length) return;
+  const handleImageUpload = async () => {
+    if (!photos.length) {
+      return setError("At least one image must be added");
+    }
+    const imageWithKeys: string[] = [];
 
-    const images = photos.map(async (img) => {
+    for (const photo of photos) {
       const { fields, key, url } = (await createPresignedUrl({
-        fileType: img.type,
+        fileType: photo.type,
       })) as { fields: string[]; key: string; url: string };
 
       const data = {
         ...fields,
-        "Content-Type": img.type,
-        file: img,
+        "Content-Type": photo.type,
+        file: photo,
       };
 
       const formData = new FormData();
@@ -109,10 +109,41 @@ const ProductForm: FC = ({}) => {
         .then((res) => console.log(res))
         .catch((err) => console.log(err));
 
-      return key;
-    });
+      imageWithKeys.push(key);
+    }
 
-    return images;
+    // const images = photos.map(async (img) => {
+    //   const { fields, key, url } = (await createPresignedUrl({
+    //     fileType: img.type,
+    //   })) as { fields: string[]; key: string; url: string };
+
+    //   const data = {
+    //     ...fields,
+    //     "Content-Type": img.type,
+    //     file: img,
+    //   };
+
+    //   const formData = new FormData();
+
+    //   Object.entries(data).forEach(([key, value]) => {
+    //     formData.append(key, value as string | Blob);
+    //   });
+
+    //   await fetch(url, {
+    //     method: "POST",
+    //     body: formData,
+    //   })
+    //     .then((res) => console.log(res))
+    //     .catch((err) => console.log(err));
+
+    //   imageWithKeys.push(key);
+    //   return key;
+    // });
+
+    // console.log(imageWithKeys)
+
+    return imageWithKeys;
+    // return images;
   };
 
   const addNewProduct = async () => {
@@ -125,6 +156,7 @@ const ProductForm: FC = ({}) => {
       delivery,
       stock,
       categoryId,
+      saleId,
     } = form;
     if (
       categoryId ||
@@ -138,7 +170,7 @@ const ProductForm: FC = ({}) => {
     ) {
       setError("Missing Information");
     }
-    const key = handleImageUpload();
+    const key = await handleImageUpload();
     if (!key) throw new Error("No key");
 
     addProduct({
@@ -151,8 +183,9 @@ const ProductForm: FC = ({}) => {
       stock,
       categoryId,
       subcategoryId: form.subcategoryId || "",
-      imgUrl: ["key"],
-      saleId: "",
+      imgUrl: key,
+      saleId,
+      attributes,
     });
   };
 
@@ -225,8 +258,19 @@ const ProductForm: FC = ({}) => {
             <button className="h-full w-12 bg-buttonGreen">Add</button>
           </form>
           <p className="h-full w-full border-2">
-            {attribute.options.map((option) => (
-              <button>{option}</button>
+            {attribute.options.map((option, i) => (
+              <button
+                className="border-2 p-1"
+                onClick={() =>
+                  setAttribute((prev) => ({
+                    ...prev,
+                    options: prev.options.filter((el) => el !== option),
+                  }))
+                }
+                key={i}
+              >
+                {option}
+              </button>
             ))}
           </p>
         </div>
@@ -517,7 +561,9 @@ const ProductForm: FC = ({}) => {
             className="h-12 rounded-sm bg-gray-200 disabled:cursor-not-allowed"
             // disabled={!formName}
             onClick={() => {
-              addNewProduct();
+              addNewProduct()
+                .then((res) => res)
+                .catch((err) => console.log(err));
             }}
           >
             Add Product

@@ -9,11 +9,28 @@ import { TRPCError } from "@trpc/server";
 import { s3 } from "~/lib/s3";
 import { MAX_FILE_SIZE } from "~/constant/config";
 import crypto from "crypto";
+import { getImgUrl } from "~/lib/helper";
+import { Product } from "@prisma/client";
 
 export const productRouter = createTRPCRouter({
   getAllProducts: publicProcedure.query(async ({ ctx }) => {
     const products = await ctx.prisma.product.findMany();
-    return products;
+
+    const productsWithUrls = await Promise.all(
+      products.map((product) => {
+        const withUrls = product.imgUrl.map(async (url) =>
+          !url.includes("unsplash")
+            ? await s3.getSignedUrlPromise("getObject", {
+                Bucket: "e-market-jiho",
+                Key: url,
+              })
+            : url,
+        );
+        return { ...product, imgUrl: withUrls };
+      }),
+    );
+
+    return productsWithUrls;
   }),
   getRandomProducts: publicProcedure
     .input(z.number())
@@ -56,7 +73,9 @@ export const productRouter = createTRPCRouter({
         });
       }
 
-      return product;
+      const withUrls = await getImgUrl(product);
+
+      return withUrls;
     }),
   findRelatedProducts: publicProcedure
     .input(z.object({ id: z.string() }))
@@ -138,7 +157,7 @@ export const productRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const { category, subcategory, search } = input;
-      let products;
+      let products: Product[];
 
       const categoryCheck = category === "all";
       const subcategoryCheck = subcategory === "all";
@@ -178,7 +197,14 @@ export const productRouter = createTRPCRouter({
         );
       }
 
-      return products;
+      const productsWithUrls: Product[] = [];
+
+      for (const product of products) {
+        const withUrl = await getImgUrl(product);
+        productsWithUrls.push(withUrl);
+      }
+
+      return productsWithUrls;
     }),
   addProduct: adminProcedure
     .input(
@@ -194,6 +220,9 @@ export const productRouter = createTRPCRouter({
         saleId: z.string(),
         delivery: z.number(),
         imgUrl: z.array(z.string()),
+        attributes: z.array(
+          z.object({ title: z.string(), options: z.array(z.string()) }),
+        ),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -209,7 +238,20 @@ export const productRouter = createTRPCRouter({
         saleId,
         delivery,
         imgUrl,
+        attributes,
       } = input;
+
+      /* eslint-disable-next-line */
+      const attData: {
+        [key: string]: string[];
+      } = {};
+
+      if (attributes.length) {
+        attributes.forEach((att) => {
+          const { title, options } = att;
+          attData[title] = options;
+        });
+      }
 
       const product = await ctx.prisma.product.create({
         data: {
@@ -224,6 +266,7 @@ export const productRouter = createTRPCRouter({
           saleId: saleId.length ? saleId : null,
           delivery,
           imgUrl,
+          attributes: attributes.length ? attData : undefined,
         },
       });
 
@@ -238,46 +281,23 @@ export const productRouter = createTRPCRouter({
     }),
   createPresignedUrl: adminProcedure
     .input(z.object({ fileType: z.string() }))
-    .mutation(async ({ input }) => {
+    .mutation(({ input }) => {
       const id = crypto.randomUUID();
-      const ex = input.fileType.split("/")[1] || "";
+      const ex = input.fileType.split("/")[1] ?? "";
       const key = `${id}.${ex}`;
 
-      const { url, fields } = (await new Promise((resolve, reject) => {
-        s3.createPresignedPost(
-          {
-            Bucket: "e-market-jiho",
-            Fields: { key },
-            Expires: 60,
-            Conditions: [
-              ["content-length-range", 0, MAX_FILE_SIZE],
-              ["starts-with", "$Content-Type", "image/"],
-            ],
-          },
-          (err, data) => {
-            console.log(data);
-            if (err) return reject(err);
-            resolve(data);
-          },
-        );
-      })) as any as { url: string; fields: string[] };
+      const { url, fields } = s3.createPresignedPost({
+        Bucket: "e-market-jiho",
+        Fields: { key },
+        Expires: 60,
+        Conditions: [
+          ["content-length-range", 0, MAX_FILE_SIZE],
+          ["starts-with", "$Content-Type", "image/"],
+        ],
+        /* eslint-disable-next-line */
+      }) as any as { url: string; fields: string[] };
 
       console.log({ url, fields, key });
       return { url, fields, key };
     }),
-
-  // getMenuItems: publicProcedure.query(async ({ ctx }) => {
-  //   const menuItems = await ctx.prisma.menuItem.findMany();
-  //   // Each menu item only contains its AWS key. Extend all items with their actual img url
-  //   const withUrls = await Promise.all(
-  //     menuItems.map(async (menuItem) => ({
-  //       ...menuItem,
-  //       url: await s3.getSignedUrlPromise("getObject", {
-  //         Bucket: "restaurant-booking-app",
-  //         Key: menuItem.imageKey,
-  //       }),
-  //     }))
-  //   );
-  //   return withUrls;
-  // }),
 });

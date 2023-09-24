@@ -11,7 +11,7 @@ import { api } from "~/utils/api";
 const Watchlist: FC = ({}) => {
   const { userDetail, updateWatchlistContext, updateCartContext } =
     useStateContext();
-  const { data: products, isLoading } = api.product.findProducts.useQuery(
+  const { data: products, isLoading, isError } = api.product.findProducts.useQuery(
     userDetail.watchlist,
   );
 
@@ -76,6 +76,7 @@ const Watchlist: FC = ({}) => {
         </button>
       </div>
       <div className="flex flex-wrap justify-evenly gap-4">
+        {isError && <p>No Watchlist...</p>}
         {products?.map((product) => (
           <div className="w-32 shrink-0 sm:w-64" key={product.id}>
             <div className="relative h-24 overflow-y-hidden rounded-md border-2 sm:h-48">

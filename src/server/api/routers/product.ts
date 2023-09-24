@@ -16,19 +16,12 @@ export const productRouter = createTRPCRouter({
   getAllProducts: publicProcedure.query(async ({ ctx }) => {
     const products = await ctx.prisma.product.findMany();
 
-    const productsWithUrls = await Promise.all(
-      products.map((product) => {
-        const withUrls = product.imgUrl.map(async (url) =>
-          !url.includes("unsplash")
-            ? await s3.getSignedUrlPromise("getObject", {
-                Bucket: "e-market-jiho",
-                Key: url,
-              })
-            : url,
-        );
-        return { ...product, imgUrl: withUrls };
-      }),
-    );
+    const productsWithUrls: Product[] = [];
+
+    for (const product of products) {
+      const withUrl = await getImgUrl(product);
+      productsWithUrls.push(withUrl);
+    }
 
     return productsWithUrls;
   }),
@@ -163,27 +156,26 @@ export const productRouter = createTRPCRouter({
       const subcategoryCheck = subcategory === "all";
       const searchCheck = search === "all";
       const searchInput = search.toLowerCase();
-      console.log(categoryCheck, subcategoryCheck, searchCheck);
 
       if (categoryCheck && subcategoryCheck) {
         products = await ctx.prisma.product.findMany();
-      } else if (categoryCheck) {
-        products = await ctx.prisma.product.findMany({
-          where: {
-            subcategoryId: subcategory,
-          },
-        });
-      } else if (category) {
+      } else if (subcategoryCheck) {
         products = await ctx.prisma.product.findMany({
           where: {
             categoryId: category,
+          },
+        });
+      } else if (subcategory) {
+        products = await ctx.prisma.product.findMany({
+          where: {
+            categoryId: category,
+            subcategoryId: subcategory,
           },
         });
       } else {
         products = await ctx.prisma.product.findMany({
           where: {
             categoryId: category,
-            subcategoryId: subcategory,
           },
         });
       }
@@ -279,6 +271,121 @@ export const productRouter = createTRPCRouter({
 
       return product;
     }),
+  updateProduct: adminProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        title: z.string(),
+        description: z.string(),
+        type: z.string(),
+        rrp: z.string(),
+        price: z.string(),
+        stock: z.number(),
+        categoryId: z.string(),
+        subcategoryId: z.string(),
+        saleId: z.string(),
+        delivery: z.number(),
+        imgUrl: z.array(z.string()),
+        attributes: z.array(
+          z.object({ title: z.string(), options: z.array(z.string()) }),
+        ),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const {
+        id,
+        title,
+        description,
+        type,
+        rrp,
+        price,
+        stock,
+        categoryId,
+        subcategoryId,
+        saleId,
+        delivery,
+        imgUrl,
+        attributes,
+      } = input;
+
+      if (!id) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Cannot find product",
+        });
+      }
+
+      /* eslint-disable-next-line */
+      const attData: {
+        [key: string]: string[];
+      } = {};
+
+      if (attributes.length) {
+        attributes.forEach((att) => {
+          const { title, options } = att;
+          attData[title] = options;
+        });
+      }
+
+      const product = await ctx.prisma.product.update({
+        where: {
+          id,
+        },
+        data: {
+          title,
+          description,
+          type,
+          rrp,
+          price,
+          stock,
+          categoryId,
+          subcategoryId: subcategoryId.length ? subcategoryId : null,
+          saleId: saleId.length ? saleId : null,
+          delivery,
+          imgUrl: { push: imgUrl },
+          attributes: attributes.length ? attData : undefined,
+        },
+      });
+
+      if (!product) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Failed to create Product.",
+        });
+      }
+
+      return product;
+    }),
+  deleteProduct: adminProcedure
+    .input(z.object({ id: z.string(), imageKey: z.array(z.string()) }))
+    .mutation(async ({ ctx, input }) => {
+      const { id, imageKey } = input;
+      if (!id) {
+        throw new TRPCError({
+          code: "CONFLICT",
+          message: "id is Missing",
+        });
+      }
+
+      console.log(imageKey);
+      for (const key of imageKey) {
+        if (!key.includes("unsplash")) {
+          const res = await s3
+            .deleteObject({ Bucket: "e-market-jiho", Key: key })
+            .promise()
+            .then((res) => console.log(res));
+
+        }
+      }
+
+      const product = await ctx.prisma.product.delete({
+        where: {
+          id,
+        },
+      });
+
+      return product;
+    }),
   createPresignedUrl: adminProcedure
     .input(z.object({ fileType: z.string() }))
     .mutation(({ input }) => {
@@ -297,7 +404,6 @@ export const productRouter = createTRPCRouter({
         /* eslint-disable-next-line */
       }) as any as { url: string; fields: string[] };
 
-      console.log({ url, fields, key });
       return { url, fields, key };
     }),
 });

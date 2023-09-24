@@ -1,43 +1,17 @@
-import { FC, useEffect, useState } from "react";
+import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { api } from "~/utils/api";
 import Image from "next/image";
 import { MAX_FILE_SIZE } from "~/constant/config";
 import { BiStar } from "react-icons/bi";
+import { Product } from "@prisma/client";
 
-// interface ProductFormProps {}
+interface ProductFormProps {
+  product: Product;
+  setOpenForm: Dispatch<SetStateAction<Product | null>>;
+}
 
-type Form = {
-  title: string;
-  description: string;
-  type: string;
-  rrp: string;
-  price: string;
-  stock: number;
-  categoryId: string;
-  subcategoryId: string;
-  saleId: string;
-  delivery: number;
-  imgUrl: string[];
-};
-
-const initialForm = {
-  title: "",
-  description: "",
-  type: "",
-  rrp: "",
-  price: "",
-  stock: 0,
-  categoryId: "",
-  subcategoryId: "",
-  saleId: "",
-  delivery: 0,
-  imgUrl: [],
-};
-
-// const DynamicSelect = dynamic(() => import("react-select"), { ssr: false });
-
-const ProductForm: FC = ({}) => {
+const ProductForm: FC<ProductFormProps> = ({ product, setOpenForm }) => {
   const { data: categories, refetch } =
     api.category.getAllCategories.useQuery();
   const { data: sales } = api.sale.getAllSales.useQuery();
@@ -48,16 +22,26 @@ const ProductForm: FC = ({}) => {
       refetch()
         .then((res) => res)
         .catch((err) => console.log(err));
-      setForm(initialForm);
+      setOpenForm(null);
       toast.success("sucessfully added Product");
       setError("");
       setPhotos([]);
-      setPreviews([]);
+    },
+  });
+  const { mutate: updateProduct } = api.product.updateProduct.useMutation({
+    onSuccess: () => {
+      refetch()
+        .then((res) => res)
+        .catch((err) => console.log(err));
+      setOpenForm(null);
+      toast.success("sucessfully Updated Product");
+      setError("");
+      setPhotos([]);
     },
   });
   const [photos, setPhotos] = useState<File[]>([]);
-  const [form, setForm] = useState<Form>(initialForm);
-  const [previews, setPreviews] = useState<string[]>([]);
+  const [form, setForm] = useState<Product>(product);
+  const [previews, setPreviews] = useState<string[]>(product.imgUrl);
   const [error, setError] = useState("");
   const [openSale, setOpenSale] = useState(false);
   const [attributes, setAttributes] = useState<
@@ -67,13 +51,13 @@ const ProductForm: FC = ({}) => {
     }[]
   >([]);
 
-  console.log(attributes);
+  console.log(previews)
 
   useEffect(() => {
     if (!photos.length) return;
     // create the preview
     const objectUrl = photos?.map((img) => URL.createObjectURL(img));
-    setPreviews([...objectUrl]);
+    setPreviews(objectUrl);
 
     // clean up the preview
     () => objectUrl.map((img) => URL.revokeObjectURL(img)) || "";
@@ -112,38 +96,7 @@ const ProductForm: FC = ({}) => {
       imageWithKeys.push(key);
     }
 
-    // const images = photos.map(async (img) => {
-    //   const { fields, key, url } = (await createPresignedUrl({
-    //     fileType: img.type,
-    //   })) as { fields: string[]; key: string; url: string };
-
-    //   const data = {
-    //     ...fields,
-    //     "Content-Type": img.type,
-    //     file: img,
-    //   };
-
-    //   const formData = new FormData();
-
-    //   Object.entries(data).forEach(([key, value]) => {
-    //     formData.append(key, value as string | Blob);
-    //   });
-
-    //   await fetch(url, {
-    //     method: "POST",
-    //     body: formData,
-    //   })
-    //     .then((res) => console.log(res))
-    //     .catch((err) => console.log(err));
-
-    //   imageWithKeys.push(key);
-    //   return key;
-    // });
-
-    // console.log(imageWithKeys)
-
     return imageWithKeys;
-    // return images;
   };
 
   const addNewProduct = async () => {
@@ -156,19 +109,18 @@ const ProductForm: FC = ({}) => {
       delivery,
       stock,
       categoryId,
-      saleId,
     } = form;
     if (
-      categoryId ||
-      title ||
-      description ||
-      type ||
-      rrp ||
-      price ||
-      delivery ||
-      stock
+      !categoryId ||
+      !title ||
+      !description ||
+      !type ||
+      !rrp ||
+      !price ||
+      !delivery ||
+      !stock
     ) {
-      setError("Missing Information");
+      return setError("Missing Information");
     }
     const key = await handleImageUpload();
     if (!key) throw new Error("No key");
@@ -184,7 +136,53 @@ const ProductForm: FC = ({}) => {
       categoryId,
       subcategoryId: form.subcategoryId || "",
       imgUrl: key,
-      saleId,
+      saleId: form.saleId ? form.saleId : "",
+      attributes,
+    });
+  };
+
+  const updateNewProduct = async () => {
+    const {
+      title,
+      description,
+      type,
+      rrp,
+      price,
+      delivery,
+      stock,
+      categoryId,
+      id,
+    } = form;
+    if (
+      !categoryId ||
+      !title ||
+      !description ||
+      !type ||
+      !rrp ||
+      !price ||
+      !delivery ||
+      !stock ||
+      !delivery ||
+      !id
+    ) {
+      return setError("Missing Information");
+    }
+    const key = await handleImageUpload();
+    if (!key) throw new Error("No key");
+
+    updateProduct({
+      id,
+      title,
+      description,
+      type,
+      rrp,
+      price,
+      delivery,
+      stock,
+      categoryId,
+      subcategoryId: form.subcategoryId || "",
+      imgUrl: key,
+      saleId: form.saleId ? form.saleId : "",
       attributes,
     });
   };
@@ -427,7 +425,7 @@ const ProductForm: FC = ({}) => {
                     delivery: Number(e.target.value),
                   }))
                 }
-                value={form.delivery}
+                value={form.delivery || 0}
               />
             </div>
 
@@ -532,6 +530,10 @@ const ProductForm: FC = ({}) => {
                   {previews.map((img, i) => (
                     <div key={i} className="relative">
                       <Image
+                        onClick={() => {
+                          // setPhotos((prev) => {})
+                          // setPreviews((prev) => {})
+                        }}
                         className="w-32"
                         key={img}
                         alt="preview"
@@ -557,17 +559,31 @@ const ProductForm: FC = ({}) => {
             ""
           )}
           {error && <p className="text-redPrimary">{error}</p>}
-          <button
-            className="h-12 rounded-sm bg-gray-200 disabled:cursor-not-allowed"
-            // disabled={!formName}
-            onClick={() => {
-              addNewProduct()
-                .then((res) => res)
-                .catch((err) => console.log(err));
-            }}
-          >
-            Add Product
-          </button>
+          {product.id ? (
+            <button
+              className="h-12 rounded-sm bg-yellow-300 hover:bg-yellow-400 disabled:cursor-not-allowed"
+              // disabled={!formName}
+              onClick={() => {
+                updateNewProduct()
+                  .then((res) => res)
+                  .catch((err) => console.log(err));
+              }}
+            >
+              Update Product
+            </button>
+          ) : (
+            <button
+              className="h-12 rounded-sm bg-gray-200 disabled:cursor-not-allowed"
+              // disabled={!formName}
+              onClick={() => {
+                addNewProduct()
+                  .then((res) => res)
+                  .catch((err) => console.log(err));
+              }}
+            >
+              Add Product
+            </button>
+          )}
         </div>
       </div>
     </div>

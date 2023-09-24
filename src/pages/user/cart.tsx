@@ -100,7 +100,10 @@ const Cart: FC = ({}) => {
               className="mx-6 h-24 overflow-hidden border-2 text-center"
             >
               <th className="px-4 text-start">
-                <Link href={`/product/${product.id}`}>
+                <Link
+                  className="flex flex-col sm:flex-row"
+                  href={`/product/${product.id}`}
+                >
                   <Image
                     className="mr-4 h-full sm:inline"
                     src={product.imgUrl[0]!}
@@ -152,9 +155,7 @@ const Cart: FC = ({}) => {
           ))}
           {isError && (
             <tr>
-              <td className="flex w-screen justify-center">
-                No Data...
-              </td>
+              <td className="flex w-screen justify-center">No Data...</td>
             </tr>
           )}
         </tbody>

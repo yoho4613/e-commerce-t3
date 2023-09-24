@@ -18,6 +18,7 @@ import Star from "~/components/global/Star";
 import RelatedItems from "~/components/Products/RelatedItems";
 import { getAverage } from "~/lib/helper";
 import { api } from "~/utils/api";
+import { useStateContext } from "~/context/userDetailContext";
 
 interface IProductDetailProps {
   id: string;
@@ -36,6 +37,7 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
   const { data: relatedProducts } = api.product.findRelatedProducts.useQuery({
     id,
   });
+  const { userDetail, updateCartContext } = useStateContext();
   const { data: reviews } = api.review.findProductReview.useQuery({ id });
   const [selectedPhoto, setSelectedPhoto] = useState("");
   const [orderDetail, setOrderDetail] = useState<OrderDetail>({ quantity: 0 });
@@ -66,8 +68,8 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
     }
   }, [reviews]);
 
-  const handleAddCart = async () => {
-    console.log(orderDetail);
+  const handleAddCart = () => {
+    updateCartContext(id);
   };
 
   if (!product) {
@@ -183,7 +185,21 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
                 </div>
               ))}
           </div>
-          <div className="flex justify-start gap-4 py-6 md:justify-between md:gap-0">
+          <div className="w-full">
+            <button
+              onClick={handleAddCart}
+              className={`${
+                userDetail.cart.includes(product.id)
+                  ? "bg-redPrimary text-whitePrimary"
+                  : "hover:bg-buttonGreen"
+              } w-full rounded-md border-2 py-1 text-xs sm:text-base`}
+            >
+              {userDetail.cart.includes(product.id)
+                ? "Remove From Cart"
+                : "Add To Cart"}
+            </button>
+          </div>
+          <div className="flex justify-start gap-4 pb-6 md:justify-between md:gap-0">
             <div className="flex items-center">
               <button
                 onClick={() =>
@@ -231,10 +247,11 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
             >
               Buy Now
             </button>
-            <div className="rounded-md border-2 hover:border-transparent hover:bg-redPrimary hover:text-whitePrimary">
+            <div className="rounded-md border-2 hover:border-transparent hover:bg-buttonGreen hover:text-whitePrimary">
               <Heart productId={product.id} />
             </div>
           </div>
+
           <div>
             <div className="flex items-center rounded-sm border-2 px-2.5 py-4">
               <TbTruckDelivery className="mr-4" size={35} />

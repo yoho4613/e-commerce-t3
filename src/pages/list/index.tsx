@@ -8,9 +8,7 @@ import CategoryNavBar from "~/components/navbar/CategoryNavBar";
 import { api } from "~/utils/api";
 import Spinner from "~/components/global/Spinner";
 import { GetServerSideProps } from "next";
-
 import { FC } from "react";
-import { useRouter } from "next/router";
 
 interface ListPageProps {
   category: string;
@@ -27,13 +25,6 @@ const ListPage: FC<ListPageProps> = ({ category, subcategory, search }) => {
   });
   const [productLength, setProductLength] = useState(20);
   const [slicedProducts, setSlicedProducts] = useState<Product[] | null>(null);
-  const router = useRouter();
-
-  useEffect(() => {
-    console.log(category);
-    console.log(subcategory);
-    console.log(search);
-  }, [products, router]);
 
   useEffect(() => {
     if (products) {

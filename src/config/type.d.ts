@@ -90,3 +90,17 @@ export interface Address {
   country: string;
   contact: string;
 }
+
+export type ProductForm = {
+  title: string;
+  description: string;
+  type: string;
+  rrp: string;
+  price: string;
+  stock: number;
+  categoryId: string;
+  subcategoryId: string;
+  saleId: string;
+  delivery: number;
+  imgUrl: string[];
+};

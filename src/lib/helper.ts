@@ -1,5 +1,5 @@
 import { Product } from "@prisma/client";
-import { CartItem } from "~/config/type";
+import { CartItem, ProductType } from "~/config/type";
 import { s3 } from "./s3";
 
 export const getAverage = (arr: number[]) => {
@@ -76,5 +76,6 @@ export const getImgUrl = async (product: Product) => {
         : url;
     }),
   );
-  return { ...product, url: [...withUrls] };
+
+  return { ...product, url: [...withUrls] } as ProductType;
 };

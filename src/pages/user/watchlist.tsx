@@ -3,6 +3,7 @@ import { FC, useState } from "react";
 import { BsTrash } from "react-icons/bs";
 import RelatedItems from "~/components/Products/RelatedItems";
 import Spinner from "~/components/global/Spinner";
+import { ProductType } from "~/config/type";
 import { useStateContext } from "~/context/userDetailContext";
 import { api } from "~/utils/api";
 
@@ -129,7 +130,7 @@ const Watchlist: FC = ({}) => {
       </div>
       <div className="md:px-8 md:py-12">
         {relatedProducts && (
-          <RelatedItems products={relatedProducts} title="Just For you" />
+          <RelatedItems products={relatedProducts as ProductType[]} title="Just For you" />
         )}
       </div>
     </div>

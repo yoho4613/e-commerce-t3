@@ -11,14 +11,15 @@ import { api } from "~/utils/api";
 import Image from "next/image";
 import { MAX_FILE_SIZE } from "~/constant/config";
 import { BiStar } from "react-icons/bi";
-import { Product } from "~/config/type";
+import { ProductType } from "~/config/type";
 import { BsTrash } from "react-icons/bs";
 import Spinner from "../global/Spinner";
 
 interface ProductFormProps {
-  product: Product;
-  setOpenForm: Dispatch<SetStateAction<Product | null>>;
-  refetch: () => void;
+  product: ProductType;
+  setOpenForm: Dispatch<SetStateAction<ProductType | null>>;
+  /* eslint-disable-next-line */
+  refetch: () => Promise<any>;
 }
 
 interface Attribute {
@@ -37,9 +38,9 @@ const ProductForm: FC<ProductFormProps> = ({
     api.product.createPresignedUrl.useMutation();
   const { mutate: addProduct } = api.product.addProduct.useMutation({
     onSuccess: () => {
-      refetch();
-      // .then((res) => res)
-      // .catch((err) => console.log(err))
+      refetch()
+        .then((res) => [])
+        .catch((err) => console.log(err));
       setOpenForm(null);
       toast.success("sucessfully added Product");
       setError("");
@@ -53,9 +54,9 @@ const ProductForm: FC<ProductFormProps> = ({
   });
   const { mutate: updateProduct } = api.product.updateProduct.useMutation({
     onSuccess: () => {
-      refetch();
-      // .then((res) => res)
-      // .catch((err) => console.log(err))
+      refetch()
+        .then((res) => [])
+        .catch((err) => console.log(err));
       setOpenForm(null);
       toast.success("sucessfully Updated Product");
       setError("");
@@ -68,9 +69,9 @@ const ProductForm: FC<ProductFormProps> = ({
     },
   });
   const [photos, setPhotos] = useState<File[]>([]);
-  const [form, setForm] = useState<Product>(product);
+  const [form, setForm] = useState<ProductType>(product);
   const [existPreviews, setExistPreviews] = useState<string[]>(
-    product.url || [],
+    product.url ?? [],
   );
   const [previews, setPreviews] = useState<string[]>([]);
   const [combinedPreviews, setCombinedPreviews] = useState<string[]>(
@@ -91,7 +92,7 @@ const ProductForm: FC<ProductFormProps> = ({
           ...prev,
           {
             title: att,
-            options: (product.attributes && product.attributes[att]) || [],
+            options: (product.attributes?.[att]) ?? [],
           },
         ]);
       }
@@ -184,7 +185,7 @@ const ProductForm: FC<ProductFormProps> = ({
       delivery,
       stock,
       categoryId,
-      subcategoryId: form.subcategoryId || "",
+      subcategoryId: form.subcategoryId ?? "",
       imgUrl: key,
       saleId: form.saleId ? form.saleId : "",
       attributes,
@@ -230,7 +231,7 @@ const ProductForm: FC<ProductFormProps> = ({
       delivery,
       stock,
       categoryId,
-      subcategoryId: form.subcategoryId || "",
+      subcategoryId: form.subcategoryId ?? "",
       saleId: form.saleId ? form.saleId : "",
       attributes,
       deleteImg: product.imgUrl.filter((key) => deletedPhotos.includes(key)),
@@ -382,7 +383,7 @@ const ProductForm: FC<ProductFormProps> = ({
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, categoryId: e.target.value }))
                 }
-                defaultValue={product.categoryId || ""}
+                defaultValue={product.categoryId ?? ""}
                 className="h-12 bg-gray-200 p-1"
               >
                 <option value="" disabled>
@@ -406,7 +407,7 @@ const ProductForm: FC<ProductFormProps> = ({
                       subcategoryId: e.target.value,
                     }))
                   }
-                  defaultValue={product.subcategoryId || ""}
+                  defaultValue={product.subcategoryId ?? ""}
                   className="h-12 bg-gray-200 p-1"
                 >
                   <option value="" disabled>
@@ -509,7 +510,7 @@ const ProductForm: FC<ProductFormProps> = ({
                     delivery: Number(e.target.value),
                   }))
                 }
-                value={form.delivery || 0}
+                value={form.delivery ?? 0}
               />
             </div>
 
@@ -540,7 +541,7 @@ const ProductForm: FC<ProductFormProps> = ({
                       saleId: e.target.value,
                     }))
                   }
-                  defaultValue={product.saleId || ""}
+                  defaultValue={product.saleId ?? ""}
                   className="h-12 bg-gray-200 p-1"
                 >
                   <option value="" disabled>

@@ -3,7 +3,7 @@ import { toast } from "react-hot-toast";
 import { AiFillCloseCircle } from "react-icons/ai";
 import ProductForm from "~/components/admin/ProductForm";
 import Spinner from "~/components/global/Spinner";
-import { Product } from "~/config/type";
+import { ProductType } from "~/config/type";
 import { initialProductForm } from "~/constant/config";
 import { api } from "~/utils/api";
 
@@ -11,37 +11,39 @@ const Product: FC = ({}) => {
   const { data: categories } = api.category.getAllCategories.useQuery();
   const { mutate: deleteProduct } = api.product.deleteProduct.useMutation({
     onSuccess: () => {
-      refetch();
+      refetch().then(res => res).catch(err => console.log(err))
     },
   });
-  const [selectedproducts, setSelectedproducts] = useState<Product[]>([]);
-  const [openForm, setOpenForm] = useState<Product | null>(null);
+  const [selectedproducts, setSelectedproducts] = useState<ProductType[]>([]);
+  const [openForm, setOpenForm] = useState<ProductType | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<{
     categoryId: string | null;
     subcategoryId: string | null;
   }>({ categoryId: null, subcategoryId: null });
   const [productLength, setProductLength] = useState(0);
-  const [slicedProducts, setSlicedProducts] = useState<Product[]>([]);
+  const [slicedProducts, setSlicedProducts] = useState<ProductType[]>([]);
   const [openPopup, setOpenPopup] = useState<boolean>(false);
   const {
     data: products,
     isLoading,
     refetch,
   } = api.product.findByFilter.useQuery({
-    category: selectedCategory.categoryId || "all",
-    subcategory: selectedCategory.subcategoryId || "all",
+    category: selectedCategory.categoryId ?? "all",
+    subcategory: selectedCategory.subcategoryId ?? "all",
     search: "all",
   });
 
   useEffect(() => {
     if (products) {
-      setSlicedProducts(products.slice(0, productLength + 20));
+      setSlicedProducts(
+        (products as ProductType[]).slice(0, productLength + 20),
+      );
       setProductLength((prev) => prev + 20);
     }
   }, [products]);
 
   useEffect(() => {
-    refetch();
+    refetch().then(res => res).catch(err => console.log(err))
   }, [selectedCategory]);
 
   const deleteSelectedProducts = () => {
@@ -96,7 +98,11 @@ const Product: FC = ({}) => {
               <AiFillCloseCircle size={35} color="red" />
             </button>
           </div>
-          <ProductForm setOpenForm={setOpenForm} product={openForm} refetch={refetch} />
+          <ProductForm
+            setOpenForm={setOpenForm}
+            product={openForm}
+            refetch={refetch}
+          />
         </div>
       )}
       {openPopup && (
@@ -273,7 +279,7 @@ const Product: FC = ({}) => {
               <td className="px-6 py-4 font-bold">${product.delivery}</td>
               <td className="px-6 py-4 font-bold">
                 {product.attributes &&
-                  Object.entries(product.attributes as Object)?.map(
+                  Object.entries(product.attributes as object)?.map(
                     (att, i, arr) => (
                       <span className="mr-1" key={i}>
                         {att[0]}
@@ -303,7 +309,9 @@ const Product: FC = ({}) => {
             <button
               onClick={() => {
                 if (products) {
-                  setSlicedProducts(products?.slice(0, productLength + 20));
+                  setSlicedProducts(
+                    (products as ProductType[]).slice(0, productLength + 20),
+                  );
                   setProductLength((prev) => prev + 20);
                 }
               }}

@@ -1,9 +1,8 @@
 import React, { FC, useEffect, useState } from "react";
 import { IoMdArrowBack, IoMdArrowForward } from "react-icons/io";
 import ProductCard from "../Products/ProductCard";
-import { Sale } from "~/config/type";
+import { ProductType, Sale } from "~/config/type";
 import { shuffle, startCountdown } from "~/lib/helper";
-import { Product } from "@prisma/client";
 
 interface TodayDealProps {
   deal: Sale | null;
@@ -17,7 +16,7 @@ const TodayDeal: FC<TodayDealProps> = ({ deal }) => {
     minutes: 0,
     seconds: 0,
   });
-  const [suffledProducts, setSuffledProducts] = useState<Product[] | null>(
+  const [suffledProducts, setSuffledProducts] = useState<ProductType[] | null>(
     null,
   );
   useEffect(() => {

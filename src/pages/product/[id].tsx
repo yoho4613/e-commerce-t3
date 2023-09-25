@@ -19,6 +19,7 @@ import RelatedItems from "~/components/Products/RelatedItems";
 import { getAverage } from "~/lib/helper";
 import { api } from "~/utils/api";
 import { useStateContext } from "~/context/userDetailContext";
+import { ProductType } from "~/config/type";
 
 interface IProductDetailProps {
   id: string;
@@ -159,11 +160,11 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
                   {attribute.map((att, i) =>
                     i === 0 ? (
                       <h3 key={i} className="text-base sm:text-xl">
-                        {att[0].toUpperCase()}
+                        {att[0]?.toUpperCase()}
                         {att.slice(1)}:
                       </h3>
                     ) : (
-                      att.map((value: string, index: number) => (
+                      (att as string[]).map((value: string, index: number) => (
                         <button
                           key={index}
                           onClick={() =>
@@ -322,7 +323,10 @@ const ProductDetail: FC<IProductDetailProps> = ({ id }) => {
       {/* Related Item */}
       <div>
         {relatedProducts && (
-          <RelatedItems products={relatedProducts} title="Related Item" />
+          <RelatedItems
+            products={relatedProducts as ProductType[]}
+            title="Related Item"
+          />
         )}
       </div>
     </div>

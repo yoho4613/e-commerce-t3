@@ -1,9 +1,9 @@
 import React, { FC, useState } from "react";
 import ProductCard from "../Products/ProductCard";
-import { Product } from "@prisma/client";
+import { ProductType } from "~/config/type";
 
 interface HotProductsProps {
-  products: Product[]
+  products: ProductType[]
 }
 
 const HotProducts: FC<HotProductsProps> = ({products}) => {

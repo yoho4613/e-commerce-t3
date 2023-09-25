@@ -7,9 +7,10 @@ import { api } from "~/utils/api";
 import Heart from "../global/Heart";
 import { getAverage } from "~/lib/helper";
 import Star from "../global/Star";
+import { ProductType } from "~/config/type";
 
 interface ProductCardProps {
-  product: Product;
+  product: ProductType;
   deal?: Sale;
 }
 

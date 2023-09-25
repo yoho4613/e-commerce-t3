@@ -1,4 +1,3 @@
-import { Product } from "@prisma/client";
 import { useEffect, useState } from "react";
 import { BiFilterAlt } from "react-icons/bi";
 import { ImSortAmountDesc } from "react-icons/im";
@@ -9,6 +8,7 @@ import { api } from "~/utils/api";
 import Spinner from "~/components/global/Spinner";
 import { GetServerSideProps } from "next";
 import { FC } from "react";
+import { ProductType } from "~/config/type";
 
 interface ListPageProps {
   category: string;
@@ -24,11 +24,13 @@ const ListPage: FC<ListPageProps> = ({ category, subcategory, search }) => {
     search,
   });
   const [productLength, setProductLength] = useState(20);
-  const [slicedProducts, setSlicedProducts] = useState<Product[] | null>(null);
+  const [slicedProducts, setSlicedProducts] = useState<ProductType[] | null>(
+    null,
+  );
 
   useEffect(() => {
     if (products) {
-      setSlicedProducts(products.slice(0, productLength));
+      setSlicedProducts((products as ProductType[]).slice(0, productLength));
     }
   }, [products]);
 
@@ -62,7 +64,9 @@ const ListPage: FC<ListPageProps> = ({ category, subcategory, search }) => {
               <button
                 onClick={() => {
                   if (products) {
-                    setSlicedProducts(products?.slice(0, productLength + 20));
+                    setSlicedProducts(
+                      (products as ProductType[]).slice(0, productLength + 20),
+                    );
                     setProductLength((prev) => prev + 20);
                   }
                 }}

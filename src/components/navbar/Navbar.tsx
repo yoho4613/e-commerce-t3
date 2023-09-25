@@ -30,7 +30,7 @@ const Navbar: FC = ({}) => {
   const [mobileMenuOpened, setMobileMenuOpened] = useState(false);
   const [profileOpened, setProfileOpened] = useState(false);
   const popupRef = useRef<HTMLUListElement>(null);
-  const profileRef = useRef<HTMLDivElement>(null)
+  const profileRef = useRef<HTMLDivElement>(null);
   const [user, setUser] = useState<User | { id: string } | null>(null);
   const session = useSession();
   const { mutate: getUserDetail } = api.user.findUser.useMutation({
@@ -48,7 +48,6 @@ const Navbar: FC = ({}) => {
       getUserDetail({ email: session.data.user.email! });
     }
   }, [session]);
-
 
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
@@ -75,7 +74,7 @@ const Navbar: FC = ({}) => {
   }, [mobileMenuOpened]);
 
   return (
-    <nav className="flex relative items-center w-full justify-between sm:px-4  ">
+    <nav className="relative flex w-full items-center justify-between sm:px-4  ">
       <div className="relative order-1 h-16 w-16 md:h-20 md:w-20">
         <Link href="/">
           <Image src={logo} alt="logo" fill />
@@ -96,12 +95,17 @@ const Navbar: FC = ({}) => {
           }`}
         >
           <li className="hover-underline-animation bg-slate-200 p-2.5 md:bg-transparent md:p-0">
-            <Link onClick={() => setMobileMenuOpened(false)} className="inline-block w-full" href="/">
+            <Link
+              onClick={() => setMobileMenuOpened(false)}
+              className="inline-block w-full"
+              href="/"
+            >
               Home
             </Link>
           </li>
           <li className="hover-underline-animation bg-slate-200 p-2.5 md:bg-transparent md:p-0">
-            <Link onClick={() => setMobileMenuOpened(false)}
+            <Link
+              onClick={() => setMobileMenuOpened(false)}
               className="inline-block w-full"
               href="/list?category=all&subcategory=all"
             >
@@ -109,18 +113,30 @@ const Navbar: FC = ({}) => {
             </Link>
           </li>
           <li className="hover-underline-animation bg-slate-200 p-2.5 md:bg-transparent md:p-0">
-            <Link onClick={() => setMobileMenuOpened(false)} className="inline-block w-full" href="/contact">
+            <Link
+              onClick={() => setMobileMenuOpened(false)}
+              className="inline-block w-full"
+              href="/contact"
+            >
               Contact
             </Link>
           </li>
           <li className="hover-underline-animation bg-slate-200 p-2.5 md:bg-transparent md:p-0">
-            <Link onClick={() => setMobileMenuOpened(false)} className="inline-block w-full" href="/">
+            <Link
+              onClick={() => setMobileMenuOpened(false)}
+              className="inline-block w-full"
+              href="/"
+            >
               About
             </Link>
           </li>
           {!user && (
             <li className="hover-underline-animation bg-slate-200 p-2.5 md:bg-transparent md:p-0">
-              <Link onClick={() => setMobileMenuOpened(false)} className="inline-block w-full" href="/login">
+              <Link
+                onClick={() => setMobileMenuOpened(false)}
+                className="inline-block w-full"
+                href="/login"
+              >
                 Login
               </Link>
             </li>
@@ -173,7 +189,10 @@ const Navbar: FC = ({}) => {
               className="absolute right-0 top-6 z-[999] flex w-32 flex-col rounded-sm px-2.5 text-sm text-whitePrimary sm:w-[20rem] sm:text-lg"
               style={{ background: "rgba(0,0,0,0.5)" }}
             >
-              <Link href="/user/profile" className="flex w-full items-center p-2 text-left">
+              <Link
+                href="/user/profile"
+                className="flex w-full items-center p-2 text-left"
+              >
                 <BsPerson color="white" className="mr-2 text-xl" />
                 Manage My Profile
               </Link>

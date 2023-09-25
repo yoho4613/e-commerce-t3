@@ -66,7 +66,8 @@ const Profile = () => {
               <div className="mt-3 text-sm text-white">
                 {userDetail && (
                   <p className="mt-2.5 font-semibold ">
-                    Purchase: <span className="text-emerald-400">{userDetail.purchase || 0}</span>
+                    Purchase: 
+                    {/* <span className="text-emerald-400">{userDetail.purchase || 0}</span> */}
                   </p>
                 ) }
               </div>

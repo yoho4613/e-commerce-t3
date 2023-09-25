@@ -54,9 +54,37 @@ export interface Product {
   rrp: string;
   price: string;
   imgUrl: string[];
+  /* eslint-disable-next-line */
   attributes?: {
     [key: string]: string[];
   };
+  review?: Review;
+  delivery: number | null;
+  stock: number;
+  category?: Category;
+  categoryId?: string;
+  subcategory?: Subcategory;
+  subcategoryId: string | null;
+  order?: Order[];
+  Sale?: Sale;
+  saleId: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  url?: string[];
+}
+
+export interface ProductType {
+  id: string;
+  title: string;
+  type: string;
+  description: string;
+  rrp: string;
+  price: string;
+  imgUrl: string[];
+  /* eslint-disable-next-line */
+  attributes: {
+    [key: string]: string[];
+  } | null;
   review?: Review;
   delivery: number | null;
   stock: number;

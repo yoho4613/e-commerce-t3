@@ -1,8 +1,7 @@
 import React, { FC } from "react";
 import ProductCard from "../Products/ProductCard";
-import {  shuffle } from "~/lib/helper";
-import { Sale } from "~/config/type";
-import { Product } from "@prisma/client";
+import { shuffle } from "~/lib/helper";
+import { ProductType, Sale } from "~/config/type";
 
 interface MonthDealProps {
   deal: Sale | null;
@@ -10,7 +9,7 @@ interface MonthDealProps {
 
 const MonthDeal: FC<MonthDealProps> = ({ deal }) => {
   const suffledProducts = (deal &&
-    shuffle(deal.Products.slice(0, 12))) as Product[];
+    shuffle(deal.Products.slice(0, 12))) as ProductType[];
   return (
     <div>
       <div className="flex items-center">
@@ -31,11 +30,7 @@ const MonthDeal: FC<MonthDealProps> = ({ deal }) => {
         {suffledProducts &&
           deal &&
           suffledProducts.map((product, i) => (
-            <ProductCard
-              key={i}
-              product={product}
-              deal={deal}
-            />
+            <ProductCard key={i} product={product} deal={deal} />
           ))}
       </div>
     </div>

@@ -1,9 +1,9 @@
 import { FC } from "react";
 import ProductCard from "./ProductCard";
-import { Product } from "@prisma/client";
+import { ProductType } from "~/config/type";
 
 interface RelatedItemsProps {
-  products: Product[];
+  products: ProductType[];
   title: string;
 }
 

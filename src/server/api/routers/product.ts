@@ -11,12 +11,13 @@ import { MAX_FILE_SIZE } from "~/constant/config";
 import crypto from "crypto";
 import { getImgUrl } from "~/lib/helper";
 import { Product } from "@prisma/client";
+import { ProductType } from "~/config/type";
 
 export const productRouter = createTRPCRouter({
   getAllProducts: publicProcedure.query(async ({ ctx }) => {
     const products = await ctx.prisma.product.findMany();
 
-    const productsWithUrls: Product[] = [];
+    const productsWithUrls: ProductType[] = [];
 
     for (const product of products) {
       const withUrl = await getImgUrl(product);
@@ -37,8 +38,14 @@ export const productRouter = createTRPCRouter({
           Sale: true,
         },
       });
+      const productsWithUrls: ProductType[] = [];
 
-      return products;
+      for (const product of products) {
+        const withUrl = await getImgUrl(product);
+        productsWithUrls.push(withUrl);
+      }
+
+      return productsWithUrls;
     }),
   findProduct: publicProcedure
     .input(z.object({ id: z.string() }))
@@ -189,7 +196,7 @@ export const productRouter = createTRPCRouter({
         );
       }
 
-      const productsWithUrls: Product[] = [];
+      const productsWithUrls: ProductType[] = [];
 
       for (const product of products) {
         const withUrl = await getImgUrl(product);

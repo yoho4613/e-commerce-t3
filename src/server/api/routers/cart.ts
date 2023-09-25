@@ -7,8 +7,8 @@ export const cartRouter = createTRPCRouter({
     .input(z.object({ userId: z.string(), productId: z.string() }))
     .mutation(async ({ ctx, input }) => {
       const { userId, productId } = input;
-      console.log(userId)
-      console.log(productId)
+      console.log(userId);
+      console.log(productId);
 
       const user = await ctx.prisma.user.findFirst({
         where: {
@@ -32,8 +32,8 @@ export const cartRouter = createTRPCRouter({
             cart: user.cart.filter((id) => id !== productId),
           },
         });
-        console.log("remove from cart")
-        console.log(userUpdate.cart)
+        console.log("remove from cart");
+        console.log(userUpdate.cart);
         return userUpdate;
       } else {
         const userUpdate = await ctx.prisma.user.update({
@@ -41,13 +41,11 @@ export const cartRouter = createTRPCRouter({
             id: userId,
           },
           data: {
-            cart: {
-              push: productId,
-            },
+            cart: [...user.cart, productId],
           },
         });
-        console.log("add to cart")
-        console.log(userUpdate.cart)
+        console.log("add to cart");
+        console.log(userUpdate.cart);
         return userUpdate;
       }
     }),

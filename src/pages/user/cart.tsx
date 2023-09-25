@@ -34,9 +34,11 @@ const Cart: FC = ({}) => {
     code: "",
     country: "New Zealand",
     contact: "",
+    title: "",
   });
   const [formOpened, setFormOpened] = useState(false);
   const [warning, setWarning] = useState<string | null>(null);
+
   useEffect(() => {
     if (products) {
       setCartItems(
@@ -59,15 +61,16 @@ const Cart: FC = ({}) => {
     addNewAddressContext(addressForm);
     setFormOpened(false);
   };
+  console.log(userDetail.address);
 
   /* eslint-disable */
   const submitCheckout = () => {
-    if (!userDetail.address.length) {
+    if (!userDetail.address) {
       return toast.error("Please Check Your Delivery Address");
     } else {
       checkout({
         email: userDetail.email,
-        address: userDetail.address[0]! as Address,
+        address: userDetail.address[0] as Address,
         products: cartItems,
         url: BASE_URL,
       });
@@ -175,24 +178,26 @@ const Cart: FC = ({}) => {
         <button className="rounded-sm border-2 px-4 py-2">Update Cart</button>
       </div>
       <div className="mt-12 flex w-full flex-col items-center justify-between gap-4 md:flex-row">
-        {userDetail.address.length && !formOpened ? (
+        {userDetail.address && !formOpened ? (
           <div className="flex w-4/5 flex-col rounded-sm border-2 border-buttonBlack p-4 md:w-96">
-            <h3 className="pb-4 font-bold">Delivery Detail</h3>
+            <div className="flex justify-between pb-4">
+              <h3 className="font-bold">Delivery Detail</h3>
+              <h3 className="font-bold">{userDetail.address.title}</h3>
+            </div>
             <div className="flex justify-between border-b-2 pb-4">
               <p className="">Name:</p>
-              <span>{userDetail.address[0]?.name}</span>
+              <span>{userDetail.address.name}</span>
             </div>
             <div className="flex justify-between border-b-2 pb-4">
               <p className="">Adress:</p>
               <span>
-                {userDetail.address[0]?.address},{userDetail.address[0]?.city},
-                {userDetail.address[0]?.code}, {userDetail.address[0]?.city},{" "}
-                {userDetail.address[0]?.country}
+                {userDetail.address.address},{userDetail.address.city},
+                {userDetail.address.code},{userDetail.address.country}
               </span>
             </div>
             <div className="flex justify-between border-b-2 pb-4">
               <p className="pb-4">Contact:</p>
-              <span>{userDetail.address[0]?.contact}</span>
+              <span>{userDetail.address.contact}</span>
             </div>
             <button
               onClick={() => setFormOpened(true)}
@@ -206,6 +211,25 @@ const Cart: FC = ({}) => {
             {formOpened ? (
               <form>
                 <div className="mb-6">
+                  <label
+                    htmlFor="title"
+                    className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"
+                  >
+                    Title
+                  </label>
+                  <input
+                    type="text"
+                    id="title"
+                    placeholder="Home"
+                    value={addressForm.title}
+                    onChange={(e) =>
+                      setAddressForm((prev) => ({
+                        ...prev,
+                        title: e.target.value,
+                      }))
+                    }
+                    className="block w-full rounded-lg border border-gray-300 bg-gray-50 p-2 text-gray-900 focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 sm:text-xs"
+                  />
                   <label
                     htmlFor="name"
                     className="mb-2 block text-sm font-medium text-gray-900 dark:text-white"

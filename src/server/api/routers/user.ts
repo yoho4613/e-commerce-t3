@@ -3,13 +3,12 @@ import { createTRPCRouter, publicProcedure, userProcedure } from "../trpc";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { SignJWT } from "jose";
-import { nanoid } from "nanoid";
 import cookie from "cookie";
+import { nanoid } from "nanoid";
 import { getJwtSecretKey } from "~/lib/auth";
 import { getServerSession } from "next-auth";
 import { authOptions } from "~/server/auth";
-import { Prisma } from "@prisma/client";
-import { Address } from "~/config/type";
+import crypto from "crypto";
 
 export const userRouter = createTRPCRouter({
   // getAllUsers: adminProcedure.query(async ({ ctx, input }) => {
@@ -177,14 +176,7 @@ export const userRouter = createTRPCRouter({
         cart,
         watchlist,
         purchase,
-        address: address as {
-          name: string;
-          address: string;
-          city: string;
-          code: string;
-          country: string;
-          contact: string;
-        }[],
+        address: address as object,
         role,
         createdAt,
       };
@@ -228,17 +220,26 @@ export const userRouter = createTRPCRouter({
         code: z.string(),
         country: z.string(),
         contact: z.string(),
+        title: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { id, name, address, city, code, country, contact } = input;
+      const { id, name, address, city, code, country, contact, title } = input;
       if (!id) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "User id is missing",
         });
       }
-      if (!name || !address || !city || !code || !country || !contact) {
+      if (
+        !name ||
+        !address ||
+        !city ||
+        !code ||
+        !country ||
+        !contact ||
+        !title
+      ) {
         throw new TRPCError({
           code: "CONFLICT",
           message: "Missing Delivery information",
@@ -251,17 +252,17 @@ export const userRouter = createTRPCRouter({
         },
         data: {
           address: {
-            push: {
-              name,
-              address,
-              city,
-              code,
-              country,
-              contact,
-            },
+            name,
+            address,
+            city,
+            code,
+            country,
+            contact,
+            title,
           },
         },
       });
+
       if (!newAddress) {
         throw new TRPCError({
           code: "CONFLICT",

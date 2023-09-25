@@ -46,6 +46,11 @@ export const StateContext = ({ children }: { children: ReactNode }) => {
     },
   });
   const { mutate: addNewAddress } = api.user.addressRegister.useMutation({
+    onSuccess: (res) =>
+      setUserDetail((prev) => ({
+        ...prev,
+        address: res.address as object,
+      })),
     onError: (err) => toast.error(err.message),
   });
 
@@ -82,11 +87,6 @@ export const StateContext = ({ children }: { children: ReactNode }) => {
   };
 
   const addNewAddressContext = (address: Address) => {
-    setUserDetail((prev) => ({
-      ...prev,
-      /* eslint-disable */
-      address: [...prev.address, address] as Address[],
-    }));
     addNewAddress({ id: userDetail.id, ...address });
   };
 

@@ -109,7 +109,10 @@ export interface UserDetail {
   cart: string[];
   watchlist: string[];
   purchase: Prisma.JsonValue;
-  address: Address[];
+  /* eslint-disable-next-line */
+  address: {
+    [key: string]: Addres;
+  } | null;
   role: string;
   createdAt: Date;
 }
@@ -126,6 +129,7 @@ export interface Address {
   code: string;
   country: string;
   contact: string;
+  title: string;
 }
 
 export type ProductForm = {

@@ -10,7 +10,7 @@ export const defaultUserDetail = {
   emailVerified: null,
   watchlist: [],
   purchase: [],
-  address: [],
+  address: null,
   role: "customer",
   createdAt: new Date(),
 };

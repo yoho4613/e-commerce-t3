@@ -42,6 +42,8 @@ const Navbar: FC = ({}) => {
   });
   const { setUserDetail, userDetail } = useStateContext();
 
+  console.log(userDetail)
+  
   useEffect(() => {
     if (session.status === "authenticated") {
       setUser(session.data.user);

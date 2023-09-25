@@ -37,9 +37,7 @@ export const watchlistRouter = createTRPCRouter({
             id: userId,
           },
           data: {
-            watchlist: {
-              push: productId,
-            },
+            watchlist: [...user.watchlist, productId],
           },
         });
         return userUpdate;

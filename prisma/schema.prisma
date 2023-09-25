@@ -6,9 +6,10 @@ generator client {
 }
 
 datasource db {
-    provider  = "postgres"
-    url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
-    directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
+    provider  = "cockroachdb"
+    url       = env("DATABASE_URL")
+    // url       = env("POSTGRES_PRISMA_URL") // uses connection pooling
+    // directUrl = env("POSTGRES_URL_NON_POOLING") // uses a direct connection
 }
 
 model admin {
@@ -58,7 +59,7 @@ model User {
     cart          String[]     @default([])
     watchlist     String[]     @default([])
     purchase      Json?
-    address       Json[]       @default([])
+    address       Json?
     Order         Order[]
     role          RoleEnumType @default(customer)
     Review        Review[]

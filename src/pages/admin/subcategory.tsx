@@ -45,9 +45,10 @@ const Subcategory: FC = ({}) => {
             onChange={(e) =>
               setForm((prev) => ({ ...prev, categoryId: e.target.value }))
             }
+            defaultValue=""
             className="border-2 p-1"
           >
-            <option selected value="" disabled>
+            <option value="" disabled>
               Select Category
             </option>
             {mainCategories?.map((category) => (

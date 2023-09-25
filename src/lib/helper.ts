@@ -76,5 +76,5 @@ export const getImgUrl = async (product: Product) => {
         : url;
     }),
   );
-  return { ...product, url: withUrls };
+  return { ...product, url: [...withUrls] };
 };

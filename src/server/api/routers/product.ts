@@ -285,10 +285,11 @@ export const productRouter = createTRPCRouter({
         subcategoryId: z.string(),
         saleId: z.string(),
         delivery: z.number(),
-        imgUrl: z.array(z.string()),
         attributes: z.array(
           z.object({ title: z.string(), options: z.array(z.string()) }),
         ),
+        deleteImg: z.array(z.string()),
+        imgUrl: z.array(z.string()),
       }),
     )
     .mutation(async ({ ctx, input }) => {
@@ -304,8 +305,9 @@ export const productRouter = createTRPCRouter({
         subcategoryId,
         saleId,
         delivery,
-        imgUrl,
         attributes,
+        deleteImg,
+        imgUrl,
       } = input;
 
       if (!id) {
@@ -327,7 +329,28 @@ export const productRouter = createTRPCRouter({
         });
       }
 
-      const product = await ctx.prisma.product.update({
+      const product = await ctx.prisma.product.findFirst({
+        where: { id },
+        select: { imgUrl: true },
+      });
+
+      if (!product) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "Could not find User with ID",
+        });
+      }
+
+      if (deleteImg.length) {
+        for (const img of deleteImg) {
+          await s3
+            .deleteObject({ Bucket: "e-market-jiho", Key: img })
+            .promise()
+            .then((res) => console.log(res));
+        }
+      }
+
+      const updatedProduct = await ctx.prisma.product.update({
         where: {
           id,
         },
@@ -342,19 +365,21 @@ export const productRouter = createTRPCRouter({
           subcategoryId: subcategoryId.length ? subcategoryId : null,
           saleId: saleId.length ? saleId : null,
           delivery,
-          imgUrl: { push: imgUrl },
+          imgUrl,
           attributes: attributes.length ? attData : undefined,
         },
       });
 
-      if (!product) {
+      if (!updatedProduct) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "Failed to create Product.",
         });
       }
 
-      return product;
+      console.log(updatedProduct);
+
+      return updatedProduct;
     }),
   deleteProduct: adminProcedure
     .input(z.object({ id: z.string(), imageKey: z.array(z.string()) }))
@@ -374,7 +399,6 @@ export const productRouter = createTRPCRouter({
             .deleteObject({ Bucket: "e-market-jiho", Key: key })
             .promise()
             .then((res) => console.log(res));
-
         }
       }
 

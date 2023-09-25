@@ -177,7 +177,14 @@ export const userRouter = createTRPCRouter({
         cart,
         watchlist,
         purchase,
-        address,
+        address: address as {
+          name: string;
+          address: string;
+          city: string;
+          code: string;
+          country: string;
+          contact: string;
+        }[],
         role,
         createdAt,
       };

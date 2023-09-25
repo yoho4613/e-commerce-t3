@@ -1,9 +1,9 @@
-import { Product } from "@prisma/client";
 import { FC, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { AiFillCloseCircle } from "react-icons/ai";
 import ProductForm from "~/components/admin/ProductForm";
 import Spinner from "~/components/global/Spinner";
+import { Product } from "~/config/type";
 import { initialProductForm } from "~/constant/config";
 import { api } from "~/utils/api";
 
@@ -96,7 +96,7 @@ const Product: FC = ({}) => {
               <AiFillCloseCircle size={35} color="red" />
             </button>
           </div>
-          <ProductForm setOpenForm={setOpenForm} product={openForm} />
+          <ProductForm setOpenForm={setOpenForm} product={openForm} refetch={refetch} />
         </div>
       )}
       {openPopup && (

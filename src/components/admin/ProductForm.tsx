@@ -1,57 +1,102 @@
-import { Dispatch, FC, SetStateAction, useEffect, useState } from "react";
+import {
+  Dispatch,
+  FC,
+  MouseEvent,
+  SetStateAction,
+  useEffect,
+  useState,
+} from "react";
 import { toast } from "react-hot-toast";
 import { api } from "~/utils/api";
 import Image from "next/image";
 import { MAX_FILE_SIZE } from "~/constant/config";
 import { BiStar } from "react-icons/bi";
-import { Product } from "@prisma/client";
+import { Product } from "~/config/type";
+import { BsTrash } from "react-icons/bs";
+import Spinner from "../global/Spinner";
 
 interface ProductFormProps {
   product: Product;
   setOpenForm: Dispatch<SetStateAction<Product | null>>;
+  refetch: () => void;
 }
 
-const ProductForm: FC<ProductFormProps> = ({ product, setOpenForm }) => {
-  const { data: categories, refetch } =
-    api.category.getAllCategories.useQuery();
+interface Attribute {
+  title: string;
+  options: string[];
+}
+
+const ProductForm: FC<ProductFormProps> = ({
+  product,
+  setOpenForm,
+  refetch,
+}) => {
+  const { data: categories } = api.category.getAllCategories.useQuery();
   const { data: sales } = api.sale.getAllSales.useQuery();
   const { mutateAsync: createPresignedUrl } =
     api.product.createPresignedUrl.useMutation();
   const { mutate: addProduct } = api.product.addProduct.useMutation({
     onSuccess: () => {
-      refetch()
-        .then((res) => res)
-        .catch((err) => console.log(err));
+      refetch();
+      // .then((res) => res)
+      // .catch((err) => console.log(err))
       setOpenForm(null);
       toast.success("sucessfully added Product");
       setError("");
       setPhotos([]);
+      setLoading(false);
+    },
+    onError: (err) => {
+      toast.error(err.message);
+      setLoading(false);
     },
   });
   const { mutate: updateProduct } = api.product.updateProduct.useMutation({
     onSuccess: () => {
-      refetch()
-        .then((res) => res)
-        .catch((err) => console.log(err));
+      refetch();
+      // .then((res) => res)
+      // .catch((err) => console.log(err))
       setOpenForm(null);
       toast.success("sucessfully Updated Product");
       setError("");
       setPhotos([]);
+      setLoading(false);
+    },
+    onError: (err) => {
+      toast.error(err.message);
+      setLoading(false);
     },
   });
   const [photos, setPhotos] = useState<File[]>([]);
   const [form, setForm] = useState<Product>(product);
-  const [previews, setPreviews] = useState<string[]>(product.imgUrl);
+  const [existPreviews, setExistPreviews] = useState<string[]>(
+    product.url || [],
+  );
+  const [previews, setPreviews] = useState<string[]>([]);
+  const [combinedPreviews, setCombinedPreviews] = useState<string[]>(
+    existPreviews.concat(previews),
+  );
+  const [deletedPhotos, setDeletedPhotos] = useState<string[]>([]);
   const [error, setError] = useState("");
-  const [openSale, setOpenSale] = useState(false);
-  const [attributes, setAttributes] = useState<
-    {
-      title: string;
-      options: string[];
-    }[]
-  >([]);
+  const [openSale, setOpenSale] = useState<boolean>(
+    product.saleId ? true : false,
+  );
+  const [attributes, setAttributes] = useState<Attribute[]>([]);
+  const [loading, setLoading] = useState(false);
 
-  console.log(previews)
+  useEffect(() => {
+    if (product.attributes) {
+      for (const att in product.attributes) {
+        setAttributes((prev) => [
+          ...prev,
+          {
+            title: att,
+            options: (product.attributes && product.attributes[att]) || [],
+          },
+        ]);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     if (!photos.length) return;
@@ -62,6 +107,10 @@ const ProductForm: FC<ProductFormProps> = ({ product, setOpenForm }) => {
     // clean up the preview
     () => objectUrl.map((img) => URL.revokeObjectURL(img)) || "";
   }, [photos]);
+
+  useEffect(() => {
+    setCombinedPreviews(existPreviews.concat(previews));
+  }, [previews, existPreviews]);
 
   const handleImageUpload = async () => {
     if (!photos.length) {
@@ -124,6 +173,7 @@ const ProductForm: FC<ProductFormProps> = ({ product, setOpenForm }) => {
     }
     const key = await handleImageUpload();
     if (!key) throw new Error("No key");
+    setLoading(true);
 
     addProduct({
       title,
@@ -160,7 +210,6 @@ const ProductForm: FC<ProductFormProps> = ({ product, setOpenForm }) => {
       !type ||
       !rrp ||
       !price ||
-      !delivery ||
       !stock ||
       !delivery ||
       !id
@@ -170,6 +219,7 @@ const ProductForm: FC<ProductFormProps> = ({ product, setOpenForm }) => {
     const key = await handleImageUpload();
     if (!key) throw new Error("No key");
 
+    setLoading(true);
     updateProduct({
       id,
       title,
@@ -181,9 +231,13 @@ const ProductForm: FC<ProductFormProps> = ({ product, setOpenForm }) => {
       stock,
       categoryId,
       subcategoryId: form.subcategoryId || "",
-      imgUrl: key,
       saleId: form.saleId ? form.saleId : "",
       attributes,
+      deleteImg: product.imgUrl.filter((key) => deletedPhotos.includes(key)),
+      imgUrl: [
+        ...product.imgUrl.filter((key) => !deletedPhotos.includes(key)),
+        ...key,
+      ],
     });
   };
 
@@ -196,11 +250,36 @@ const ProductForm: FC<ProductFormProps> = ({ product, setOpenForm }) => {
     setPhotos((prev) => [...prev, e.target.files![0]!]);
   };
 
-  const AttributeForm = ({ index }: { index: number }) => {
-    const [attribute, setAttribute] = useState<{
-      title: string;
-      options: string[];
-    }>({ title: "", options: [] });
+  const handleRemovePreview = (img: string, e: MouseEvent) => {
+    const div = e.currentTarget.parentElement;
+    div?.classList.add("opacity-0");
+    setTimeout(() => {
+      div?.classList.remove("opacity-0");
+      const existImg = existPreviews.find((url) => url === img);
+      if (existImg) {
+        setDeletedPhotos((prev) => [...prev, img]);
+      }
+      setExistPreviews((prev) => prev.filter((url) => url !== img));
+      setPreviews((prev) =>
+        prev.filter((url, i) => {
+          if (url === img) {
+            setPhotos((prev) => prev.filter((photo, index) => i !== index));
+            return false;
+          } else {
+            return true;
+          }
+        }),
+      );
+    }, 500);
+  };
+
+  const AttributeForm = ({ index, att }: { index: number; att: Attribute }) => {
+    const [attribute, setAttribute] = useState<Attribute>(
+      att || {
+        title: "",
+        options: [],
+      },
+    );
     useEffect(() => {
       if (attributes) {
         setAttribute(attributes[index]!);
@@ -279,6 +358,11 @@ const ProductForm: FC<ProductFormProps> = ({ product, setOpenForm }) => {
   return (
     <div>
       <div className="p-6">
+        {loading && (
+          <div className="fixed left-1/2 top-1/2 z-40 h-screen w-screen">
+            <Spinner />
+          </div>
+        )}
         <div className="mx-auto flex max-w-xl flex-col gap-2">
           <label>Title</label>
           <input
@@ -298,7 +382,7 @@ const ProductForm: FC<ProductFormProps> = ({ product, setOpenForm }) => {
                 onChange={(e) =>
                   setForm((prev) => ({ ...prev, categoryId: e.target.value }))
                 }
-                defaultValue=""
+                defaultValue={product.categoryId || ""}
                 className="h-12 bg-gray-200 p-1"
               >
                 <option value="" disabled>
@@ -322,7 +406,7 @@ const ProductForm: FC<ProductFormProps> = ({ product, setOpenForm }) => {
                       subcategoryId: e.target.value,
                     }))
                   }
-                  defaultValue=""
+                  defaultValue={product.subcategoryId || ""}
                   className="h-12 bg-gray-200 p-1"
                 >
                   <option value="" disabled>
@@ -456,7 +540,7 @@ const ProductForm: FC<ProductFormProps> = ({ product, setOpenForm }) => {
                       saleId: e.target.value,
                     }))
                   }
-                  defaultValue=""
+                  defaultValue={product.saleId || ""}
                   className="h-12 bg-gray-200 p-1"
                 >
                   <option value="" disabled>
@@ -485,26 +569,24 @@ const ProductForm: FC<ProductFormProps> = ({ product, setOpenForm }) => {
           </button>
           {attributes.length
             ? attributes.map((att, i) => (
-                <>
-                  <div key={i} className="flex items-start justify-between">
-                    <AttributeForm index={i} />
-                    <div>
-                      <h4 className="text-center">Action</h4>
-                      <button
-                        onClick={() =>
-                          setAttributes((prev) => {
-                            const attributes = [...prev];
-                            attributes.splice(i, 1);
-                            return attributes;
-                          })
-                        }
-                        className="btn--red px-4 py-2"
-                      >
-                        Delete
-                      </button>
-                    </div>
+                <div key={i} className="flex items-start justify-between">
+                  <AttributeForm att={att} index={i} />
+                  <div>
+                    <h4 className="text-center">Action</h4>
+                    <button
+                      onClick={() =>
+                        setAttributes((prev) => {
+                          const attributes = [...prev];
+                          attributes.splice(i, 1);
+                          return attributes;
+                        })
+                      }
+                      className="btn--red px-4 py-2"
+                    >
+                      Delete
+                    </button>
                   </div>
-                </>
+                </div>
               ))
             : ""}
 
@@ -522,28 +604,36 @@ const ProductForm: FC<ProductFormProps> = ({ product, setOpenForm }) => {
               className="sr-only"
             />
           </label>
-          {previews.length ? (
+          {combinedPreviews.length ? (
             <div>
               <span className="sr-only">File input</span>
               <div className="flex h-full items-center justify-center">
                 <div className="relative flex h-3/4 w-full flex-wrap justify-evenly gap-4 border-2">
-                  {previews.map((img, i) => (
-                    <div key={i} className="relative">
+                  {combinedPreviews.map((img, i) => (
+                    <div
+                      key={i}
+                      className="group/bin relative flex items-center bg-slate-500 transition-all duration-300"
+                    >
                       <Image
-                        onClick={() => {
-                          // setPhotos((prev) => {})
-                          // setPreviews((prev) => {})
+                        onClick={(e) => {
+                          handleRemovePreview(img, e);
                         }}
-                        className="w-32"
+                        className="w-32 hover:cursor-pointer"
                         key={img}
                         alt="preview"
-                        style={{ objectFit: "contain" }}
+                        // style={{ objectFit: "contain" }}
                         width={100}
                         height={100}
                         src={img}
                       />
+                      <button
+                        onClick={(e) => handleRemovePreview(img, e)}
+                        className="invisible absolute right-1/2 top-1/2 z-10 -translate-y-1/2 translate-x-1/2 rounded-full bg-whitePrimary p-1.5 group-hover/bin:visible"
+                      >
+                        <BsTrash color="red" size={20} />
+                      </button>
                       {i === 0 && (
-                        <span className="group/item absolute right-2 top-2">
+                        <span className="group/item absolute right-2 top-2 z-10 p-1">
                           <BiStar color="red" />
                           <span className="invisible absolute left-0 top-0 border-2 bg-slate-400 p-1 text-xs text-whitePrimary group-hover/item:visible">
                             This is Main Photo for This Product

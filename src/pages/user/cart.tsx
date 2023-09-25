@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import Spinner from "~/components/global/Spinner";
-import { CartItem } from "~/config/type";
+import { Address, CartItem } from "~/config/type";
 import { BASE_URL } from "~/constant/config";
 
 import { useStateContext } from "~/context/userDetailContext";
@@ -67,7 +67,7 @@ const Cart: FC = ({}) => {
     } else {
       checkout({
         email: userDetail.email,
-        address: userDetail.address[0]!,
+        address: userDetail.address[0]! as Address,
         products: cartItems,
         url: BASE_URL,
       });

@@ -17,7 +17,7 @@ interface ContextProp {
   setUserDetail: Dispatch<SetStateAction<UserDetail>>;
   updateWatchlistContext: (productId: string) => void;
   updateCartContext: (productId: string) => void;
-  addNewAddressContext: ( address: Address) => void;
+  addNewAddressContext: (address: Address) => void;
 }
 
 const UserContext = createContext<ContextProp>({
@@ -81,11 +81,11 @@ export const StateContext = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const addNewAddressContext = ( address: Address) => {
+  const addNewAddressContext = (address: Address) => {
     setUserDetail((prev) => ({
       ...prev,
       /* eslint-disable */
-      address: [...prev.address, address],
+      address: [...prev.address, address] as Address[],
     }));
     addNewAddress({ id: userDetail.id, ...address });
   };
@@ -97,7 +97,7 @@ export const StateContext = ({ children }: { children: ReactNode }) => {
         setUserDetail,
         updateWatchlistContext,
         updateCartContext,
-        addNewAddressContext
+        addNewAddressContext,
       }}
     >
       {children}

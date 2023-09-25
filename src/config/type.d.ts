@@ -1,4 +1,11 @@
-import { Product } from "@prisma/client";
+import {
+  Category,
+  Order,
+  Prisma,
+  Product,
+  Review,
+  Subcategory,
+} from "@prisma/client";
 import { Session } from "next-auth";
 
 export interface User {
@@ -47,20 +54,22 @@ export interface Product {
   rrp: string;
   price: string;
   imgUrl: string[];
-  attributes?: json;
-  review: string[];
-  star: number[];
-  delivery?: number;
+  attributes?: {
+    [key: string]: string[];
+  };
+  review?: Review;
+  delivery: number | null;
   stock: number;
-  category: Category;
-  categoryId: string;
+  category?: Category;
+  categoryId?: string;
   subcategory?: Subcategory;
-  subcategoryId?: string;
-  order: Order[];
+  subcategoryId: string | null;
+  order?: Order[];
   Sale?: Sale;
-  saleId?: string;
+  saleId: string | null;
   createdAt: Date;
   updatedAt: Date;
+  url?: string[];
 }
 
 export interface UserDetail {
@@ -72,7 +81,7 @@ export interface UserDetail {
   cart: string[];
   watchlist: string[];
   purchase: Prisma.JsonValue;
-  address: Prisma.JsonValue[];
+  address: Address[];
   role: string;
   createdAt: Date;
 }

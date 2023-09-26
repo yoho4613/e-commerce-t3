@@ -17,6 +17,10 @@ export const bannerRouter = createTRPCRouter({
         },
       }),
   ),
+  getTopbar: publicProcedure.query(
+    async ({ ctx }) =>
+      await ctx.prisma.banner.findMany({ where: { position: "advertise" } }),
+  ),
   getNewBanners: publicProcedure
     .input(z.number())
     .query(async ({ ctx, input }) => {

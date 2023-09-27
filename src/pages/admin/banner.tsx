@@ -1,30 +1,59 @@
+import { BannerPosition } from "@prisma/client";
 import Image from "next/image";
 import React, { FC, useEffect, useState } from "react";
+import { toast } from "react-hot-toast";
 import { MultiValue } from "react-select";
+import { BannerPositionType, BannerType } from "~/config/type";
 import { MAX_FILE_SIZE } from "~/constant/config";
-// import { MAX_FILE_SIZE } from "~/constants/config";
 // import { selectOptions } from "~/utils/helpers";
 import { api } from "~/utils/api";
 
+type Input = {
+  title: string;
+  description: string;
+  position: string;
+  link: string;
+  file: undefined | File;
+};
+
 const initialInput = {
-  name: "",
-  price: 0,
-  categories: [],
+  title: "",
+  description: "",
+  position: "",
+  link: "",
   file: undefined,
 };
 
 const Menu: FC = ({}) => {
-  const [input, setInput] = useState(initialInput);
+  const [input, setInput] = useState<Input>(initialInput);
   const [preview, setPreview] = useState<string>("");
   const [error, setError] = useState<string>("");
-
+  const [filteredBanners, setFilteredBanners] = useState<BannerType[]>([]);
+  const [selectedBanner, setSelectedBanner] = useState<string | null>(null);
   // tRPC
   const { mutateAsync: createPresignedUrl } =
     api.product.createPresignedUrl.useMutation();
-  // const { mutateAsync: addItem } = api.admin.addMenuItem.useMutation();
   const { data: banners, refetch } = api.banner.getAllBanners.useQuery();
+  const { mutateAsync: addBanner } = api.banner.addBanner.useMutation();
+  const bannerPositions = BannerPosition;
+
   // const { mutateAsync: deleteMenuItem } =
   //   api.admin.deleteMenuItem.useMutation();
+
+  console.log(banners)
+  console.log(filteredBanners)
+
+  useEffect(() => {
+    if (banners) {
+      if (selectedBanner) {
+        setFilteredBanners(
+          banners.filter((banner) => banner.position === selectedBanner),
+        );
+      } else {
+        setFilteredBanners(banners);
+      }
+    }
+  }, [selectedBanner, banners]);
 
   useEffect(() => {
     if (!input.file) return;
@@ -41,57 +70,53 @@ const Menu: FC = ({}) => {
     if (!e.target.files?.[0]) return setError("No File Selected");
     if (e.target.files[0].size > MAX_FILE_SIZE)
       return setError("File size is too big");
-    // setInput((prev) => ({ ...prev, file: e.target.files![0] }));
+
+    setInput((prev) => ({ ...prev, file: e.target.files?.[0] }));
   };
 
   const handleImageUpload = async () => {
     const { file } = input;
     if (!file) return;
 
-    // const { fields, key, url } = await createPresignedUrl({
-    //   fileType: file.type,
-    // });
-    // const { fields, key, url } = (await createPresignedUrl({
-    //   fileType: file.type,
-    // })) as { fields: string[]; key: string; url: string };
+    const { fields, key, url } = (await createPresignedUrl({
+      fileType: file.type,
+    })) as { fields: string[]; key: string; url: string };
 
-    // const data = {
-    //   ...fields,
-    //   "Content-Type": file.type,
-    //   file,
-    // };
+    const data = {
+      ...fields,
+      "Content-Type": file.type,
+      file,
+    };
 
-    // const formData = new FormData();
+    const formData = new FormData();
 
-    // Object.entries(data).forEach(([key, value]) => {
-    //   formData.append(key, value as string | Blob);
-    // });
+    Object.entries(data).forEach(([key, value]) => {
+      formData.append(key, value as string | Blob);
+    });
 
-    // await fetch(url, {
-    //   method: "POST",
-    //   body: formData,
-    // });
+    await fetch(url, {
+      method: "POST",
+      body: formData,
+    });
 
-    // return key;
+    return key;
   };
 
   const addMenuItem = async () => {
-    // const key = await handleImageUpload();
-    // if (!key) throw new Error("No key");
+    const key = await handleImageUpload();
+    if (!key) throw new Error("No key");
 
-    // await addItem({
-    //   name: input.name,
-    //   imageKey: key,
-    //   categories: input.categories.map((c) => c.value) as Exclude<
-    //     ["breakfast", "lunch", "dinner"],
-    //     "all"
-    //   >,
-    //   price: input.price,
-    // });
+    await addBanner({
+      title: input.title,
+      description: input.description,
+      link: input.link,
+      imgUrl: key,
+      position: input.position as BannerPositionType,
+    });
 
-    // refetch()
-    //   .then((res) => res)
-    //   .catch((err: Error) => console.log(err));
+    refetch()
+      .then((res) => res)
+      .catch((err: Error) => console.log(err));
 
     // Reset input
     setInput(initialInput);
@@ -110,85 +135,99 @@ const Menu: FC = ({}) => {
       <div className="p-6">
         <div className="mx-auto flex max-w-xl flex-col gap-2">
           <input
-            name="name"
-            className="h-12 rounded-sm border-none bg-gray-200"
+            name="title"
+            className="h-12 rounded-sm border-none bg-gray-200 p-1"
             type="text"
-            placeholder="name"
+            placeholder="title"
             onChange={(e) =>
-              setInput((prev) => ({ ...prev, name: e.target.value }))
+              setInput((prev) => ({ ...prev, title: e.target.value }))
             }
-            value={input.name}
+            value={input.title}
+          />
+
+          <textarea
+            name="description"
+            className="h-12 rounded-sm border-none bg-gray-200 p-1"
+            placeholder="description"
+            onChange={(e) =>
+              setInput((prev) => ({ ...prev, description: e.target.value }))
+            }
+            value={input.description}
           />
 
           <input
-            name="price"
-            className="h-12 rounded-sm border-none bg-gray-200"
-            type="number"
-            placeholder="price"
+            name="link"
+            className="h-12 rounded-sm border-none bg-gray-200 p-1"
+            type="text"
+            placeholder="link https://"
             onChange={(e) =>
-              setInput((prev) => ({ ...prev, price: Number(e.target.value) }))
+              setInput((prev) => ({ ...prev, link: e.target.value }))
             }
-            value={input.price}
+            value={input.link}
           />
 
+          <label>Banner Position</label>
           <select
-            // onChange={(e) =>
-            //   setForm((prev) => ({ ...prev, categoryId: e.target.value }))
-            // }
-            // defaultValue={product.categoryId ?? ""}
-            className="h-12 bg-gray-200 p-1"
+            onChange={(e) =>
+              setInput((prev) => ({ ...prev, position: e.target.value }))
+            }
+            defaultValue=""
+            className="border-2 p-1"
           >
             <option value="" disabled>
               Select Category
             </option>
-            {/* {categories?.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
+            {Object.values(bannerPositions)?.map((position) => (
+              <option key={position} value={position}>
+                {position}
               </option>
-            ))} */}
+            ))}
           </select>
-          {/* <DynamicSelect
-            value={input.categories}
-            onChange={(e) =>
-              setInput((prev) => ({ ...prev, categories: e } as Input))
-            }
-            isMulti
-            className="h-12"
-            // options={selectOptions}
-          /> */}
 
-          <label
-            htmlFor="file"
-            className="relative h-12 cursor-pointer rounded-sm bg-gray-200 font-medium text-indigo-600 focus-within:outline-none"
-          >
-            <span className="sr-only">File input</span>
-            <div className="flex h-full items-center justify-center">
-              {preview ? (
-                <div className="relative h-3/4 w-full">
-                  <Image
-                    alt="preview"
-                    style={{ objectFit: "contain" }}
-                    fill
-                    src={preview}
-                  />
+          {input.position !== "advertise" && (
+            <div>
+              <label
+                htmlFor="file"
+                className="relative h-12 cursor-pointer rounded-sm bg-gray-200 font-medium text-indigo-600 focus-within:outline-none"
+              >
+                <span className="sr-only">File input</span>
+                <div className="flex h-full items-center justify-center border-2 py-2">
+                  <span>Select Image</span>
                 </div>
-              ) : (
-                <span>Select image</span>
-              )}
+                <input
+                  name="file"
+                  id="file"
+                  onChange={handleFileSelect}
+                  accept="image/jpeg image/png image/jpg"
+                  type="file"
+                  className="sr-only"
+                />
+              </label>
             </div>
-            <input
-              name="file"
-              id="file"
-              onChange={handleFileSelect}
-              accept="image/jpeg image/png image/jpg"
-              type="file"
-              className="sr-only"
-            />
-          </label>
-
+          )}
+          {preview && (
+            <div className="relative h-60 w-full">
+              <Image
+                onClick={() => {
+                  setPreview("");
+                  setInput((prev) => ({ ...prev, file: undefined }));
+                }}
+                className="h-full w-full cursor-pointer"
+                alt="preview"
+                width={100}
+                height={100}
+                src={preview}
+              />
+            </div>
+          )}
           <button
             className="h-12 rounded-sm bg-gray-200 disabled:cursor-not-allowed"
-            disabled={!input.file || !input.name}
+            disabled={
+              !input.file ||
+              !input.title ||
+              !input.position ||
+              !input.description
+            }
             onClick={() => {
               addMenuItem()
                 .then((res) => res)
@@ -201,9 +240,26 @@ const Menu: FC = ({}) => {
         {error && <p className="text-xs text-red-600">{error}</p>}
 
         <div className="mx-auto mt-12 max-w-7xl">
-          <p className="text-lg font-medium">Your Banners:</p>
+          <div className="flex items-center gap-4">
+            <p className="text-lg font-medium">Your Banners:</p>
+            <div>
+              <label>Find by Position</label>
+              <select
+                onChange={(e) => setSelectedBanner(e.target.value)}
+                defaultValue=""
+                className="border-2 p-1"
+              >
+                <option value="">All</option>
+                {Object.values(bannerPositions)?.map((position) => (
+                  <option key={position} value={position}>
+                    {position}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
           <div className="space-y-4">
-            {banners?.map((banner) => (
+            {filteredBanners?.map((banner) => (
               <div
                 key={banner.id}
                 className="flex flex-col items-center justify-between border-2 sm:flex-row"
@@ -211,7 +267,12 @@ const Menu: FC = ({}) => {
                 <div className="flex gap-4">
                   <div className="relative h-40 w-40">
                     {banner.position !== "advertise" && (
-                      <Image priority fill alt={banner.title} src={banner.imgUrl} />
+                      <Image
+                        priority
+                        fill
+                        alt={banner.title}
+                        src={banner.url}
+                      />
                     )}
                   </div>
                   <div className="flex h-40 flex-col justify-between">
@@ -236,7 +297,7 @@ const Menu: FC = ({}) => {
                         .then((res) => res)
                         .catch((err: Error) => console.log(err));
                     }}
-                    className="text-sm bg-gray-400 rounded-md text-whitePrimary px-4 py-2"
+                    className="rounded-md bg-gray-400 px-4 py-2 text-sm text-whitePrimary"
                   >
                     Update
                   </button>
@@ -246,7 +307,7 @@ const Menu: FC = ({}) => {
                         .then((res) => res)
                         .catch((err: Error) => console.log(err));
                     }}
-                    className="text-sm btn--red px-4 py-2"
+                    className="btn--red px-4 py-2 text-sm"
                   >
                     Delete
                   </button>

@@ -1,4 +1,5 @@
 import {
+  BannerPosition,
   Category,
   Order,
   Prisma,
@@ -144,4 +145,16 @@ export type ProductForm = {
   saleId: string;
   delivery: number;
   imgUrl: string[];
+};
+
+export type BannerPositionType = BannerPosition;
+
+export type BannerType = {
+  id: string;
+  title: string;
+  description: string;
+  link: string;
+  imgUrl: string;
+  position: BannerPosition;
+  url: string;
 };

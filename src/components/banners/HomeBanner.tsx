@@ -46,7 +46,7 @@ const HomeBanner: FC= ({}) => {
                 sizes="cover"
                 width={100}
                 height={100}
-                src={banner.imgUrl}
+                src={banner.url}
                 alt={banner.description}
               />
             </div>

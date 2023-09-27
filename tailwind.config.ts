@@ -12,7 +12,8 @@ export default {
         grayPrimary: "#828282",
         graySecondary: "#2F2E30",
         buttonGreen: "#00FF66",
-        textPrimary: "#FAFAFA"
+        textPrimary: "#FAFAFA",
+        textBackground: "rgba(0,0,0,0.4)",
       },
     },
   },

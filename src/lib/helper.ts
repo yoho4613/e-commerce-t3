@@ -1,5 +1,5 @@
-import { Product } from "@prisma/client";
-import { CartItem, ProductType } from "~/config/type";
+import { Banner, Product } from "@prisma/client";
+import { BannerType, CartItem, ProductType } from "~/config/type";
 import { s3 } from "./s3";
 
 export const getAverage = (arr: number[]) => {
@@ -78,4 +78,15 @@ export const getImgUrl = async (product: Product) => {
   );
 
   return { ...product, url: [...withUrls] } as ProductType;
+};
+
+export const getBannerImgUrl = async (banner: Banner) => {
+  const url = !banner.imgUrl.includes("unsplash")
+    ? await s3.getSignedUrlPromise("getObject", {
+        Bucket: "e-market-jiho",
+        Key: banner.imgUrl,
+      })
+    : banner.imgUrl;
+
+  return { ...banner, url } as BannerType;
 };

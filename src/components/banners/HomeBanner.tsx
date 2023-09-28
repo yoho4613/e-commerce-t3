@@ -6,7 +6,7 @@ import { api } from "~/utils/api";
 
 // interface HomeBannerProps {}
 
-const HomeBanner: FC= ({}) => {
+const HomeBanner: FC = ({}) => {
   const [currentBanner, setCurrentBanner] = useState(0);
   const { data: banners } = api.banner.getTopBanners.useQuery();
   useEffect(() => {

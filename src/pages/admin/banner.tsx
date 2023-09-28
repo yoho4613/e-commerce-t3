@@ -2,7 +2,7 @@ import { BannerPosition } from "@prisma/client";
 import Image from "next/image";
 import React, { FC, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
-import { MultiValue } from "react-select";
+import BannerUpdateForm from "~/components/admin/BannerUpdateForm";
 import { BannerPositionType, BannerType } from "~/config/type";
 import { MAX_FILE_SIZE } from "~/constant/config";
 // import { selectOptions } from "~/utils/helpers";
@@ -30,18 +30,14 @@ const Menu: FC = ({}) => {
   const [error, setError] = useState<string>("");
   const [filteredBanners, setFilteredBanners] = useState<BannerType[]>([]);
   const [selectedBanner, setSelectedBanner] = useState<string | null>(null);
+  const [formOpened, setFormOpened] = useState<BannerType | null>(null);
+  const bannerPositions = BannerPosition;
   // tRPC
   const { mutateAsync: createPresignedUrl } =
     api.product.createPresignedUrl.useMutation();
   const { data: banners, refetch } = api.banner.getAllBanners.useQuery();
   const { mutateAsync: addBanner } = api.banner.addBanner.useMutation();
-  const bannerPositions = BannerPosition;
-
-  // const { mutateAsync: deleteMenuItem } =
-  //   api.admin.deleteMenuItem.useMutation();
-
-  console.log(banners)
-  console.log(filteredBanners)
+  const { mutateAsync: deleteBanner } = api.banner.deleteBanner.useMutation();
 
   useEffect(() => {
     if (banners) {
@@ -74,8 +70,7 @@ const Menu: FC = ({}) => {
     setInput((prev) => ({ ...prev, file: e.target.files?.[0] }));
   };
 
-  const handleImageUpload = async () => {
-    const { file } = input;
+  const handleImageUpload = async (file: File) => {
     if (!file) return;
 
     const { fields, key, url } = (await createPresignedUrl({
@@ -103,7 +98,9 @@ const Menu: FC = ({}) => {
   };
 
   const addMenuItem = async () => {
-    const key = await handleImageUpload();
+    const { file } = input;
+    if (!file) return;
+    const key = await handleImageUpload(input.file!);
     if (!key) throw new Error("No key");
 
     await addBanner({
@@ -124,15 +121,24 @@ const Menu: FC = ({}) => {
   };
 
   const handleDelete = async (imageKey: string, id: string) => {
-    // await deleteMenuItem({ id, imageKey });
-    // refetch()
-    //   .then((res) => res)
-    //   .catch((err: Error) => console.log(err));
+    await deleteBanner({ id, imageKey });
+    refetch()
+      .then((res) => res)
+      .catch((err: Error) => console.log(err));
   };
 
   return (
     <>
       <div className="p-6">
+        {formOpened && (
+          <div className="fixed left-0 top-10 z-10 h-screen w-screen">
+            <BannerUpdateForm
+              banner={formOpened}
+              setFormOpened={setFormOpened}
+              refetch={refetch}
+            />
+          </div>
+        )}
         <div className="mx-auto flex max-w-xl flex-col gap-2">
           <input
             name="title"
@@ -234,7 +240,7 @@ const Menu: FC = ({}) => {
                 .catch((err: Error) => console.log(err));
             }}
           >
-            Add menu item
+            Add Banner item
           </button>
         </div>
         {error && <p className="text-xs text-red-600">{error}</p>}
@@ -292,11 +298,7 @@ const Menu: FC = ({}) => {
 
                 <div className="flex gap-2">
                   <button
-                    onClick={() => {
-                      handleDelete(banner.imgUrl, banner.id)
-                        .then((res) => res)
-                        .catch((err: Error) => console.log(err));
-                    }}
+                    onClick={() => setFormOpened(banner)}
                     className="rounded-md bg-gray-400 px-4 py-2 text-sm text-whitePrimary"
                   >
                     Update

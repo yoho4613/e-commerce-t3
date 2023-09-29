@@ -1,9 +1,9 @@
 <!-- CLIENT -->
 PROFILE PAGE  (Purchase hardcoded)
 COMMENT & REVIEW
-
+ABOUT PAGE
 <!-- ADMIN -->
-Banner Page
+
 
 <!-- SERVER -->
 ADMIN ROLE

@@ -7,7 +7,6 @@ import {
   IoLogoGameControllerB,
 } from "react-icons/io";
 import { HiOutlineDesktopComputer, HiOutlineCamera } from "react-icons/hi";
-import { FiHeadphones } from "react-icons/fi";
 import { CategoryWithSubCategory } from "~/config/type";
 import Link from "next/link";
 interface CategoriesProps {

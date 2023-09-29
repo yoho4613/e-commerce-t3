@@ -38,6 +38,7 @@ const Footer: FC = ({}) => {
 
       <div className="flex flex-col gap-1 md:gap-4">
         <h2 className="text-xl font-light">Quick Link</h2>
+        <Link href="/about">About Us</Link>
         <Link href="/">Privacy Policy</Link>
         <Link href="/">Terms Of Use</Link>
         <Link href="/">FAQ</Link>

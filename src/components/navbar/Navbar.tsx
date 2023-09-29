@@ -127,7 +127,7 @@ const Navbar: FC = ({}) => {
             <Link
               onClick={() => setMobileMenuOpened(false)}
               className="inline-block w-full"
-              href="/"
+              href="/about"
             >
               About
             </Link>

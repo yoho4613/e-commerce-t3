@@ -23,7 +23,7 @@ body {
 }
 
 .passing-animation {
-  animation: passing 18s linear infinite;
+  animation: passing 20s linear infinite;
 }
 
 @keyframes passing {

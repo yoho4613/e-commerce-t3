@@ -1,3 +1,7 @@
+import tom from '../../public/Tom.jpeg'
+import emma from '../../public/Emma.jpeg'
+import will from '../../public/Will.webp'
+
 export const BASE_URL =
   process.env.NEXT_PUBLIC_BASE_URL ?? "http://localhost:3000";
 
@@ -34,3 +38,30 @@ export const initialProductForm = {
   createdAt: new Date(),
   updatedAt: new Date(),
 };
+
+export const STAFF = [
+  {
+    name: "Tom Cruise",
+    role: "Founder & Chairman",
+    twitter: "https://twitter.com",
+    instagram: "https://instagram.com",
+    linkedIn: "https://linkedin.com",
+    image: tom
+  },
+  {
+    name: "Emma Watson",
+    role: "Managing Director",
+    twitter: "https://twitter.com",
+    instagram: "https://instagram.com",
+    linkedIn: "https://linkedin.com",
+    image: emma
+  },
+  {
+    name: "Will Smith",
+    role: "Product Designer",
+    twitter: "https://twitter.com",
+    instagram: "https://instagram.com",
+    linkedIn: "https://linkedin.com",
+    image: will
+  },
+];

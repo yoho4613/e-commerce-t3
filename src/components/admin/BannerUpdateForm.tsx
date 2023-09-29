@@ -25,6 +25,7 @@ const BannerUpdateForm = ({
   const { mutate: updateBannerItem } = api.banner.updateBanner.useMutation({
     onSuccess: () => {
       refetch()
+        /* eslint-disable-next-line */
         .then((res) => res)
         .catch((err: Error) => console.log(err));
 
@@ -93,8 +94,8 @@ const BannerUpdateForm = ({
       title: form.title,
       description: form.description,
       link: form.link,
-      imgUrl: key || form.imgUrl,
-      position: form.position as BannerPositionType,
+      imgUrl: key ?? form.imgUrl,
+      position: form.position,
     });
   };
 

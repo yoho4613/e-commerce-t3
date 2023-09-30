@@ -47,7 +47,7 @@ const about: FC = ({}) => {
         </div>
       </div>
       <div className="m-auto my-32 flex flex-wrap justify-around gap-4">
-        <div className="f w-60 border-2 p-4 text-center">
+        <div className="w-60 border-2 p-4 text-center hover:bg-redPrimary hover:text-white">
           <div className="m-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-graySecondary ">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-buttonBlack ">
               <BiStoreAlt color="white" size={50} />
@@ -56,7 +56,7 @@ const about: FC = ({}) => {
           <h3 className="text-sm font-bold sm:text-xl">10.5k</h3>
           <h4 className="mt-2 text-xs sm:text-base">Seller active our site</h4>
         </div>
-        <div className="w-60 border-2 p-4 text-center">
+        <div className="w-60 border-2 p-4 text-center hover:bg-redPrimary hover:text-white">
           <div className="m-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-graySecondary ">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-buttonBlack ">
               <AiOutlineDollar color="white" size={50} />
@@ -66,7 +66,7 @@ const about: FC = ({}) => {
           <h4 className="mt-2 text-xs sm:text-base">Monthly Product Sale</h4>
         </div>
 
-        <div className="w-60 border-2 p-4 text-center">
+        <div className="w-60 border-2 p-4 text-center hover:bg-redPrimary hover:text-white">
           <div className="m-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-graySecondary ">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-buttonBlack ">
               <FiShoppingBag color="white" size={50} />
@@ -77,7 +77,7 @@ const about: FC = ({}) => {
             Customer active in our site
           </h4>
         </div>
-        <div className="w-60 border-2 p-4 text-center">
+        <div className="w-60 border-2 p-4 text-center hover:bg-redPrimary hover:text-white">
           <div className="m-auto mb-6 flex h-24 w-24 items-center justify-center rounded-full bg-graySecondary ">
             <div className="flex h-16 w-16 items-center justify-center rounded-full bg-buttonBlack ">
               <TbFlagDollar color="white" size={50} />

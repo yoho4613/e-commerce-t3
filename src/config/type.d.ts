@@ -8,6 +8,7 @@ import {
   Subcategory,
 } from "@prisma/client";
 import { Session } from "next-auth";
+import { z } from "zod";
 
 export interface User {
   name: string;

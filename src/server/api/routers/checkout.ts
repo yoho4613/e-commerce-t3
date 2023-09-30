@@ -35,7 +35,6 @@ export const checkoutRouter = createTRPCRouter({
           });
         }
 
-        console.log(input.url)
         if (
           !input.address.name ||
           !input.address.address ||
@@ -101,12 +100,10 @@ export const checkoutRouter = createTRPCRouter({
           success_url: `${input.url}/success`,
           cancel_url: `${input.url}/`,
         });
-        
-
 
         console.log(session);
         return {
-          url: session.url || "",
+          url: `${session.url}/${session.id}` || "",
           // bookingAndPreorder: await ctx.prisma.booking
           //   .create({
           //     data: {
@@ -134,5 +131,64 @@ export const checkoutRouter = createTRPCRouter({
           code: "INTERNAL_SERVER_ERROR",
         });
       }
+    }),
+  checkoutIntent: publicProcedure
+    .input(
+      z.object({
+        email: z.string(),
+        products: z.array(z.object({
+          id: z.string(),
+          title: z.string(),
+          type: z.string(),
+          description: z.string(),
+          rrp: z.string(),
+          price: z.string(),
+          imgUrl: z.array(z.string()),
+          url: z.array(z.string()),
+          attributes: z.record(z.string()),
+          delivery: z.number().optional(),
+          stock: z.number(),
+          categoryId: z.string(),
+          subcategoryId: z.string().optional(),
+          order: z.array(z.any()),
+          saleId: z.string().optional(),
+          review: z.array(z.any()),
+          quantity: z.number(),
+          checked: z.boolean()
+        })),
+        address: z.object({
+          name: z.string(),
+          address: z.string(),
+          city: z.string(),
+          code: z.string(),
+          country: z.string(),
+        }),
+        url: z.string(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const { products, email, address, url } = input;
+      const subtotal = products.reduce(
+        (acc, next) => (acc += next.quantity * Number(next.price)),
+        0,
+      );
+      console.log(subtotal);
+      const paymentIntent = await stripe.paymentIntents.create({
+        amount: subtotal,
+        currency: "nzd",
+        statement_descriptor_suffix: "E-market Payment",
+        automatic_payment_methods: {
+          enabled: true,
+        },
+      });
+
+      if(!paymentIntent) {
+        throw new TRPCError({
+          code: "BAD_REQUEST",
+          message: "something went wrong"
+        })
+      }
+
+      return paymentIntent.client_secret
     }),
 });

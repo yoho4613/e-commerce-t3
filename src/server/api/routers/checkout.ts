@@ -136,59 +136,81 @@ export const checkoutRouter = createTRPCRouter({
     .input(
       z.object({
         email: z.string(),
-        products: z.array(z.object({
-          id: z.string(),
-          title: z.string(),
-          type: z.string(),
-          description: z.string(),
-          rrp: z.string(),
-          price: z.string(),
-          imgUrl: z.array(z.string()),
-          url: z.array(z.string()),
-          attributes: z.record(z.string()),
-          delivery: z.number().optional(),
-          stock: z.number(),
-          categoryId: z.string(),
-          subcategoryId: z.string().optional(),
-          order: z.array(z.any()),
-          saleId: z.string().optional(),
-          review: z.array(z.any()),
-          quantity: z.number(),
-          checked: z.boolean()
-        })),
+        products: z.array(z.any()),
+        // products: z.array(z.object({
+        // id: z.string(),
+        // title: z.string(),
+        // type: z.string(),
+        // description: z.string(),
+        // rrp: z.string(),
+        // price: z.string(),
+        // imgUrl: z.array(z.string()),
+        // url: z.array(z.string()),
+        // attributes: z.record(z.string()),
+        // delivery: z.number().optional(),
+        // stock: z.number(),
+        // categoryId: z.string(),
+        // subcategoryId: z.string().optional(),
+        // order: z.array(z.any()),
+        // saleId: z.string().optional(),
+        // review: z.array(z.any()),
+        // quantity: z.number(),
+        // checked: z.boolean()
+        // })),
         address: z.object({
           name: z.string(),
           address: z.string(),
           city: z.string(),
           code: z.string(),
           country: z.string(),
+          contact: z.string(),
         }),
-        url: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { products, email, address, url } = input;
+      const { products, address, email } = input;
       const subtotal = products.reduce(
-        (acc, next) => (acc += next.quantity * Number(next.price)),
+        (acc, next) => (acc += (next.quantity * Number(next.price) + Number(next.delivery)) ),
         0,
       );
-      console.log(subtotal);
+
       const paymentIntent = await stripe.paymentIntents.create({
-        amount: subtotal,
+        capture_method: "automatic_async",
+        amount: subtotal * 100,
         currency: "nzd",
         statement_descriptor_suffix: "E-market Payment",
         automatic_payment_methods: {
           enabled: true,
         },
+        payment_method_options: {
+          afterpay_clearpay: {
+            capture_method: "manual"
+          },
+
+        },
+        shipping: {
+          address: {
+            line1: address.address,
+            city: address.city,
+            postal_code: address.code,
+            country: address.country
+          },
+          name: address.name,
+          phone: address.contact
+        },
+        receipt_email: email,
+        
       });
 
-      if(!paymentIntent) {
+      if (!paymentIntent) {
         throw new TRPCError({
           code: "BAD_REQUEST",
-          message: "something went wrong"
-        })
+          message: "something went wrong",
+        });
       }
 
-      return paymentIntent.client_secret
+      console.log(paymentIntent)
+
+      return paymentIntent.client_secret;
     }),
 });

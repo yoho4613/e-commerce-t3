@@ -131,7 +131,6 @@ export interface Address {
   code: string;
   country: string;
   contact: string;
-  title: string;
 }
 
 export type ProductForm = {

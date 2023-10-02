@@ -220,11 +220,10 @@ export const userRouter = createTRPCRouter({
         code: z.string(),
         country: z.string(),
         contact: z.string(),
-        title: z.string(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { id, name, address, city, code, country, contact, title } = input;
+      const { id, name, address, city, code, country, contact } = input;
       if (!id) {
         throw new TRPCError({
           code: "BAD_REQUEST",
@@ -237,8 +236,7 @@ export const userRouter = createTRPCRouter({
         !city ||
         !code ||
         !country ||
-        !contact ||
-        !title
+        !contact 
       ) {
         throw new TRPCError({
           code: "CONFLICT",
@@ -258,7 +256,6 @@ export const userRouter = createTRPCRouter({
             code,
             country,
             contact,
-            title,
           },
         },
       });

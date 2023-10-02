@@ -4,23 +4,15 @@ import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import Spinner from "~/components/global/Spinner";
-import { Address, CartItem } from "~/config/type";
-import { BASE_URL } from "~/constant/config";
+import { CartItem } from "~/config/type";
+
 
 import { useStateContext } from "~/context/userDetailContext";
 import { getTotalPrice } from "~/lib/helper";
 import { api } from "~/utils/api";
-import {
-  Elements,
-  LinkAuthenticationElement,
-  PaymentElement,
-  useElements,
-  useStripe,
-} from "@stripe/react-stripe-js";
-import { StripeElementsOptionsMode, loadStripe } from "@stripe/stripe-js";
-import { URLSearchParams } from "url";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 import CheckoutForm from "~/components/checkout/CheckoutForm";
-import { MdClose } from "react-icons/md";
 
 // interface CartProps {}
 
@@ -102,7 +94,6 @@ const Cart: FC = ({}) => {
         address: addressForm,
         email: userDetail.email,
       });
-      router.push("#payment-form");
     }
   };
   const appearance = {
@@ -122,11 +113,6 @@ const Cart: FC = ({}) => {
   // console.log(stripePromise);
   return (
     <div className="m-auto max-w-[1280px] py-12">
-      <form id="payment-form">
-        hello
-        <span>hello</span>
-        <button></button>
-      </form>
       <table className="relative w-full space-y-2 sm:mx-auto  ">
         <thead>
           <tr className="mx-6 border-2 text-sm sm:text-base">
@@ -433,7 +419,7 @@ const Cart: FC = ({}) => {
         <div className="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center bg-gray-300 dark:bg-buttonBlack  ">
           <div className="w-1/2 ">
             <Elements options={options} stripe={stripePromise}>
-              <CheckoutForm setClientSecret={setClientSecret} />
+              <CheckoutForm products={cartItems.filter((item) => item.checked)} setClientSecret={setClientSecret} />
             </Elements>
           </div>
         </div>

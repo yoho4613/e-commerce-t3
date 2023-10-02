@@ -2,12 +2,12 @@ import { GetServerSideProps } from 'next'
 import { useRouter } from 'next/router'
 import { FC } from 'react'
 
-interface successProps {
-  id: string
-}
+// interface successProps {
+//   id: string
+// }
 
-const Success: FC<successProps> = ({id}) => {
-  console.log(id)
+const Success: FC = () => {
+
   return (
      <div>
        success
@@ -16,14 +16,13 @@ const Success: FC<successProps> = ({id}) => {
 }
 
 
-export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  
-  return {
-    props: {
-     id: query.id
-    },
-  };
-};
+// export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+//   return {
+//     props: {
+//      id: query.id
+//     },
+//   };
+// };
 
 export default Success
 

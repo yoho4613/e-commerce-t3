@@ -182,12 +182,6 @@ export const checkoutRouter = createTRPCRouter({
         automatic_payment_methods: {
           enabled: true,
         },
-        payment_method_options: {
-          afterpay_clearpay: {
-            capture_method: "manual"
-          },
-
-        },
         shipping: {
           address: {
             line1: address.address,

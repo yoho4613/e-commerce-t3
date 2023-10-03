@@ -6,7 +6,6 @@ import { toast } from "react-hot-toast";
 import Spinner from "~/components/global/Spinner";
 import { CartItem } from "~/config/type";
 
-
 import { useStateContext } from "~/context/userDetailContext";
 import { getTotalPrice } from "~/lib/helper";
 import { api } from "~/utils/api";
@@ -17,19 +16,14 @@ import CheckoutForm from "~/components/checkout/CheckoutForm";
 // interface CartProps {}
 
 const Cart: FC = ({}) => {
-  const router = useRouter();
   const { userDetail, addNewAddressContext } = useStateContext();
   const {
     data: products,
     isLoading,
     isError,
   } = api.product.findProducts.useQuery(userDetail.cart);
-
-  const { mutate: checkout } = api.checkout.checkoutSession.useMutation({
-    onSuccess: (res) => router.push(res.url),
-  });
-
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
+  const [checkoutItems, setCheckoutItems] = useState<CartItem[]>([]);
   const [addressForm, setAddressForm] = useState({
     name: "",
     address: "",
@@ -41,18 +35,8 @@ const Cart: FC = ({}) => {
   const [formOpened, setFormOpened] = useState(false);
   const [warning, setWarning] = useState<string | null>(null);
   const [clientSecret, setClientSecret] = useState<string>("");
-  const [createCheckout, setCreateCheckout] = useState(false);
-  const { mutate: checkoutData } = api.checkout.checkoutIntent.useMutation({
-    onSuccess: (res) => res && setClientSecret(res),
-  });
-
-  // const stripe = useStripe();
-  // const elements = useElements();
-  // const paymentElementOptions = {
-  // layout: "tabs",
-  // };
-
-  // const customerSecret = new URLSearchParams(window.location.search).get("payment_intent_client_secret")
+  const { mutateAsync: checkoutData } =
+    api.checkout.checkoutIntent.useMutation();
 
   useEffect(() => {
     if (products) {
@@ -76,10 +60,9 @@ const Cart: FC = ({}) => {
     addNewAddressContext(addressForm);
     setFormOpened(false);
   };
-  console.log(userDetail.address);
 
   /* eslint-disable */
-  const submitCheckout = () => {
+  const submitCheckout = async () => {
     if (!userDetail.address) {
       return toast.error("Please Check Your Delivery Address");
     } else {
@@ -89,11 +72,15 @@ const Cart: FC = ({}) => {
       //   products: cartItems,
       //   url: BASE_URL,
       // });
-      checkoutData({
+      const res = await checkoutData({
         products: cartItems.filter((item) => item.checked),
         address: addressForm,
         email: userDetail.email,
       });
+      setCheckoutItems(cartItems.filter((item) => item.checked));
+      if (res) {
+        setClientSecret(res);
+      }
     }
   };
   const appearance = {
@@ -415,11 +402,14 @@ const Cart: FC = ({}) => {
           </button>
         </div>
       </div>
-      {clientSecret && (
-        <div className="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center bg-gray-300 dark:bg-buttonBlack  ">
+      {clientSecret && checkoutItems.length && (
+        <div className="fixed left-0 top-0 z-50 flex h-full w-full items-center justify-center bg-whitePrimary dark:bg-buttonBlack  ">
           <div className="w-1/2 ">
             <Elements options={options} stripe={stripePromise}>
-              <CheckoutForm products={cartItems.filter((item) => item.checked)} setClientSecret={setClientSecret} />
+              <CheckoutForm
+                products={checkoutItems}
+                setClientSecret={setClientSecret}
+              />
             </Elements>
           </div>
         </div>

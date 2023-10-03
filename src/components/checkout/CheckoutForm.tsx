@@ -4,7 +4,6 @@ import {
   useElements,
   useStripe,
 } from "@stripe/react-stripe-js";
-import { StripeLinkAuthenticationElementChangeEvent } from "@stripe/stripe-js";
 import {
   Dispatch,
   FC,
@@ -16,6 +15,7 @@ import {
 import { BASE_URL } from "~/constant/config";
 import Spinner from "../global/Spinner";
 import { CartItem } from "~/config/type";
+import { getTotalPrice } from "~/lib/helper";
 
 interface CheckoutFormProps {
   products: CartItem[];
@@ -27,6 +27,7 @@ const CheckoutForm: FC<CheckoutFormProps> = ({ setClientSecret, products }) => {
   const elements = useElements();
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const totalPrice = getTotalPrice(products);
 
   useEffect(() => {
     if (!stripe) return;
@@ -89,12 +90,6 @@ const CheckoutForm: FC<CheckoutFormProps> = ({ setClientSecret, products }) => {
     return isLoading;
   };
 
-  const handleEmailChange = (e: StripeLinkAuthenticationElementChangeEvent) => {
-    console.log(e);
-    console.log("yoho4613");
-    return "yoho4613@gmai.com";
-  };
-
   return (
     <div>
       {isLoading || !stripe || !elements ? (
@@ -102,21 +97,30 @@ const CheckoutForm: FC<CheckoutFormProps> = ({ setClientSecret, products }) => {
           <Spinner />
         </div>
       ) : (
-        <div className="flex flex-col gap-4 md:flex-row">
-          <div>
+        <div className="flex flex-col gap-6 ">
+          <div className="bg-white p-2">
+            <h2 className="mb-2 text-xl font-bold">Products</h2>
             {products.map((product) => (
-              <div key={product.id} className="">
-                <p>{product.title}</p>
-                <p>{product.price}</p>
+              <div
+                key={product.id}
+                className="flex items-center justify-between gap-4 border-2"
+              >
+                <h3 className="font-bold">{product.title}</h3>
+                <p>${Number(product.price) * product.quantity}</p>
               </div>
             ))}
+            <div className="flex justify-between">
+              <h3>Delivery Fee</h3>
+              <p>${totalPrice.totalDelivery}</p>
+            </div>
+            <div className="mt-2 flex justify-between font-bold">
+              <h3>Total Price</h3>
+              <p>${totalPrice.totalPrice}</p>
+            </div>
           </div>
           {/* eslint-disable-next-line */}
           <form id="payment-form" onSubmit={handleSubmit}>
-            <LinkAuthenticationElement
-              id="link-authentication-element"
-              onChange={(e) => handleEmailChange(e)}
-            />
+            <LinkAuthenticationElement id="link-authentication-element" />
             <PaymentElement id="payment-element" options={{ layout: "tabs" }} />
             <div className="mt-4 flex justify-evenly">
               <button

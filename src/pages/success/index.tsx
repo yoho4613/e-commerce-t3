@@ -7,7 +7,9 @@ import { FC } from 'react'
 // }
 
 const Success: FC = () => {
+  const router = useRouter();
 
+  console.log(router.query)
   return (
      <div>
        success

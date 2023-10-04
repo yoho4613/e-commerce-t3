@@ -16,7 +16,7 @@ import { ProductType } from "~/config/type";
 export const productRouter = createTRPCRouter({
   getAllProducts: publicProcedure.query(async ({ ctx }) => {
     const products = await ctx.prisma.product.findMany();
-
+    console.log(products);
     const productsWithUrls: ProductType[] = [];
 
     for (const product of products) {

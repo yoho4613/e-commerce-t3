@@ -11,6 +11,7 @@ import { watchlistRouter } from "./routers/watchlist";
 import { cartRouter } from "./routers/cart";
 import { checkoutRouter } from "./routers/checkout";
 import { reviewRouter } from "./routers/review";
+import { orderRouter } from "./routers/order";
 
 /**
  * This is the primary router for your server.
@@ -29,7 +30,8 @@ export const appRouter = createTRPCRouter({
   watchlist: watchlistRouter,
   cart: cartRouter,
   checkout: checkoutRouter,
-  review: reviewRouter
+  review: reviewRouter,
+  order: orderRouter,
 });
 
 // export type definition of API

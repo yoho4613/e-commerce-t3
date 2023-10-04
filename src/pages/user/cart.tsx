@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import Spinner from "~/components/global/Spinner";
@@ -97,7 +96,7 @@ const Cart: FC = ({}) => {
     };
   };
   const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY!);
-  // console.log(stripePromise);
+
   return (
     <div className="m-auto max-w-[1280px] py-12">
       <table className="relative w-full space-y-2 sm:mx-auto  ">
@@ -407,6 +406,7 @@ const Cart: FC = ({}) => {
           <div className="w-1/2 ">
             <Elements options={options} stripe={stripePromise}>
               <CheckoutForm
+                clientSecret={clientSecret}
                 products={checkoutItems}
                 setClientSecret={setClientSecret}
               />

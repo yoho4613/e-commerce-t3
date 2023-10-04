@@ -15,23 +15,32 @@ import {
 import { BASE_URL } from "~/constant/config";
 import { CartItem } from "~/config/type";
 import { getTotalPrice } from "~/lib/helper";
+import { api } from "~/utils/api";
 import { useStateContext } from "~/context/userDetailContext";
 
 interface CheckoutFormProps {
   products: CartItem[];
+  clientSecret: string;
   setClientSecret: Dispatch<SetStateAction<string>>;
 }
 
-const CheckoutForm: FC<CheckoutFormProps> = ({ setClientSecret, products }) => {
+const CheckoutForm: FC<CheckoutFormProps> = ({
+  setClientSecret,
+  clientSecret,
+  products,
+}) => {
   const stripe = useStripe();
   const elements = useElements();
   const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const { setUserDetail } = useStateContext();
+  const { mutateAsync: createOrder } = api.order.createOrder.useMutation();
+  const { userDetail } = useStateContext();
   const totalPrice = getTotalPrice(products);
+  console.log(products);
 
   useEffect(() => {
     if (!stripe) return;
+    // console.log(stripe.confirmPayment());
 
     const customerSecret = new URLSearchParams(window.location.search).get(
       "payment_intent_client_secret",
@@ -59,7 +68,9 @@ const CheckoutForm: FC<CheckoutFormProps> = ({ setClientSecret, products }) => {
             break;
         }
       })
-      .then((res) => res)
+      .then((res) => {
+        return res;
+      })
       .catch((err) => console.log(err));
   }, [stripe]);
 
@@ -69,8 +80,14 @@ const CheckoutForm: FC<CheckoutFormProps> = ({ setClientSecret, products }) => {
     if (!stripe || !elements) {
       return;
     }
-
     setIsLoading(true);
+
+    // create Order
+    await createOrder({
+      userId: userDetail.id,
+      paymentId: clientSecret,
+      product: products,
+    });
 
     const payment = await stripe.confirmPayment({
       elements,
@@ -86,12 +103,7 @@ const CheckoutForm: FC<CheckoutFormProps> = ({ setClientSecret, products }) => {
       setMessage(payment.error.message!);
     } else if (payment.error.type) {
       setMessage("An unexpected error occurred.");
-    } else {
-      setUserDetail((prev) => ({ ...prev, cart: [], watchlist: [] }));
-      console.log("is working!");
     }
-
-    console.log("payment", payment);
 
     setIsLoading(false);
     return isLoading;

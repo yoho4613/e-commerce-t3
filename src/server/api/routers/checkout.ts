@@ -170,7 +170,8 @@ export const checkoutRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       const { products, address, email } = input;
       const subtotal = products.reduce(
-        (acc, next) => (acc += (next.quantity * Number(next.price) + Number(next.delivery)) ),
+        (acc, next) =>
+          (acc += next.quantity * Number(next.price) + Number(next.delivery)),
         0,
       );
 
@@ -187,13 +188,12 @@ export const checkoutRouter = createTRPCRouter({
             line1: address.address,
             city: address.city,
             postal_code: address.code,
-            country: address.country
+            country: address.country,
           },
           name: address.name,
-          phone: address.contact
+          phone: address.contact,
         },
         receipt_email: email,
-        
       });
 
       if (!paymentIntent) {
@@ -202,8 +202,6 @@ export const checkoutRouter = createTRPCRouter({
           message: "something went wrong",
         });
       }
-
-      console.log(paymentIntent)
 
       return paymentIntent.client_secret;
     }),

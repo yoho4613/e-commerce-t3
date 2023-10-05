@@ -1,5 +1,6 @@
 import { useElements, useStripe } from "@stripe/react-stripe-js";
 import { FC, useEffect } from "react";
+import { CartItem, OrderType } from "~/config/type";
 import { api } from "~/utils/api";
 
 interface OrderDetailProps {
@@ -9,8 +10,11 @@ interface OrderDetailProps {
 const OrderDetail: FC<OrderDetailProps> = ({ clientSecret }) => {
   const stripe = useStripe();
   const elements = useElements();
-  const { data: order } = api.order.findOrder.useQuery({paymentId: clientSecret})
-
+  const { data: order } = api.order.findOrder.useQuery({
+    paymentId: clientSecret,
+  }) 
+  const { mutateAsync: updateStatus } = api.order.updateStatus.useMutation();
+  console.log(order);
   useEffect(() => {
     if (!stripe) return;
     // console.log(stripe.confirmPayment());
@@ -23,31 +27,34 @@ const OrderDetail: FC<OrderDetailProps> = ({ clientSecret }) => {
 
     stripe
       .retrievePaymentIntent(customerSecret)
-      .then(({ paymentIntent }) => {
-        switch (paymentIntent?.status) {
-          case "succeeded":
-            console.log("paymentIntent", paymentIntent);
-            // setMessage("Payment succeeded!");
-            break;
-          case "processing":
-            // setMessage("Payment is processing.");
-            break;
-          case "requires_payment_method":
-            // setMessage("Your payment was not successful. please try again.");
-            break;
-
-          default:
-            // setMessage("Something went wrong");
-            break;
+      .then(async ({ paymentIntent }) => {
+        if (
+          paymentIntent?.status === "succeeded" &&
+          order?.status === "received"
+        ) {
+          await updateStatus({ id: order.id, status: "processing" });
         }
-      })
-      .then((res) => {
-        return res;
       })
       .catch((err) => console.log(err));
   }, [stripe]);
 
-  return <div>{clientSecret}</div>;
+  return (
+    <div className="flex max-w-[1280px] justify-center">
+      <div className="my-8">
+        <h1 className="font-bold text-2xl">Your Order Successfully Received</h1>
+        <div>
+          <h2>Order Details:</h2>
+          <div className="flex justify-between">
+            {/* {order && (
+              (order.products as CartItem[]).map((item) => (
+                <div></div>
+              ))
+            )} */}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 };
 
 export default OrderDetail;

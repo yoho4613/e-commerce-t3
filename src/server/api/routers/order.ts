@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure, userProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
+import { OrderStatus } from "@prisma/client";
 
 export const orderRouter = createTRPCRouter({
   createOrder: publicProcedure
@@ -39,7 +40,7 @@ export const orderRouter = createTRPCRouter({
         data: {
           userId,
           paymentId,
-          products: [...product],
+          products: product,
         },
       });
 
@@ -59,6 +60,19 @@ export const orderRouter = createTRPCRouter({
       const order = await ctx.prisma.order.findFirst({
         where: {
           paymentId,
+        },
+      });
+
+      return order;
+    }),
+  updateStatus: publicProcedure
+    .input(z.object({ id: z.string(), status: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { id, status } = input;
+      const order = await ctx.prisma.order.update({
+        where: { id },
+        data: {
+          status: status as OrderStatus,
         },
       });
 

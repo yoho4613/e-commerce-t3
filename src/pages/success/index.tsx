@@ -41,7 +41,6 @@ const Success: FC = () => {
     };
   };
   const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_KEY!);
-
   console.log(router.query);
 
   return (

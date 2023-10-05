@@ -158,3 +158,14 @@ export type BannerType = {
   position: BannerPosition;
   url: string;
 };
+
+export interface OrderType {
+  id: string;
+  products: CartItem[];
+  paymentId: string;
+  status: $Enums.OrderStatus;
+  address: Prisma.JsonValue;
+  userId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}

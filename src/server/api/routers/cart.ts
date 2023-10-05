@@ -44,9 +44,35 @@ export const cartRouter = createTRPCRouter({
             cart: [...user.cart, productId],
           },
         });
-        console.log("add to cart");
-        console.log(userUpdate.cart);
         return userUpdate;
       }
+    }),
+  updateUserCart: userProcedure
+    .input(z.object({ id: z.string(), productId: z.array(z.string()) }))
+    .mutation(async ({ ctx, input }) => {
+      const { id, productId } = input;
+
+      const user = await ctx.prisma.user.findFirst({
+        where: { id },
+      });
+
+      const newCart = [];
+
+      if (user?.cart) {
+        for (const item of user?.cart) {
+          if (!productId.includes(item)) {
+            newCart.push(item);
+          }
+        }
+      }
+
+      const updatedUser = await ctx.prisma.user.update({
+        where: { id },
+        data: {
+          cart: newCart,
+        },
+      });
+
+      return updatedUser;
     }),
 });

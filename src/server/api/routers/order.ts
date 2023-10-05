@@ -2,6 +2,7 @@ import { z } from "zod";
 import { createTRPCRouter, publicProcedure, userProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
 import { OrderStatus } from "@prisma/client";
+import { JsonArray } from "@prisma/client/runtime/library";
 
 export const orderRouter = createTRPCRouter({
   createOrder: publicProcedure
@@ -51,7 +52,27 @@ export const orderRouter = createTRPCRouter({
         });
       }
 
-      return order;
+      const {
+        id,
+        products,
+        paymentId: orderPaymentId,
+        status,
+        address,
+        userId: orderUserId,
+        createdAt,
+        updatedAt,
+      } = order;
+
+      return {
+        id,
+        products: products as JsonArray,
+        paymentId: orderPaymentId,
+        status,
+        address: address as Object,
+        userId: orderUserId,
+        createdAt,
+        updatedAt,
+      };
     }),
   findOrder: publicProcedure
     .input(z.object({ paymentId: z.string() }))
@@ -63,7 +84,34 @@ export const orderRouter = createTRPCRouter({
         },
       });
 
-      return order;
+      if(!order) {
+        throw new TRPCError({
+          code: "NOT_FOUND",
+          message: "Could not find order"
+        })
+      }
+
+      const {
+        id,
+        products,
+        paymentId: orderPaymentId,
+        status,
+        address,
+        userId: orderUserId,
+        createdAt,
+        updatedAt,
+      } = order;
+
+      return {
+        id,
+        products: products as Object[],
+        paymentId: orderPaymentId,
+        status,
+        address: address as Object,
+        userId: orderUserId,
+        createdAt,
+        updatedAt,
+      };
     }),
   updateStatus: publicProcedure
     .input(z.object({ id: z.string(), status: z.string() }))

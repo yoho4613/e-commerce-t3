@@ -1,8 +1,9 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure, userProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
-import { OrderStatus } from "@prisma/client";
+import { Order, OrderStatus, User } from "@prisma/client";
 import { JsonArray } from "@prisma/client/runtime/library";
+import { CartItem } from "~/config/type";
 
 export const orderRouter = createTRPCRouter({
   createOrder: publicProcedure
@@ -84,11 +85,11 @@ export const orderRouter = createTRPCRouter({
         },
       });
 
-      if(!order) {
+      if (!order) {
         throw new TRPCError({
           code: "NOT_FOUND",
-          message: "Could not find order"
-        })
+          message: "Could not find order",
+        });
       }
 
       const {
@@ -124,6 +125,32 @@ export const orderRouter = createTRPCRouter({
         },
       });
 
-      return order;
+      const products = order.products as Object[];
+
+      if (status === "processing") {
+        const user = await ctx.prisma.user.findFirst({
+          where: { id: order.userId },
+        });
+        const newCart = [];
+
+        if (user?.cart) {
+          for (const item of user.cart) {
+            if (!(products as CartItem[]).map((p) => p.id).includes(item)) {
+              newCart.push(item);
+            }
+          }
+        }
+
+        const updatedUser = await ctx.prisma.user.update({
+          where: { id: order.userId },
+          data: {
+            cart: newCart,
+          },
+        });
+
+        return updatedUser as User;
+      }
+
+      return order as Order;
     }),
 });

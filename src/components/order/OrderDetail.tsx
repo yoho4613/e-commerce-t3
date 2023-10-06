@@ -1,3 +1,4 @@
+import { User } from "@prisma/client";
 import { useElements, useStripe } from "@stripe/react-stripe-js";
 import { FC, useEffect } from "react";
 import { CartItem, OrderType } from "~/config/type";
@@ -36,19 +37,26 @@ const OrderDetail: FC<OrderDetailProps> = ({ clientSecret }) => {
           paymentIntent?.status === "succeeded" &&
           order?.status === "received"
         ) {
-          const products = order.products as CartItem[];
-          await updateStatus({ id: order.id, status: "processing" });
-          const newUserWithCart = await updateUserCart({
-            id: userDetail.id,
-            productId: products.map((p) => p.id),
-          });
-          if (newUserWithCart) {
-            setUserDetail((prev) => ({ ...prev, cart: newUserWithCart.cart }));
+          const updatedUser = (await updateStatus({
+            id: order.id,
+            status: "processing",
+          })) as User;
+
+          if (updatedUser.cart) {
+            setUserDetail((prev) => ({ ...prev, cart: updatedUser.cart }));
           }
+
+          // const newUserWithCart = await updateUserCart({
+          //   id: userDetail.id,
+          //   productId: products.map((p) => p.id),
+          // });
+          // if (newUserWithCart) {
+          //   setUserDetail((prev) => ({ ...prev, cart: newUserWithCart.cart }));
+          // }
         }
       })
       .catch((err) => console.log(err));
-  }, [stripe]);
+  }, [stripe, order]);
 
   return (
     <div className="flex max-w-[1280px] justify-center">
@@ -57,11 +65,14 @@ const OrderDetail: FC<OrderDetailProps> = ({ clientSecret }) => {
         <div>
           <h2>Order Details:</h2>
           <div className="flex justify-between">
-            {/* {order && (
+            {order &&
               (order.products as CartItem[]).map((item) => (
-                <div></div>
-              ))
-            )} */}
+                <div key={item.id}>
+                  <h2>{item.title}</h2>
+                  <p>{item.quantity}</p>
+                  <p>${Number(item.price) * item.quantity}</p>
+                </div>
+              ))}
           </div>
         </div>
       </div>

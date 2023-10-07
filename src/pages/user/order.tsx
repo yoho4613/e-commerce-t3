@@ -4,15 +4,13 @@ import Spinner from "~/components/global/Spinner";
 import { useStateContext } from "~/context/userDetailContext";
 import { api } from "~/utils/api";
 
-interface orderProps {}
 
-const order: FC<orderProps> = ({}) => {
+
+const Order: FC = ({}) => {
   const { userDetail } = useStateContext();
   const { data: orders, isError } = api.order.getUserOrder.useQuery({
     userId: userDetail.id,
   });
-
-  console.log(orders);
 
   if (isError) {
     return (
@@ -75,4 +73,4 @@ const order: FC<orderProps> = ({}) => {
   );
 };
 
-export default order;
+export default Order;

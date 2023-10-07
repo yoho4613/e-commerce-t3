@@ -1,9 +1,11 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure, userProcedure } from "../trpc";
 import { TRPCError } from "@trpc/server";
-import { Order, OrderStatus, User } from "@prisma/client";
+import { Order, OrderStatus, Product, User } from "@prisma/client";
 import { JsonArray } from "@prisma/client/runtime/library";
 import { CartItem } from "~/config/type";
+import { getImgUrl, getOrderImgUrl } from "~/lib/helper";
+import { OrderType } from "~/config/type";
 
 export const orderRouter = createTRPCRouter({
   createOrder: publicProcedure
@@ -162,5 +164,25 @@ export const orderRouter = createTRPCRouter({
       }
 
       return order as Order;
+    }),
+  getUserOrder: userProcedure
+    .input(z.object({ userId: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const orders = await ctx.prisma.order.findMany({
+        where: { userId: input.userId },
+      });
+
+      const ordersWithUrls: OrderType[] = [];
+      for (const order of orders) {
+        const withUrls = [];
+        for (const product of order.products as Object[]) {
+          const withUrl = await getOrderImgUrl(product as CartItem);
+          withUrls.push(withUrl);
+        }
+
+        ordersWithUrls.push({ ...order, products: withUrls });
+      }
+
+      return ordersWithUrls;
     }),
 });

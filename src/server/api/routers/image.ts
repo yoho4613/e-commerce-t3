@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { createTRPCRouter, publicProcedure } from "../trpc";
+import { s3 } from "~/lib/s3";
 
 export const imageRouter = createTRPCRouter({
   getRandomImage: publicProcedure
@@ -10,8 +11,24 @@ export const imageRouter = createTRPCRouter({
       const res = await fetch(url);
       /* eslint-disable */
       const data = await res.json();
-      const image = data.results[0].urls.regular
+      const image = data.results[0].urls.regular;
 
-      return image
+      return image;
+    }),
+  convertKeyToUrl: publicProcedure
+    .input(z.array(z.string()))
+    .query(async ({ ctx, input }) => {
+      const urls = await Promise.all(
+        input.map(async (url) => {
+          return !url.includes("unsplash")
+            ? await s3.getSignedUrlPromise("getObject", {
+                Bucket: "e-market-jiho",
+                Key: url,
+              })
+            : url;
+        }),
+      );
+
+      return urls;
     }),
 });

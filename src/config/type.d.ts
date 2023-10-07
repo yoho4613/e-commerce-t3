@@ -158,11 +158,15 @@ export type BannerType = {
 
 export interface OrderType {
   id: string;
-  products: CartItem[];
+  products: CartItemWithUrl[];
   paymentId: string;
   status: $Enums.OrderStatus;
   address: Prisma.JsonValue;
   userId: string;
   createdAt: Date;
   updatedAt: Date;
+}
+
+export interface CartItemWithUrl extends CartItem {
+  url: string[];
 }

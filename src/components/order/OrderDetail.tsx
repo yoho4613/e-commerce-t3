@@ -68,9 +68,11 @@ const OrderDetail: FC<OrderDetailProps> = ({ clientSecret }) => {
                 </div>
               ))}
           </div>
-          <Link href="/" className="rounded-md border-2 px-4 py-2">
-            Back to Home
-          </Link>
+          <div className="mt-4">
+            <Link href="/" className="rounded-md border-2 px-4 py-2">
+              Back to Home
+            </Link>
+          </div>
         </div>
       </div>
       <div className="h-full grow">

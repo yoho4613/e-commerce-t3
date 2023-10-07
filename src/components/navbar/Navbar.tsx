@@ -197,7 +197,10 @@ const Navbar: FC = ({}) => {
                 <BsPerson color="white" className="mr-2 text-xl" />
                 Manage My Profile
               </Link>
-              <Link href="/" className="flex w-full items-center p-2 text-left">
+              <Link
+                href="/user/order"
+                className="flex w-full items-center p-2 text-left"
+              >
                 <PiShoppingBagOpenLight
                   color="white"
                   className="mr-2 text-xl"

@@ -111,26 +111,23 @@ export interface UserDetail {
   cart: string[];
   watchlist: string[];
   purchase: Prisma.JsonValue;
-  /* eslint-disable-next-line */
-  address: {
-    [key: string]: Addres;
-  } | null;
+  address: Address | null;
   role: string;
   createdAt: Date;
+}
+
+export interface Address {
+  address: string;
+  city: string;
+  contact: string;
+  code: string;
+  country: string;
+  name: string;
 }
 
 export interface CartItem extends Product {
   quantity: number;
   checked: boolean;
-}
-
-export interface Address {
-  name: string;
-  address: string;
-  city: string;
-  code: string;
-  country: string;
-  contact: string;
 }
 
 export type ProductForm = {

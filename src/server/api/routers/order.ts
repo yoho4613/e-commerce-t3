@@ -34,15 +34,24 @@ export const orderRouter = createTRPCRouter({
         // ),
         paymentId: z.string(),
         userId: z.string(),
+        address: z.object({
+          address: z.string(),
+          city: z.string(),
+          code: z.string(),
+          contact: z.string(),
+          country: z.string(),
+          name: z.string(),
+        }),
       }),
     )
     .mutation(async ({ ctx, input }) => {
-      const { userId, paymentId, product } = input;
+      const { userId, paymentId, product, address } = input;
       const order = await ctx.prisma.order.create({
         data: {
           userId,
           paymentId,
           products: product,
+          address,
         },
       });
 
@@ -58,18 +67,19 @@ export const orderRouter = createTRPCRouter({
         products,
         paymentId: orderPaymentId,
         status,
-        address,
+        address: orderAddress,
         userId: orderUserId,
         createdAt,
         updatedAt,
       } = order;
 
+      /* eslint-disable */
       return {
         id,
         products: products as JsonArray,
         paymentId: orderPaymentId,
         status,
-        address: address as Object,
+        address: orderAddress as Object,
         userId: orderUserId,
         createdAt,
         updatedAt,

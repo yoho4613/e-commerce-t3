@@ -3,29 +3,19 @@ import { loadStripe } from "@stripe/stripe-js";
 
 import { useRouter } from "next/router";
 import { FC, useEffect, useState } from "react";
-import Spinner from "~/components/global/Spinner";
 import OrderDetail from "~/components/order/OrderDetail";
-import { useStateContext } from "~/context/userDetailContext";
-
-// interface successProps {
-//   id: string
-// }
 
 const Success: FC = () => {
   const router = useRouter();
-
-  const { userDetail } = useStateContext();
-  const [orderDetail, setOrderDetail] = useState<any>(null)
   const [clientSecret, setClientSecret] = useState<string>("");
   useEffect(() => {
     setClientSecret(router.query.payment_intent_client_secret as string);
   }, [router]);
 
   useEffect(() => {
-    if(clientSecret) {
-      
+    if (clientSecret) {
     }
-  }, [clientSecret])
+  }, [clientSecret]);
 
   const appearance = {
     theme: "stripe",
@@ -50,7 +40,6 @@ const Success: FC = () => {
           <OrderDetail clientSecret={clientSecret} />
         </Elements>
       )}
-      success
     </div>
   );
 };

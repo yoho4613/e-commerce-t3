@@ -87,6 +87,7 @@ const CheckoutForm: FC<CheckoutFormProps> = ({
       userId: userDetail.id,
       paymentId: clientSecret,
       product: products,
+      address: userDetail.address!,
     });
 
     const payment = await stripe.confirmPayment({

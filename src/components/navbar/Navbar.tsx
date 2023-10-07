@@ -17,6 +17,7 @@ import { useSession, signOut } from "next-auth/react";
 import Searchbar from "../global/Searchbar";
 import { api } from "~/utils/api";
 import { useStateContext } from "~/context/userDetailContext";
+import { Address } from "~/config/type";
 
 // interface NavbarProps {}
 
@@ -36,14 +37,12 @@ const Navbar: FC = ({}) => {
   const { mutate: getUserDetail } = api.user.findUser.useMutation({
     onSuccess: (res) => {
       if (res) {
-        setUserDetail(res);
+        setUserDetail({ ...res, address: res.address as Address });
       }
     },
   });
   const { setUserDetail, userDetail } = useStateContext();
 
-
-  
   useEffect(() => {
     if (session.status === "authenticated") {
       setUser(session.data.user);

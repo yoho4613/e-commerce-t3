@@ -49,7 +49,7 @@ export const StateContext = ({ children }: { children: ReactNode }) => {
     onSuccess: (res) =>
       setUserDetail((prev) => ({
         ...prev,
-        address: res.address as object,
+        address: res.address as Address | null,
       })),
     onError: (err) => toast.error(err.message),
   });

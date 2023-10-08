@@ -34,19 +34,11 @@ const Navbar: FC = ({}) => {
   const profileRef = useRef<HTMLDivElement>(null);
   const [user, setUser] = useState<User | { id: string } | null>(null);
   const session = useSession();
-  const { mutate: getUserDetail } = api.user.findUser.useMutation({
-    onSuccess: (res) => {
-      if (res) {
-        setUserDetail({ ...res, address: res.address as Address });
-      }
-    },
-  });
   const { setUserDetail, userDetail } = useStateContext();
 
   useEffect(() => {
     if (session.status === "authenticated") {
       setUser(session.data.user);
-      getUserDetail({ email: session.data.user.email! });
     }
   }, [session]);
 

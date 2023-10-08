@@ -1,3 +1,4 @@
+import { useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import {
   Dispatch,
@@ -5,6 +6,7 @@ import {
   SetStateAction,
   createContext,
   useContext,
+  useEffect,
   useState,
 } from "react";
 import { toast } from "react-hot-toast";
@@ -53,8 +55,22 @@ export const StateContext = ({ children }: { children: ReactNode }) => {
       })),
     onError: (err) => toast.error(err.message),
   });
+  const { mutateAsync: getUserDetail } = api.user.findUser.useMutation({
+    onSuccess: (res) => {
+      if (res) {
+        setUserDetail({ ...res, address: res.address as Address });
+      }
+    },
+  });
+  const session = useSession();
 
   const [userDetail, setUserDetail] = useState<UserDetail>(defaultUserDetail);
+
+  useEffect(() => {
+    if (session.status === "authenticated") {
+      getUserDetail({ email: session.data.user.email! });
+    }
+  }, [session]);
 
   const updateWatchlistContext = (productId: string) => {
     if (userDetail.watchlist.includes(productId)) {

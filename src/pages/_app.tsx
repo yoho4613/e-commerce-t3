@@ -29,8 +29,8 @@ const MyApp: AppType = ({ Component, pageProps: { ...pageProps } }) => {
         <meta name="description" content="E Market - Online Smart Store" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <StateContext>
-        <Provider>
+      <Provider>
+        <StateContext>
           <main className="w-screen overflow-hidden">
             <Toaster />
             {!isAdmin && <TopBanner />}
@@ -41,8 +41,8 @@ const MyApp: AppType = ({ Component, pageProps: { ...pageProps } }) => {
             <Component {...pageProps} />
             {isAdmin ? <AdminFooter /> : <Footer />}
           </main>
-        </Provider>
-      </StateContext>
+        </StateContext>
+      </Provider>
     </>
   );
 };

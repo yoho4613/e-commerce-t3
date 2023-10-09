@@ -55,7 +55,7 @@ export const StateContext = ({ children }: { children: ReactNode }) => {
       })),
     onError: (err) => toast.error(err.message),
   });
-  const { mutateAsync: getUserDetail } = api.user.findUser.useMutation({
+  const { mutate: getUserDetail } = api.user.findUser.useMutation({
     onSuccess: (res) => {
       if (res) {
         setUserDetail({ ...res, address: res.address as Address });

@@ -24,6 +24,7 @@ const AdminNavBar: FC = () => {
     { name: "Subcategory", href: "/admin/subcategory", current: false },
     { name: "Product", href: "/admin/product", current: false },
     { name: "Banner", href: "/admin/banner", current: false },
+    { name: "Order", href: "/admin/order", current: false },
   ]);
 
   const handleActivePage = (url: string) => {

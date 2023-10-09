@@ -34,7 +34,7 @@ const Navbar: FC = ({}) => {
   const profileRef = useRef<HTMLDivElement>(null);
   const [user, setUser] = useState<User | { id: string } | null>(null);
   const session = useSession();
-  const { setUserDetail, userDetail } = useStateContext();
+  const { userDetail } = useStateContext();
 
   useEffect(() => {
     if (session.status === "authenticated") {

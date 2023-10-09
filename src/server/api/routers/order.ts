@@ -1,5 +1,10 @@
 import { z } from "zod";
-import { createTRPCRouter, publicProcedure, userProcedure } from "../trpc";
+import {
+  adminProcedure,
+  createTRPCRouter,
+  publicProcedure,
+  userProcedure,
+} from "../trpc";
 import { TRPCError } from "@trpc/server";
 import { Order, OrderStatus, Product, User } from "@prisma/client";
 import { JsonArray } from "@prisma/client/runtime/library";
@@ -185,4 +190,9 @@ export const orderRouter = createTRPCRouter({
 
       return ordersWithUrls;
     }),
+  getAllOrders: adminProcedure.query(async ({ ctx }) => {
+    const order = await ctx.prisma.order.findMany({ include: { user: true } });
+
+    return order;
+  }),
 });

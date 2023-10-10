@@ -1,20 +1,21 @@
-import { Order } from "@prisma/client";
+import { Order, OrderStatus } from "@prisma/client";
+import { JsonArray, JsonObject } from "@prisma/client/runtime/library";
 import { FC, useEffect, useState } from "react";
 import Spinner from "~/components/global/Spinner";
 import { CartItem, OrderType } from "~/config/type";
 import { api } from "~/utils/api";
 
-interface orderProps {}
 
-const order: FC<orderProps> = ({}) => {
+
+const OrderPage: FC = ({}) => {
   const { data: orders, isLoading } = api.order.getAllOrders.useQuery();
-  const [filteredOrders, setFilteredOrders] = useState<OrderType[]>([]);
+  // const [filteredOrders, setFilteredOrders] = useState<OrderType[]>([]);
   const [openForm, setOpenForm] = useState<Order | null>(null);
-  console.log(orders);
+  // console.log(orders);
 
   useEffect(() => {
     // if(orders) setFilteredOrders(orders)
-  }, [orders])
+  }, [orders]);
   return (
     <div className="relative overflow-auto ">
       {/* {openForm && (
@@ -36,20 +37,13 @@ const order: FC<orderProps> = ({}) => {
           <DeletePopup />
         </div>
       )} */}
-      <div className="flex justify-center py-4">
-        <button
-          // onClick={() => setOpenForm(initialProductForm)}
-          className="border-2 px-4 py-2"
-        >
-          Add New Product
-        </button>
-      </div>
+
       <div className="mb-6 flex items-end justify-between px-6">
         <div>
-          <h3 className="font-bold">View by Categories</h3>
+          <h3 className="font-bold">View by Status</h3>
         </div>
         <div className="flex flex-col items-center">
-          <label>Category</label>
+          <label>Status</label>
           <select
             // onChange={(e) =>
             //   setSelectedCategory((prev) => ({
@@ -61,51 +55,21 @@ const order: FC<orderProps> = ({}) => {
             className="h-12 bg-gray-200 p-1"
           >
             <option value="all">All</option>
-            {/* {categories?.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
+            {Object.values(OrderStatus).map((status) => (
+              <option key={status} value={status}>
+                {status}
               </option>
-            ))} */}
+            ))}
           </select>
         </div>
         <div>
-          {/* {categories?.find(
-            (category) => category.id === selectedCategory.categoryId,
-          )?.subcategory.length ? (
-            <div className="flex flex-col items-center">
-              <label>Subcategory</label>
-              <select
-                onChange={(e) =>
-                  setSelectedCategory((prev) => ({
-                    ...prev,
-                    subcategoryId: e.target.value,
-                  }))
-                }
-                defaultValue={selectedCategory.subcategoryId ? "" : ""}
-                className="h-12 bg-gray-200 p-1"
-              >
-                <option value="all">All</option>
-                {categories
-                  ?.find(
-                    (category) => category.id === selectedCategory.categoryId,
-                  )
-                  ?.subcategory?.map((category) => (
-                    <option key={category.id} value={category.id}>
-                      {category.name}
-                    </option>
-                  ))}
-              </select>
-            </div>
-          ) : (
-            ""
-          )} */}
         </div>
         <div>
           <button
             // onClick={() => setOpenPopup(true)}
-            className="btn--red px-4 py-2"
+            className="rounded-md border-2 px-4 py-2"
           >
-            Delete
+            Save
           </button>
         </div>
       </div>
@@ -177,8 +141,32 @@ const order: FC<orderProps> = ({}) => {
                 </label>
               </th>
               <td className="px-6 py-4">{order.user.name}</td>
-              {/* <td className="px-6 py-4">{(order.products as CartItem[]).map((item) => item.title)}</td> */}
-
+              <td className="px-6 py-4">
+                {(order.products as JsonObject[])
+                  .map((item) => item.title)
+                  .join(",")}
+              </td>
+              <td className="px-6 py-4">{order.paymentId.slice(0, 10)}...</td>
+              <td className="px-6 py-4">
+                {Object.values(order.user.address as JsonObject).join(",")}
+              </td>
+              <td className="px-6 py-4">
+                <select
+                  className="border-2 p-1.5"
+                  name="status"
+                  defaultValue={order.status}
+                  id="status"
+                >
+                  {Object.values(OrderStatus).map((status) => (
+                    <option value={status} key={status}>
+                      {status}
+                    </option>
+                  ))}
+                </select>
+              </td>
+              <td className="px-6 py-4">{order.status}</td>
+              <td className="px-6 py-4">{order.createdAt.toLocaleString()}</td>
+              <td className="px-6 py-4">{order.updatedAt.toLocaleString()}</td>
               <td className="px-6 py-4">
                 <button
                   onClick={() => setOpenForm(order)}
@@ -216,4 +204,4 @@ const order: FC<orderProps> = ({}) => {
   );
 };
 
-export default order;
+export default OrderPage;

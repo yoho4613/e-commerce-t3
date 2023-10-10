@@ -60,6 +60,7 @@ const Order: FC = ({}) => {
                     />
                     <p>Quantity: {product.quantity}</p>
                     <p>${Number(product.price) * product.quantity}</p>
+                    <button  className="px-0.5 py-2 border-2 rounded-sm hover:bg-gray-400">Review Product</button>
                   </div>
                 ))}
               </div>

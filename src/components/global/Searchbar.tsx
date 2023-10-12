@@ -26,12 +26,12 @@ const Searchbar: FC<SearchbarProps> = ({ category, subCategory }) => {
         }}
       >
         <input
-          className="w-full bg-secondary px-2 py-1 text-sm md:px-4 md:py-2"
+          className="w-full text-xs bg-secondary px-2 py-1 md:px-4 md:py-2"
           placeholder="What are you looking for?"
           value={input}
           onChange={(e) => setInput(e.target.value)}
         />
-        <button className="absolute right-2 top-1.5 text-xl">
+        <button className="absolute right-1 top-1 text-lg md:text-xl md:right-2 md:top-1.5 ">
           <FiSearch />
         </button>
       </form>

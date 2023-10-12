@@ -137,12 +137,12 @@ const Navbar: FC = ({}) => {
         </ul>
       </div>
       <div className="order-3 flex items-center ">
-        <div className="relative mr-2 w-52 md:mr-6 md:w-64 ">
+        <div className="relative mr-2 w-44 text-xs md:mr-6 md:w-64 ">
           <Searchbar />
         </div>
-        <div className="relative flex items-center">
+        <div className="relative flex gap-1 items-center">
           <Link href={"/user/watchlist"} className="relative sm:mr-4">
-            <AiOutlineHeart className="text-lg sm:text-2xl" />
+            <AiOutlineHeart className="text-xl sm:text-2xl" />
             {userDetail.watchlist.length ? (
               <span className="absolute -right-1 -top-1 h-4 w-4 rounded-full bg-redPrimary text-center text-xs text-whitePrimary ">
                 {userDetail.watchlist.length}
@@ -152,7 +152,7 @@ const Navbar: FC = ({}) => {
             )}
           </Link>
           <Link href={"/user/cart"} className="relative sm:mr-4">
-            <AiOutlineShoppingCart className="text-lg sm:text-2xl" />
+            <AiOutlineShoppingCart className="text-xl sm:text-2xl" />
             {userDetail.cart.length ? (
               <span className="absolute -right-1 -top-1 h-4 w-4 rounded-full bg-redPrimary text-center text-xs text-whitePrimary ">
                 {userDetail.cart.length}
@@ -169,7 +169,7 @@ const Navbar: FC = ({}) => {
                   alt="avatar"
                   width={100}
                   height={100}
-                  className="w-5 rounded-full sm:w-6"
+                  className="w-6 rounded-full sm:w-6"
                 />
               ) : (
                 <RxAvatar color="#DB4444" className="text-lg sm:text-2xl" />

@@ -179,7 +179,7 @@ const Navbar: FC = ({}) => {
           {profileOpened && (
             <div
               ref={profileRef}
-              className="absolute right-0 top-6 z-[999] flex w-32 flex-col rounded-sm px-2.5 text-sm text-whitePrimary sm:w-[20rem] sm:text-lg"
+              className="absolute right-0 top-6 z-[999] flex w-44 flex-col rounded-sm px-2.5 text-sm text-whitePrimary sm:w-[20rem] sm:text-lg"
               style={{ background: "rgba(0,0,0,0.5)" }}
             >
               <Link

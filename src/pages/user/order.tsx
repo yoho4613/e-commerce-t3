@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { FC, useState } from "react";
 import { toast } from "react-hot-toast";
 import { BsStar, BsStarFill } from "react-icons/bs";
@@ -14,7 +15,9 @@ const Order: FC = ({}) => {
   const { mutate: createReview } = api.review.createReview.useMutation({
     onSuccess: (res) => {
       toast.success("review successfully submitted");
-      refetch().then(res => res).catch(err => console.log(err))
+      refetch()
+        .then((res) => res)
+        .catch((err) => console.log(err));
       setReview("");
     },
   });
@@ -55,7 +58,7 @@ const Order: FC = ({}) => {
         <div className="flex flex-col items-center gap-2">
           <label>Star</label>
           <div className="flex gap-2">
-            {[1,2,3,4,5].map((_, i) =>
+            {[1, 2, 3, 4, 5].map((_, i) =>
               form.star > i ? (
                 <BsStarFill
                   key={i}
@@ -105,7 +108,7 @@ const Order: FC = ({}) => {
         {orders ? (
           orders.map((order) => (
             <div key={order.id} className="border-2 p-2">
-              <div className="flex flex-wrap justify-between">
+              <div className="flex flex-wrap justify-between gap-2">
                 <div>
                   <h3 className="font-bold">Order ID</h3>
                   <p>{order.id}</p>
@@ -127,10 +130,15 @@ const Order: FC = ({}) => {
                   <p>{order.status}</p>
                 </div>
               </div>
-              <div className="flex gap-6">
+              <div className="flex flex-wrap gap-6">
                 {order.products.map((product) => (
-                  <div key={product.id} className="">
+                  <Link
+                    href={`/product/${product.id}`}
+                    key={product.id}
+                    className="border-2 p-1"
+                  >
                     <Image
+                      className="w-full"
                       src={product.url[0]!}
                       alt={product.title}
                       width={100}
@@ -151,7 +159,7 @@ const Order: FC = ({}) => {
                         Review Product
                       </button>
                     )}
-                  </div>
+                  </Link>
                 ))}
               </div>
             </div>

@@ -200,10 +200,6 @@ const Navbar: FC = ({}) => {
                 My Order
               </Link>
               <Link href="/" className="flex w-full items-center p-2 text-left">
-                <GiCancel color="white" className="mr-2 text-xl" />
-                My Cancellations
-              </Link>
-              <Link href="/" className="flex w-full items-center p-2 text-left">
                 <AiOutlineStar color="white" className="mr-2 text-xl" />
                 My Reviews
               </Link>

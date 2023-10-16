@@ -24,7 +24,7 @@ const Order: FC = ({}) => {
   const { data: userReviews, refetch } = api.review.getUserReviews.useQuery({
     userId: userDetail.id,
   });
-  console.log(userReviews?.map((review) => review.productId));
+
   const [review, setReview] = useState<string>("");
 
   if (isError) {

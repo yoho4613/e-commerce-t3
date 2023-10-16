@@ -1,5 +1,5 @@
 import { TRPCError } from "@trpc/server";
-import { createTRPCRouter, publicProcedure, userProcedure } from "../trpc";
+import { adminProcedure, createTRPCRouter, publicProcedure, userProcedure } from "../trpc";
 import { z } from "zod";
 import bcrypt from "bcryptjs";
 import { SignJWT } from "jose";
@@ -269,6 +269,7 @@ export const userRouter = createTRPCRouter({
 
       return newAddress;
     }),
+    getAllUsers: adminProcedure.query(async ({ctx}) => await ctx.prisma.user.findMany())
   // deleteUser: adminProcedure
   //   .input(
   //     z.object({

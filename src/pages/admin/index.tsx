@@ -1,10 +1,14 @@
+import { User } from "@prisma/client";
+import { isToday } from "date-fns";
+import { GetServerSideProps } from "next";
 import { FC } from "react";
+import { prisma } from "~/server/db";
+import { api } from "~/utils/api";
 
-// interface indexProps {
+const IndexPage: FC = () => {
 
-// }
+  const {data: users} = api.user.getAllUsers.useQuery();
 
-const index: FC = ({}) => {
   return (
     <div>
       <div className="flex h-screen flex-col p-6">
@@ -12,8 +16,9 @@ const index: FC = ({}) => {
         <div className="mb-5 mt-4 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           <div className="overflow-hidden rounded-lg bg-white shadow">
             <div className="px-4 py-5 sm:p-6">
-              <h2 className="text-lg font-medium text-gray-900">This Week</h2>
+              <h2 className="text-lg font-medium text-gray-900">Customer</h2>
               <div className="mt-2 text-sm text-gray-600">
+                <p>{users?.length} Users are active <span className="text-green-400">(+ {users?.filter((user) => isToday(user.createdAt)).length} today)</span></p>
                 {/* <Bookings
                 bookings={bookings || []}
                 thisWeekBooking={thisWeekBooking}
@@ -32,6 +37,14 @@ const index: FC = ({}) => {
           <div className="overflow-hidden rounded-lg bg-white shadow">
             <div className="px-4 py-5 sm:p-6">
               <h2 className="text-lg font-medium text-gray-900">Orders</h2>
+              <div className="mt-2 text-sm text-gray-600">
+                <p>You have 5678 orders this month.</p>
+              </div>
+            </div>
+          </div>
+          <div className="overflow-hidden rounded-lg bg-white shadow">
+            <div className="px-4 py-5 sm:p-6">
+              <h2 className="text-lg font-medium text-gray-900">Payment</h2>
               <div className="mt-2 text-sm text-gray-600">
                 <p>You have 5678 orders this month.</p>
               </div>
@@ -78,4 +91,5 @@ const index: FC = ({}) => {
   );
 };
 
-export default index;
+
+export default IndexPage;

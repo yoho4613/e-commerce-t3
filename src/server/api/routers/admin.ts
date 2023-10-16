@@ -7,9 +7,6 @@ import { nanoid } from "nanoid";
 // import { getJwtSecretKey } from "~/lib/auth";
 import cookie from "cookie";
 import { getJwtSecretKey } from "~/lib/auth";
-import { User, admin } from "@prisma/client";
-import { getServerSession } from "next-auth";
-import { authOptions } from "~/server/auth";
 
 export const adminRouter = createTRPCRouter({
   // getAllUsers: adminProcedure.query(async ({ ctx, input }) => {

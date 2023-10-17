@@ -1,13 +1,16 @@
 import { User } from "@prisma/client";
-import { isToday } from "date-fns";
+import { JsonArray, JsonObject } from "@prisma/client/runtime/library";
+import { isSameMonth, isThisMonth, isToday } from "date-fns";
 import { GetServerSideProps } from "next";
 import { FC } from "react";
+import { CartItem } from "~/config/type";
 import { prisma } from "~/server/db";
 import { api } from "~/utils/api";
 
 const IndexPage: FC = () => {
 
   const {data: users} = api.user.getAllUsers.useQuery();
+  const {data: orders} = api.order.getAllOrders.useQuery()
 
   return (
     <div>
@@ -30,7 +33,7 @@ const IndexPage: FC = () => {
             <div className="px-4 py-5 sm:p-6">
               <h2 className="text-lg font-medium text-gray-900">Revenue</h2>
               <div className="mt-2 text-sm text-gray-600">
-                <p>Your total revenue</p>
+                <p>Your total revenue <span className="font-bold">${orders?.reduce((acc, next) =>  (next.products as JsonObject[])?.reduce((a, n) => a+=(Number(n.quantity) * Number(n.price)) ,0) + acc,0)}</span></p>
               </div>
             </div>
           </div>
@@ -38,15 +41,7 @@ const IndexPage: FC = () => {
             <div className="px-4 py-5 sm:p-6">
               <h2 className="text-lg font-medium text-gray-900">Orders</h2>
               <div className="mt-2 text-sm text-gray-600">
-                <p>You have 5678 orders this month.</p>
-              </div>
-            </div>
-          </div>
-          <div className="overflow-hidden rounded-lg bg-white shadow">
-            <div className="px-4 py-5 sm:p-6">
-              <h2 className="text-lg font-medium text-gray-900">Payment</h2>
-              <div className="mt-2 text-sm text-gray-600">
-                <p>You have 5678 orders this month.</p>
+                <p>You have <span className="font-bold">{orders?.filter((order) => isThisMonth(order.createdAt)).length}</span> orders this month.</p>
               </div>
             </div>
           </div>

@@ -10,6 +10,7 @@ interface SearchbarProps {
 const Searchbar: FC<SearchbarProps> = ({ category, subCategory }) => {
   const router = useRouter();
   const [input, setInput] = useState("");
+  const [isSearching, setIsSearching] = useState(false)
   return (
     <>
       <form
@@ -34,6 +35,11 @@ const Searchbar: FC<SearchbarProps> = ({ category, subCategory }) => {
         <button className="absolute right-1 top-1 text-lg md:text-xl md:right-2 md:top-1.5 ">
           <FiSearch />
         </button>
+        {isSearching && (
+          <div className="w-full">
+            
+          </div>
+        )}
       </form>
     </>
   );

@@ -59,7 +59,7 @@ const Contact: FC = ({}) => {
             </button>
           </div>
         </form>
-      </div>
+      </div> 
     </div>
   );
 };

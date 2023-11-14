@@ -1,21 +1,23 @@
 import { Order, OrderStatus } from "@prisma/client";
-import { JsonArray, JsonObject } from "@prisma/client/runtime/library";
+import { JsonObject } from "@prisma/client/runtime/library";
 import { FC, useEffect, useState } from "react";
 import Spinner from "~/components/global/Spinner";
-import { CartItem, OrderType } from "~/config/type";
 import { api } from "~/utils/api";
-
-
 
 const OrderPage: FC = ({}) => {
   const { data: orders, isLoading } = api.order.getAllOrders.useQuery();
-  // const [filteredOrders, setFilteredOrders] = useState<OrderType[]>([]);
+  const [ordersCopy, setOrdersCopy] = useState([]);
   const [openForm, setOpenForm] = useState<Order | null>(null);
   // console.log(orders);
 
   useEffect(() => {
-    // if(orders) setFilteredOrders(orders)
-  }, [orders]);
+    if (orders) {
+      
+    }
+  }, [orders])
+
+  // const updateStatus = async () => {};
+
   return (
     <div className="relative overflow-auto ">
       {/* {openForm && (
@@ -45,12 +47,7 @@ const OrderPage: FC = ({}) => {
         <div className="flex flex-col items-center">
           <label>Status</label>
           <select
-            // onChange={(e) =>
-            //   setSelectedCategory((prev) => ({
-            //     categoryId: e.target.value,
-            //     subcategoryId: null,
-            //   }))
-            // }
+            onChange={(e) => updateStatus()}
             defaultValue=""
             className="h-12 bg-gray-200 p-1"
           >
@@ -62,8 +59,7 @@ const OrderPage: FC = ({}) => {
             ))}
           </select>
         </div>
-        <div>
-        </div>
+        <div></div>
         <div>
           <button
             // onClick={() => setOpenPopup(true)}

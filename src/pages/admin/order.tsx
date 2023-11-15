@@ -1,6 +1,6 @@
 import { Order, OrderStatus } from "@prisma/client";
 import { JsonObject } from "@prisma/client/runtime/library";
-import { FC, useEffect, useState } from "react";
+import { ChangeEvent, FC, useEffect, useState } from "react";
 import Spinner from "~/components/global/Spinner";
 import { api } from "~/utils/api";
 
@@ -8,15 +8,24 @@ const OrderPage: FC = ({}) => {
   const { data: orders, isLoading } = api.order.getAllOrders.useQuery();
   const [ordersCopy, setOrdersCopy] = useState([]);
   const [openForm, setOpenForm] = useState<Order | null>(null);
+  const [filteredOrder, setFilteredOrder] = useState(orders ?? []);
   // console.log(orders);
 
   useEffect(() => {
     if (orders) {
-      
+      // setOrdersCopy(orders)
+      setFilteredOrder(orders);
     }
-  }, [orders])
+  }, [orders]);
 
-  // const updateStatus = async () => {};
+  console.log(filteredOrder);
+
+  const updateStatus = (e: ChangeEvent<HTMLSelectElement>) => {
+    orders &&
+      setFilteredOrder(
+        orders.filter((order) => order.status === e.target.value),
+      );
+  };
 
   return (
     <div className="relative overflow-auto ">
@@ -47,7 +56,7 @@ const OrderPage: FC = ({}) => {
         <div className="flex flex-col items-center">
           <label>Status</label>
           <select
-            onChange={(e) => updateStatus()}
+            onChange={(e) => updateStatus(e)}
             defaultValue=""
             className="h-12 bg-gray-200 p-1"
           >
@@ -69,113 +78,120 @@ const OrderPage: FC = ({}) => {
           </button>
         </div>
       </div>
-      <table className="mb-6 text-left text-sm text-gray-500 dark:text-gray-400">
-        <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
-          <tr>
-            <th scope="col" className="px-6 py-3">
-              Order Id
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Customer Name
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Products
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Payment
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Address
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Status
-            </th>
-            <th scope="col" className="px-6 py-3">
-              CreatedAt
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Last Update
-            </th>
-            <th scope="col" className="px-6 py-3">
-              Action
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          {isLoading && (
+      <div className="w-full overflow-scroll">
+        <table className="mb-6 text-left text-sm text-gray-500 dark:text-gray-400">
+          <thead className="bg-gray-50 text-xs uppercase text-gray-700 dark:bg-gray-700 dark:text-gray-400">
             <tr>
-              <td>
-                <Spinner />
-              </td>
-            </tr>
-          )}
-          {orders?.map((order) => (
-            <tr
-              key={order.id}
-              className={`border-b bg-white  decoration-red-600 dark:border-gray-700 dark:bg-gray-800`}
-            >
-              <th
-                scope="row"
-                className="whitespace-nowrap px-6 py-4 font-medium dark:text-white"
-              >
-                <label className=" line-clamp-3" htmlFor={order.id}>
-                  <input
-                    className="mr-"
-                    name={order.id}
-                    type="checkbox"
-                    id={order.id}
-                    value="value"
-                    // onChange={(e) =>
-                    //   e.target.checked
-                    //     ? setSelectedproducts((prev) => [...prev, product])
-                    //     : setSelectedproducts((prev) =>
-                    //         prev.filter((p) => p.id !== product.id),
-                    //       )
-                    // }
-                  />
-                  {order.id.slice(0, 10)}...
-                </label>
+              <th scope="col" className="px-6 py-3">
+                Order Id
               </th>
-              <td className="px-6 py-4">{order.user.name}</td>
-              <td className="px-6 py-4">
-                {(order.products as JsonObject[])
-                  .map((item) => item.title)
-                  .join(",")}
-              </td>
-              <td className="px-6 py-4">{order.paymentId.slice(0, 10)}...</td>
-              <td className="px-6 py-4">
-                {Object.values(order.user.address as JsonObject).join(",")}
-              </td>
-              <td className="px-6 py-4">
-                <select
-                  className="border-2 p-1.5"
-                  name="status"
-                  defaultValue={order.status}
-                  id="status"
-                >
-                  {Object.values(OrderStatus).map((status) => (
-                    <option value={status} key={status}>
-                      {status}
-                    </option>
-                  ))}
-                </select>
-              </td>
-              <td className="px-6 py-4">{order.status}</td>
-              <td className="px-6 py-4">{order.createdAt.toLocaleString()}</td>
-              <td className="px-6 py-4">{order.updatedAt.toLocaleString()}</td>
-              <td className="px-6 py-4">
-                <button
-                  onClick={() => setOpenForm(order)}
-                  type="button"
-                  className="rounded-lg bg-gray-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
-                >
-                  Update
-                </button>
-              </td>
+              <th scope="col" className="px-6 py-3">
+                Customer Name
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Products
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Payment
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Address
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Status
+              </th>
+              <th scope="col" className="px-6 py-3">
+                CreatedAt
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Last Update
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Action
+              </th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {isLoading && (
+              <tr>
+                <td>
+                  <Spinner />
+                </td>
+              </tr>
+            )}
+            {filteredOrder?.map((order) => (
+              <tr
+                key={order.id}
+                className={`border-b bg-white  decoration-red-600 dark:border-gray-700 dark:bg-gray-800`}
+              >
+                <th
+                  scope="row"
+                  className="whitespace-nowrap px-6 py-4 font-medium dark:text-white"
+                >
+                  <label className=" line-clamp-3" htmlFor={order.id}>
+                    <input
+                      className="mr-"
+                      name={order.id}
+                      type="checkbox"
+                      id={order.id}
+                      value="value"
+                      // onChange={(e) =>
+                      //   e.target.checked
+                      //     ? setSelectedproducts((prev) => [...prev, product])
+                      //     : setSelectedproducts((prev) =>
+                      //         prev.filter((p) => p.id !== product.id),
+                      //       )
+                      // }
+                    />
+                    {order.id.slice(0, 10)}...
+                  </label>
+                </th>
+                <td className="px-6 py-4">{order.user.name}</td>
+                <td className="px-6 py-4">
+                  {(order.products as JsonObject[])
+                    .map((item) => item.title)
+                    .join(",")}
+                </td>
+                <td className="px-6 py-4">{order.paymentId.slice(0, 10)}...</td>
+                <td className="px-6 py-4">
+                  {Object.values(order.user.address as JsonObject).join(",")}
+                </td>
+                <td className="px-6 py-4">
+                  <select
+                    className="border-2 p-1.5"
+                    name="status"
+                    defaultValue={order.status}
+                    id="status"
+                  >
+                    {Object.values(OrderStatus).map((status) => (
+                      <option value={status} key={status}>
+                        {status}
+                      </option>
+                    ))}
+                  </select>
+                </td>
+                <td className="px-6 py-4">{order.status}</td>
+                <td className="px-6 py-4">
+                  {order.createdAt.toLocaleString()}
+                </td>
+                <td className="px-6 py-4">
+                  {order.updatedAt.toLocaleString()}
+                </td>
+                <td className="px-6 py-4">
+                  <button
+                    onClick={() => setOpenForm(order)}
+                    type="button"
+                    className="rounded-lg bg-gray-500 px-5 py-2.5 text-sm font-medium text-white hover:bg-red-800 focus:outline-none focus:ring-4 focus:ring-red-300  dark:bg-red-600 dark:hover:bg-red-700 dark:focus:ring-red-900"
+                  >
+                    Update
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+
       <div className="text-center">
         {/* {slicedProducts &&
           products &&

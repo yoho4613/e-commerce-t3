@@ -13,8 +13,10 @@ const Category: FC = ({}) => {
   } = api.category.getAllCategories.useQuery();
   const { mutate: addCategory } = api.category.addCategory.useMutation({
     onSuccess: () => {
-      refetch().then(res => res).catch(err => console.log(err))
-      setFormName("")
+      refetch()
+        .then((res) => res)
+        .catch((err) => console.log(err));
+      setFormName("");
       toast.success("sucessfully added subcategory");
     },
   });

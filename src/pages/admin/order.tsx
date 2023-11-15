@@ -1,30 +1,63 @@
 import { Order, OrderStatus } from "@prisma/client";
 import { JsonObject } from "@prisma/client/runtime/library";
 import { ChangeEvent, FC, useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import Spinner from "~/components/global/Spinner";
 import { api } from "~/utils/api";
 
 const OrderPage: FC = ({}) => {
-  const { data: orders, isLoading } = api.order.getAllOrders.useQuery();
-  const [ordersCopy, setOrdersCopy] = useState([]);
+  const {
+    data: orders,
+    isLoading,
+    refetch,
+  } = api.order.getAllOrders.useQuery();
+  const { mutateAsync: sendUpdatedStatus } =
+    api.order.updateStatus.useMutation();
   const [openForm, setOpenForm] = useState<Order | null>(null);
   const [filteredOrder, setFilteredOrder] = useState(orders ?? []);
-  // console.log(orders);
 
   useEffect(() => {
     if (orders) {
-      // setOrdersCopy(orders)
       setFilteredOrder(orders);
     }
   }, [orders]);
 
-  console.log(filteredOrder);
 
-  const updateStatus = (e: ChangeEvent<HTMLSelectElement>) => {
+
+  const filterStatus = (e: ChangeEvent<HTMLSelectElement>) => {
     orders &&
       setFilteredOrder(
         orders.filter((order) => order.status === e.target.value),
       );
+  };
+
+  const updateStatus = (e: ChangeEvent<HTMLSelectElement>, id: string) => {
+    setFilteredOrder((prev) =>
+      prev.map((order) =>
+        order.id === id
+          ? { ...order, status: e.target.value as OrderStatus }
+          : order,
+      ),
+    );
+  };
+
+  const submitSave = async () => {
+    const updatedOrders: Order[] = [];
+    filteredOrder.forEach((order, i) => {
+      if (order.status !== orders?.[i]?.status) {
+        updatedOrders.push(order);
+      }
+    });
+
+    if (!updatedOrders.length) {
+      return toast.error("There is nothing to update");
+    }
+    for (const order of updatedOrders) {
+      await sendUpdatedStatus({ id: order.id, status: order.status });
+    }
+
+    await refetch();
+    return toast.success("Orders are successfully updated");
   };
 
   return (
@@ -56,7 +89,7 @@ const OrderPage: FC = ({}) => {
         <div className="flex flex-col items-center">
           <label>Status</label>
           <select
-            onChange={(e) => updateStatus(e)}
+            onChange={(e) => filterStatus(e)}
             defaultValue=""
             className="h-12 bg-gray-200 p-1"
           >
@@ -68,10 +101,11 @@ const OrderPage: FC = ({}) => {
             ))}
           </select>
         </div>
-        <div></div>
+
         <div>
           <button
-            // onClick={() => setOpenPopup(true)}
+            // eslint-disable-next-line @typescript-eslint/no-misused-promises
+            onClick={submitSave}
             className="rounded-md border-2 px-4 py-2"
           >
             Save
@@ -158,10 +192,16 @@ const OrderPage: FC = ({}) => {
                 </td>
                 <td className="px-6 py-4">
                   <select
-                    className="border-2 p-1.5"
+                    className={`border-2 p-1.5 ${
+                      orders?.find((o) => o.id === order.id)?.status !==
+                      order.status
+                        ? "border-yellow-400"
+                        : "border-black"
+                    }`}
                     name="status"
                     defaultValue={order.status}
                     id="status"
+                    onChange={(e) => updateStatus(e, order.id)}
                   >
                     {Object.values(OrderStatus).map((status) => (
                       <option value={status} key={status}>
@@ -170,7 +210,7 @@ const OrderPage: FC = ({}) => {
                     ))}
                   </select>
                 </td>
-                <td className="px-6 py-4">{order.status}</td>
+
                 <td className="px-6 py-4">
                   {order.createdAt.toLocaleString()}
                 </td>

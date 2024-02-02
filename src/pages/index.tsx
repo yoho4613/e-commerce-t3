@@ -12,8 +12,11 @@ import HomeBanner from "~/components/banners/HomeBanner";
 import CategoryNavBar from "~/components/navbar/CategoryNavBar";
 import { Sale } from "~/config/type";
 import { api } from "~/utils/api";
+import { useShopContext } from "~/context/shopContext";
 
 export default function Home() {
+  const { categories, fetchCategories } = useShopContext();
+
   const { data: withSubCategory } = api.category.withSubcategory.useQuery();
   const { data: sales } = api.sale.getAllSales.useQuery();
   const { data: randomProducts } = api.product.getRandomProducts.useQuery(20);
@@ -38,6 +41,13 @@ export default function Home() {
       });
     }
   }, [sales]);
+
+  useEffect(() => {
+    if(!categories.length) {
+
+      fetchCategories()
+    }
+  }, [categories])
 
   return (
     <>

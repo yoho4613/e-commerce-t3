@@ -270,7 +270,7 @@ const Menu: FC = ({}) => {
                 key={banner.id}
                 className="flex flex-col items-center justify-between border-2 sm:flex-row"
               >
-                <div className="flex gap-4">
+                <div className="flex flex-col md:flex-row gap-4">
                   <div className="relative h-40 w-40">
                     {banner.position !== "advertise" && (
                       <Image

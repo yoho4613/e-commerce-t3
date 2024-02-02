@@ -79,17 +79,11 @@ export const adminRouter = createTRPCRouter({
       const passwordMatch =
         user?.password && (await bcrypt.compare(password, user.password));
 
-      const adminAccess =
-        email === process.env.ADMIN_EMAIL &&
-        password === process.env.ADMIN_PASSWORD;
-
-      if (!adminAccess) {
-        if (!user || !passwordMatch || !email || !password) {
-          throw new TRPCError({
-            code: "UNAUTHORIZED",
-            message: "Invalid email or password",
-          });
-        }
+      if (!user || !passwordMatch || !email || !password) {
+        throw new TRPCError({
+          code: "UNAUTHORIZED",
+          message: "Invalid email or password",
+        });
       }
 
       const token = await new SignJWT({})
@@ -119,7 +113,9 @@ export const adminRouter = createTRPCRouter({
     )
     .query(async ({ ctx, input }) => {
       const { email } = input;
-      const token = ctx.req.cookies["next-auth.session-token"] ?? ctx.req.cookies["__Secure-next-auth.session-token"];
+      const token =
+        ctx.req.cookies["next-auth.session-token"] ??
+        ctx.req.cookies["__Secure-next-auth.session-token"];
 
       if (!token) {
         throw new TRPCError({
@@ -172,6 +168,23 @@ export const adminRouter = createTRPCRouter({
 
     return { success: true };
   }),
+  pauseShop: adminProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(async ({ ctx, input }) => {
+      const { id } = input;
+      const admin = await ctx.prisma.admin.findFirst({ where: { id } });
+
+      if (!admin) {
+        return new TRPCError({
+          message: "No User Found",
+          code: "NOT_FOUND",
+        });
+      }
+
+      if (admin.role === "admin" || admin.role === "superadmin") {
+        // Shop Paused Logic
+      }
+    }),
 
   // deleteUser: adminProcedure
   //   .input(
@@ -184,38 +197,6 @@ export const adminRouter = createTRPCRouter({
   //     return await ctx.prisma.user.delete({
   //       where: {
   //         id,
-  //       },
-  //     });
-  //   }),
-  // updateUser: adminProcedure
-  //   .input(
-  //     z.object({
-  //       id: z.string(),
-  //       email: z.string(),
-  //       name: z.string(),
-  //       verified: z.boolean(),
-  //       role: z.enum(["staff", "manager", "admin", "superadmin"]),
-  //     })
-  //   )
-  //   .mutation(async ({ ctx, input }) => {
-  //     const { id, email, name, verified, role } = input;
-
-  //     if (!email || !name || !role) {
-  //       throw new TRPCError({
-  //         code: "CONFLICT",
-  //         message: "Missing Information",
-  //       });
-  //     }
-
-  //     return await ctx.prisma.user.update({
-  //       where: {
-  //         id,
-  //       },
-  //       data: {
-  //         email,
-  //         name,
-  //         verified,
-  //         role,
   //       },
   //     });
   //   }),

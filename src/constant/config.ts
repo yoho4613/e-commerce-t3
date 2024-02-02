@@ -19,6 +19,16 @@ export const defaultUserDetail = {
   createdAt: new Date(),
 };
 
+export const defaultCategories = [
+
+]
+
+export const defaultProducts = [
+  
+]
+
+export const defaultRandomProducts = []
+
 export const MAX_FILE_SIZE = 1024 * 1024 * 5;
 
 export const initialProductForm = {

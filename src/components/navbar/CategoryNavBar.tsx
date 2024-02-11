@@ -1,6 +1,5 @@
-import { Category, Subcategory } from "@prisma/client";
 import Link from "next/link";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC,  } from "react";
 import { MdArrowForwardIos } from "react-icons/md";
 import { CategoryWithSubCategory } from "~/config/type";
 

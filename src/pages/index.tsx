@@ -43,18 +43,17 @@ export default function Home() {
   }, [sales]);
 
   useEffect(() => {
-    if(!categories.length) {
 
       fetchCategories()
-    }
+
   }, [categories])
 
   return (
     <>
       <div className="m-auto w-screen max-w-[1280px] md:px-6">
         <div className="flex w-full flex-col md:flex-row ">
-          {withSubCategory ? (
-            <CategoryNavBar categories={withSubCategory} />
+          {categories ? (
+            <CategoryNavBar categories={categories} />
           ) : (
             <div>
               <Spinner /> Loading...

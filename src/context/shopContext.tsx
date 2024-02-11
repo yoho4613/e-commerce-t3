@@ -44,6 +44,7 @@ const ShopContext = createContext<ContextProp>({
     return str;
   },
   fetchCategories: () => {
+    console.log("test")
     return
   }
 });
@@ -68,17 +69,17 @@ export const StateContext = ({ children }: { children: ReactNode }) => {
     }
   };
 
-  const fetchProducts = () => {};
+  // const fetchProducts = () => {};
 
-  const fetchProductsByCategories = async () => {};
+  // const fetchProductsByCategories = async () => {};
 
-  const fetchProductsByRecommandation = async () => {
-    if (!randomProducts.length) {
-      if (fetchedrandomProducts) {
-        setRandomProducts(fetchedrandomProducts);
-      }
-    }
-  };
+  // const fetchProductsByRecommandation = async () => {
+  //   if (!randomProducts.length) {
+  //     if (fetchedrandomProducts) {
+  //       setRandomProducts(fetchedrandomProducts);
+  //     }
+  //   }
+  // };
 
   return (
     <ShopContext.Provider
